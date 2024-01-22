@@ -49,7 +49,5 @@ let selectedGroups = [];
 			<li>{member.displayName} - {member.mail}</li>
 		{/each}
 	</ul>
-    <input type="text" bind:value={courseId} placeholder="Enter Course ID">
-    <button formaction="?/enrollUsersInCourse" >Enroll Users in Course</button>
 {/if}
 </form>

@@ -1,5 +1,4 @@
 import {getAccessToken, getGroupMembers, getMemberGroups, searchGroupsByDisplayName, getUserGroupByEmail} from '$lib/utils/azureGraph';
-import { createUser, enrollUserInCourse } from '$lib/utils/brightSpace';
 let groups = [];
 let groupMembers = [];
 let searchQuery = "";

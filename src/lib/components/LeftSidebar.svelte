@@ -1,5 +1,9 @@
 <script>
+  import { PUBLIC_EUI_WEB } from '$env/static/public';
+
 	export let data;
+  console.log(data)
+  const user_data = data.session.algoliaUser;
 </script>
 
 <div class="bg-gray-200">
@@ -16,19 +20,14 @@
       <div class="flex items-center justify-between p-4">
         <!-- User Image -->
         <div class="flex items-center space-x-3">
-          <img class="h-12 w-12 rounded-full" src="" alt="Emanuele Strano">
+          <img class="h-12 w-12 rounded-full" src="{PUBLIC_EUI_WEB+user_data.cms.photo.asset.sys.uri}" alt="">
           <!-- User Details -->
           <div>
-            <div class="text-lg font-semibold">Emanuele Strano</div>
-            <a href="https://www.eui.eu/people?id=emanuele-strano" class="text-blue-500 hover:text-blue-700" target="_blank" rel="noopener noreferrer">View your public profile</a>
+            <div class="text-lg font-semibold">{user_data.ict.Firstnames}</div>
+            <a href="{PUBLIC_EUI_WEB+"people?id="+user_data.objectID}" class="text-blue-500 hover:text-blue-700" target="_blank" rel="noopener noreferrer">View your public profile</a>
           </div>
         </div>
-  
-        <!-- Switch User Button -->
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Switch User
-        </button>
-      </div>
+        </div>
     </div>
   
     <!-- Navigation Menu -->
@@ -46,9 +45,8 @@
   
     <!-- Logout Section -->
     <div class="p-4">
-      <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded flex items-center">
-        Logout <i class="fas fa-sign-out-alt ml-2"></i>
-      </button>
+      <a data-sveltekit-preload-data="tap" href="/auth/signout" class="flex items-center text-gray-700 hover:text-gray-900">Logout</a>
+
     </div>
   </div>
   

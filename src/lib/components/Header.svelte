@@ -1,8 +1,3 @@
-<script>
-	export let isLoggedIn;
-</script>
-
-
 <div class="bg-gray-100">
     <div class="mobile-header tray-closed">
       <div class="container mx-auto px-4 wide">
@@ -29,11 +24,5 @@
         </div>
       </div>
     </div>
-    {#if isLoggedIn}
-        <a class="btn" href="/auth/signout">Logout</a>
-    {:else}
-        <a class="btn" href="/auth/signin">Login</a>
-    {/if}
-
   </div>
   

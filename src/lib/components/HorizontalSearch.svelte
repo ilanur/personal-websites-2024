@@ -4,13 +4,11 @@ import algoliasearch from 'algoliasearch/lite';
 import instantsearch from 'instantsearch.js';
 import { searchBox, hits } from 'instantsearch.js/es/widgets';
 import {setConfigs } from '$lib/utils/algolia/indexesConfig';
-
+import { PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY } from '$env/static/public';
 if (browser) {
   
-let appId = 'E2MU8FKW2W';
-let apiKey = '6bc5cd451c16fa8b817e006c63ef660c';
 
-const searchClient = algoliasearch(appId, apiKey);
+const searchClient = algoliasearch(PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY);
 let indexName = 'people';
 const {currentTemplateFunction, currentTransformItems, root_classes, list_classes, item_classes } = setConfigs(indexName); 
 

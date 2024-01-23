@@ -9,8 +9,6 @@ let groups =data.groups;
 let members = data.groupMembers;
 let searchQuery = data.searchQuery;
 
-let courseId = "";
-
 $: if (form?.groups && form.groups !== groups) {
 	groups = form.groups;
 	searchQuery = form.searchQuery;
@@ -18,7 +16,6 @@ $: if (form?.groups && form.groups !== groups) {
 $: if (form?.groupMembers) {
 	members = form.groupMembers;
 }
-
 
 let selectedGroups = [];
 

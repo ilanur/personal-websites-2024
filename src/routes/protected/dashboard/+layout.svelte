@@ -9,7 +9,6 @@
 			<p>Welcome {data.session.user.name}</p>
 
 			<ul>
-				<li><a href="/protected/dashboard">PDF generate</a></li>
 				<li><a href="/protected/dashboard/azure-groups">Azure groups</a></li>
 			</ul>
 		</div>

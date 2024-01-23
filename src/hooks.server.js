@@ -33,7 +33,7 @@ const handleAuth = SvelteKitAuth({
 		},
 		redirect: async ({ url, baseUrl }) => {
 			if (url === baseUrl) {
-				return `${baseUrl}/protected/dashboard`;
+				return `${baseUrl}/`;
 			}
 
 			return url;
@@ -43,11 +43,10 @@ const handleAuth = SvelteKitAuth({
 
 async function isAuthenticatedUser({ event, resolve }) {
 	// Any page in the protected/ folder will be for authenticated users.
-	if (event.url.pathname.startsWith('/protected/dashboard')) {
+	if (event.url.pathname.startsWith('/')) {
 		const session = await event.locals.getSession();
-
 		if (!session) {
-			throw redirect(303, '/login');
+			throw redirect(303, '/auth/signin');
 		}
 	}
 

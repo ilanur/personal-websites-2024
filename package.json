@@ -23,7 +23,7 @@
 	"type": "module",
 	"dependencies": {
 		"@auth/core": "^0.5.1",
-		"@auth/sveltekit": "^0.3.0",
+		"@auth/sveltekit": "^0.3.16",
 		"algoliasearch": "^4.22.1",
 		"instantsearch.js": "^4.64.0",
 		"jspdf": "^2.5.1"

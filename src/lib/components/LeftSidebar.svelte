@@ -3,7 +3,6 @@
   import { signOut } from "@auth/sveltekit/client"
 
 	export let data;
-  console.log(data)
   const user_data = data.session.algoliaUser;
   let portrait = '/default-user-dark.png';
   if(user_data.cms.photo) {

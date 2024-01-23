@@ -1,5 +1,6 @@
 <script>
   import { PUBLIC_EUI_WEB } from '$env/static/public';
+  import { signOut } from "@auth/sveltekit/client"
 
 	export let data;
   console.log(data)
@@ -45,7 +46,7 @@
   
     <!-- Logout Section -->
     <div class="p-4">
-      <a data-sveltekit-preload-data="tap" href="/auth/signout" class="flex items-center text-gray-700 hover:text-gray-900">Logout</a>
+      <button on:click={() => signOut()} class="button">Logout</button>
 
     </div>
   </div>

@@ -5,6 +5,11 @@
 	export let data;
   console.log(data)
   const user_data = data.session.algoliaUser;
+  let portrait = '/default-user-dark.png';
+  if(user_data.cms.photo) {
+    portrait = PUBLIC_EUI_WEB + user_data.cms.photo.asset.sys.uri;
+  }
+  
 </script>
 
 <div class="bg-gray-200">
@@ -21,7 +26,7 @@
       <div class="flex items-center justify-between p-4">
         <!-- User Image -->
         <div class="flex items-center space-x-3">
-          <img class="h-12 w-12 rounded-full" src="{PUBLIC_EUI_WEB+user_data.cms.photo.asset.sys.uri}" alt="">
+          <img class="h-12 w-12 rounded-full" src="{portrait}" alt="">
           <!-- User Details -->
           <div>
             <div class="text-lg font-semibold">{user_data.ict.Firstnames}</div>

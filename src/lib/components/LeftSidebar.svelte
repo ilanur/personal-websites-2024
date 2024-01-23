@@ -25,7 +25,7 @@
           <!-- User Details -->
           <div>
             <div class="text-lg font-semibold">{user_data.ict.Firstnames}</div>
-            <a href="{PUBLIC_EUI_WEB+"people?id="+user_data.objectID}" class="text-blue-500 hover:text-blue-700" target="_blank" rel="noopener noreferrer">View your public profile</a>
+            <a href="{PUBLIC_EUI_WEB+"/people?id="+user_data.objectID}" class="text-blue-500 hover:text-blue-700" target="_blank" rel="noopener noreferrer">View your public profile</a>
           </div>
         </div>
         </div>

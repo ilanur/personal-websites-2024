@@ -46,7 +46,7 @@ async function isAuthenticatedUser({ event, resolve }) {
 	if (event.url.pathname.startsWith('/')) {
 		const session = await event.locals.getSession();
 		if (!session) {
-			throw redirect(303, '/auth/signin');
+			redirect(303, '/auth/signin');
 		}
 	}
 

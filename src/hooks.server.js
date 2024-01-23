@@ -4,6 +4,7 @@ import {
 	SECRET_TENANT_ID,
 	SECRET_AUTH_SECRET
 } from '$env/static/private';
+
 import AzureAd from '@auth/core/providers/azure-ad';
 import { sequence } from '@sveltejs/kit/hooks';
 import { SvelteKitAuth } from '@auth/sveltekit';

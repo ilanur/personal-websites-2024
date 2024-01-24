@@ -23,7 +23,6 @@
 		<slot />
 	  </main>
 	</div>
-	<div>aaaa</div>
 	<!-- Footer -->
 	<Footer />
   </div>

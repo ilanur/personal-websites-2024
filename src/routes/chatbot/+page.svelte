@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
       import { PUBLIC_EUI_WEB } from '$env/static/public';
 
     export let data;
@@ -182,4 +182,4 @@
             </div>
         </div>
     </form>
-</div>
+</div> -->

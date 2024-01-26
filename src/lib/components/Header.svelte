@@ -1,6 +1,6 @@
 <script>
   import { PUBLIC_EUI_WEB } from '$env/static/public';
-  import { signOut } from "@auth/sveltekit/client"
+  import { signOut } from "@auth/sveltekit/client";
 
   export let data;
   let isProfileDropdownOpen = false;

@@ -32,7 +32,7 @@
 				<input id="search" type="text" name="search" class="text-sm sm:text-base placeholder-gray-500 pl-10 pr-4 border border-gray-300 w-full h-10 focus:outline-none focus:border-eui-blue" placeholder="Search..." />
 			</div>
 			<div class="flex md:hidden">
-				<a href="#" class="flex items-center justify-center h-10 w-10 border-transparent">
+				<a href="/" class="flex items-center justify-center h-10 w-10 border-transparent">
 				<span class="fa-solid fa-magnifying-glass"></span>
 				</a>
 			</div>
@@ -53,18 +53,18 @@
 					<div class="py-1" role="none">
 						<!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
 						<a href="{publicProfileUrl}" class="text-gray-700 block px-4 py-2" role="menuitem" tabindex="-1" id="menu-item-0">View your public profile</a>
-						<a href="#" class="text-gray-700 block px-4 py-2" role="menuitem" tabindex="-1" id="menu-item-1">Duplicate</a>
+						<a href="/" class="text-gray-700 block px-4 py-2" role="menuitem" tabindex="-1" id="menu-item-1">Duplicate</a>
 					</div>
 					<div class="py-1" role="none">
-						<a href="#" class="text-gray-700 block px-4 py-2" role="menuitem" tabindex="-1" id="menu-item-2">Archive</a>
-						<a href="#" class="text-gray-700 block px-4 py-2" role="menuitem" tabindex="-1" id="menu-item-3">Move</a>
+						<a href="/" class="text-gray-700 block px-4 py-2" role="menuitem" tabindex="-1" id="menu-item-2">Archive</a>
+						<a href="/" class="text-gray-700 block px-4 py-2" role="menuitem" tabindex="-1" id="menu-item-3">Move</a>
 					</div>
 					<div class="py-1" role="none">
-						<a href="#" class="text-gray-700 block px-4 py-2" role="menuitem" tabindex="-1" id="menu-item-4">Share</a>
-						<a href="#" class="text-gray-700 block px-4 py-2" role="menuitem" tabindex="-1" id="menu-item-5">Add to favorites</a>
+						<a href="/" class="text-gray-700 block px-4 py-2" role="menuitem" tabindex="-1" id="menu-item-4">Share</a>
+						<a href="/" class="text-gray-700 block px-4 py-2" role="menuitem" tabindex="-1" id="menu-item-5">Add to favorites</a>
 					</div>
 					<div class="py-1" role="none">
-						<a href="#" class="text-gray-700 block px-4 py-2 " role="menuitem" tabindex="-1" id="menu-item-6">Delete</a>
+						<a href="/" class="text-gray-700 block px-4 py-2 " role="menuitem" tabindex="-1" id="menu-item-6">Delete</a>
 					</div>
 					<div class="py-1" role="none">
 						<button on:click={() => signOut()} class="text-gray-700 block px-4 py-2" role="menuitem" tabindex="-1">

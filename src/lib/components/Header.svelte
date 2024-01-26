@@ -30,8 +30,8 @@
       <a href class="flex flex-row items-center justify-end">
       <img src="{portrait}" alt class="h-10 w-10 bg-gray-200 border rounded-full" />
       <span class="flex flex-col ml-2">
-        <span class="truncate w-48 font-semibold tracking-wide leading-none">{user_data.ict.Firstnames}</span>
-        <span class="truncate w-48 text-gray-500 text-xs leading-none mt-1">Web Designer</span>
+        <span class="truncate w-48 font-semibold tracking-wide leading-none">{user_data.ict.Firstnames} {user_data.ict.Lastnames}</span>
+        <span class="truncate w-48 text-gray-500 text-xs leading-none mt-1">{user_data.ict.Staff.PostJobTitles[0].JobTitle}</span>
       </span>
       </a>
     </div>

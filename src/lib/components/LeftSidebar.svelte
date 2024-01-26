@@ -1,13 +1,4 @@
 <script>
-  import { PUBLIC_EUI_WEB } from '$env/static/public';
- 
-
-	export let data;
-  const user_data = data.session.algoliaUser;
-  let portrait = '/default-user-dark.png';
-  if(user_data.cms.photo) {
-    portrait = PUBLIC_EUI_WEB + user_data.cms.photo.asset.sys.uri;
-  }
 </script>
 
 <div class="sidebar-header flex items-center justify-center py-4">

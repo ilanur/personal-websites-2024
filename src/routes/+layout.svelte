@@ -6,7 +6,7 @@
 	export let data;
 </script>
 <!-- Header -->
-<Header isLoggedIn={!!data.session} />	
+<Header data={data} />	
 <div class="realtive h-screen md:flex bg-gray-100 w-full">
 	<!-- mobile menu bar -->
   	<div class="bg-gray-800 text-gray-100 flex justify-between md:hidden">
@@ -21,7 +21,7 @@
   	</div>
 	<!-- Left Sidebar -->
 	<aside class="sidebar bg-white text-blue-100 w-64 space-y-6 absolute inset-y-0 left-0 transform -translate-x-full transition duration-200 ease-in-out md:relative md:translate-x-0">
-		<LeftSidebar data={data} />
+		<LeftSidebar />
 	</aside>
 	<!-- Main Content Area -->
 	<main class="main flex-1 overflow-y-auto">	

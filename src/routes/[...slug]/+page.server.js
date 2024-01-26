@@ -40,4 +40,7 @@ async function get_entryBySlug(slug) {
 
     }
 
+    //aggiungere chiamata ai nodi ancestors per ottenere il breadcrumb
+    //aggiungere chiamata alla entry sul nodo ancestors più vicino del tipo departmentsServices
+
   }

@@ -1,8 +1,8 @@
 <script>
     //intranet landings
-    import AutomaticListings from '$lib/components/euiIntranetLanding/automaticListings.svelte';
-    import HeaderImageLinks from '$lib/components/euiIntranetLanding/headerImageLinks.svelte';
-    import QuickLinks from '$lib/components/euiIntranetLanding/quickLinks.svelte';
+    import AutomaticListings from '$lib/components/composerLanding/automaticListings.svelte';
+    import HeaderImageLinks from '$lib/components/composerLanding/headerImageLinks.svelte';
+    import QuickLinks from '$lib/components/composerLanding/quickLinks.svelte';
 
     export let entry;
     

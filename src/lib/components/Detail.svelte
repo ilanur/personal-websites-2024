@@ -1,9 +1,4 @@
 <script>
-    //intranet landings
-    import AutomaticListings from '$lib/components/euiIntranetLanding/automaticListings.svelte';
-    import HeaderImageLinks from '$lib/components/euiIntranetLanding/headerImageLinks.svelte';
-    import QuickLinks from '$lib/components/euiIntranetLanding/quickLinks.svelte';
-
     export let entry;
 
     function getComponentDetail(type) {

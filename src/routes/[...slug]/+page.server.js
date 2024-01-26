@@ -7,9 +7,13 @@ import { error } from '@sveltejs/kit';
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ params }) {
   console.log(params.slug);
+  let slug = '/en/eui-intranet/'+params.slug;
+  console.log(slug);
+
+
 
   //get entry by slug
-  const entry = await get_entryBySlug(params.slug);
+  const entry = await get_entryBySlug(slug);
   if (entry){
     return {
       entry

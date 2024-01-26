@@ -1,13 +1,14 @@
 <script>
-    //import SectionFigures from './SectionFigures.svelte';
-    //import SectionOverlapPillars from './SectionOverlapPillars.svelte';
-    //import CardWithTitleImageDescriptionAndURL from './CardWithTitleImageDescriptionAndURL.svelte';
-    // ... 
+   // import SectionFigures from './SectionFigures.svelte';
+   // import SectionOverlapPillars from './SectionOverlapPillars.svelte';
+   // import CardWithTitleImageDescriptionAndURL from './CardWithTitleImageDescriptionAndURL.svelte';
+    //...gli altri import
 
     export let data;
     let entry = data.entry;
     console.log(entry)
 
+    // scelgo il componente da caricare in base al tipo
     function getComponent(type) {
         switch (type) {
             case 'sectionFigures':

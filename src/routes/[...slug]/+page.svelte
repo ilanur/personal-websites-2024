@@ -1,6 +1,7 @@
 <script>
     import Landing from '$lib/components/Landing.svelte';
     import Detail from '$lib/components/Detail.svelte';
+	/** @type {import('./$types').PageData} */
 
     export let data;
     let entry = data.entry;
@@ -10,12 +11,13 @@
           entry = entry.intranetPageContent;  
       }
 
+
 </script>
 
 {#if entry.sys.contentTypeId === 'euiIntranetLanding'}
-    <Landing entry={entry} />
+    <Landing {entry} />
 {:else if entry.sys.contentTypeId === 'euiIntranetDetail'}
-    <Detail entry={entry} />
+    <Detail {entry} />
 {:else}
     <h1>{entry.entryTitle}</h1>
 {/if}

@@ -1,5 +1,5 @@
 <script>
-import HorizontalSearch from '$lib/components/HorizontalSearch2.svelte';
+import HorizontalSearch from '$lib/components/HorizontalSearch.svelte';
 </script>
 
 <HorizontalSearch/>

@@ -1,8 +1,8 @@
+import { error } from '@sveltejs/kit';
+
 const contensis_delivery = 'https://cms-eui.cloud.contensis.com/api/delivery/projects/euiWebsite';
 const contensis_management = 'https://cms-eui.cloud.contensis.com/api/management/projects/euiWebsite';
 const contensis_token = "Wj2QPClihD74Kfie162MRMP0gKYkk1NfYjgvz49ceGRQbAeW";
-
-import { error } from '@sveltejs/kit';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ params }) {

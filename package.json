@@ -1,6 +1,6 @@
 {
 	"name": "eui-intranet",
-	"version": "0.0.1",
+	"version": "0.2.1",
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
@@ -10,7 +10,6 @@
 		"format": "prettier --plugin-search-dir . --write ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-cloudflare": "^4.1.0",
 		"@sveltejs/kit": "^2.4.3",
 		"@sveltejs/vite-plugin-svelte": "^3.0.1",
 		"autoprefixer": "^10.4.17",
@@ -25,7 +24,8 @@
 	"dependencies": {
 		"@auth/core": "^0.22.0",
 		"@auth/sveltekit": "^0.8.0",
+		"@sveltejs/adapter-auto": "^3.1.1",
 		"algoliasearch": "^4.22.1",
-		"svelte-algolia-instantsearch": "^0.12.1"
+		"instantsearch.js": "^4.64.1"
 	}
 }

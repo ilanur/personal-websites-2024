@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 import { browser } from '$app/environment';
 import algoliasearch from 'algoliasearch/lite';
 import instantsearch from 'instantsearch.js';
@@ -54,4 +54,4 @@ search.start();
 </script>
 
 <div id="searchbox"></div>
-<div id="hits"></div>
+<div id="hits"></div> -->

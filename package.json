@@ -26,6 +26,6 @@
 		"@auth/core": "^0.22.0",
 		"@auth/sveltekit": "^0.8.0",
 		"algoliasearch": "^4.22.1",
-		"instantsearch.js": "^4.64.0"
+		"svelte-algolia-instantsearch": "^0.12.1"
 	}
 }

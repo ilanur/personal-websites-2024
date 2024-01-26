@@ -20,9 +20,10 @@
 
 <h1>{entry.entryTitle}</h1>
 <div>{@html entry.entryDescription}</div>
-
-{#each entry.composer as item}
-    {#if getComponentDetail(item.type)}
-        <svelte:component this={getComponentDetail(item.type)} item={item.value} />
-    {/if}
-{/each} 
+{#if entry.composer}
+    {#each entry.composer as item}
+        {#if getComponentDetail(item.type)}
+            <svelte:component this={getComponentDetail(item.type)} item={item.value} />
+        {/if}
+    {/each} 
+{/if}

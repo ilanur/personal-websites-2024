@@ -5,7 +5,6 @@
     import QuickLinks from '$lib/components/composerLanding/quickLinks.svelte';
 
     export let entry;
-    console.log(entry)
     function getComponentLanding(type) {
         switch (type) {
             case 'automaticListings':
@@ -17,7 +16,6 @@
             default:
                 return null;
         }
-
     }
 </script>
 

@@ -2,7 +2,16 @@
 export default {
   content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
-		extend: {}
+		extend: {
+			fontFamily: {
+				"nunito": ['Nunito Sans', 'sans-serif'],
+				"inter": ['Inter', 'sans-serif'] 
+			},
+			colors: {
+				'eui-blue': '#004676',
+			},			
+		}
+		
 	},
 
 	daisyui: {

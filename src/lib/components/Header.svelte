@@ -1,28 +1,26 @@
-<div class="bg-gray-100">
-    <div class="mobile-header tray-closed">
-      <div class="container mx-auto px-4 wide">
-        <div class="header-tools">
-          <button aria-label="Open main menu" class="mobile-menu-toggle">
-            <div aria-hidden="true" class="iconFont burger"></div> <!-- Replace with Font Awesome if needed -->
-          </button>
+<header class="header bg-white shadow py-4 px-4">
+  <div class="header-content flex items-center flex-row">
+    <form action="#">
+      <div class="hidden md:flex relative">
+        <div class="inline-flex items-center justify-center absolute left-0 top-0 h-full w-10 text-gray-400">
+          <span class="fa-solid fa-magnifying-glass"></span>
         </div>
+        <input id="search" type="text" name="search" class="text-sm sm:text-base placeholder-gray-500 pl-10 pr-4 border border-gray-300 w-full h-10 focus:outline-none focus:border-eui-blue" placeholder="Search..." />
       </div>
-    </div>
-    <div class="search-header">
-      <div class="container mx-auto px-4 wide">
-        <form class="flex items-center searchbar">
-          <label for="search-field" class="sr-only">Search</label>
-          <input id="search-field" placeholder="Search" class="form-input flex-1" type="search" value="">
-          <button class="search-button">
-            <div aria-hidden="true" class="iconFont search"></div> <!-- Replace with Font Awesome if needed -->
-          </button>
-        </form>
-        <div class="header-tools">
-          <button aria-label="View notifications" class="notifications-toggle hasUpdates">
-            <div aria-hidden="true" class="iconFont notification"></div> <!-- Replace with Font Awesome if needed -->
-          </button>
-        </div>
+      <div class="flex md:hidden">
+        <a href="#" class="flex items-center justify-center h-10 w-10 border-transparent">
+          <span class="fa-solid fa-magnifying-glass"></span>
+        </a>
       </div>
+    </form>
+    <div class="flex ml-auto">
+      <a href class="flex flex-row items-center justify-end">
+      <img src="default-user-dark.png" alt class="h-10 w-10 bg-gray-200 border rounded-full" />
+      <span class="flex flex-col ml-2">
+        <span class="truncate w-48 font-semibold tracking-wide leading-none">Simone Santoro</span>
+        <span class="truncate w-48 text-gray-500 text-xs leading-none mt-1">Web Designer</span>
+      </span>
+      </a>
     </div>
   </div>
-  
+</header>

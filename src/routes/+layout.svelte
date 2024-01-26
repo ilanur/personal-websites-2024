@@ -3,27 +3,33 @@
 	import Header from '$lib/components/Header.svelte';
 	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
 	import Footer from '$lib/components/Footer.svelte';
-
 	export let data;
 </script>
-
-
-<div class="flex flex-col h-screen">
-	<!-- Header -->
-	<Header isLoggedIn={!!data.session} />
-  
-	<div class="flex flex-1 overflow-hidden">
-	  <!-- Left Sidebar -->
-	  <div class="hidden md:block">
+<!-- Header -->
+<Header isLoggedIn={!!data.session} />	
+<div class="realtive h-screen md:flex bg-gray-100 w-full">
+	<!-- mobile menu bar -->
+  	<div class="bg-gray-800 text-gray-100 flex justify-between md:hidden">
+    	<!-- logo -->
+    	<a href="/" class="block p-4 text-white font-bold">EUI Intranet</a>
+    	<!-- mobile menu button -->
+		<button class="mobile-menu-button p-4 focus:outline-none focus:bg-gray-700">
+			<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+				<path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM9 15a1 1 0 011-1h6a1 1 0 110 2h-6a1 1 0 01-1-1z" clip-rule="evenodd" />
+			</svg>
+		</button>
+  	</div>
+	<!-- Left Sidebar -->
+	<aside class="sidebar bg-white text-blue-100 w-64 space-y-6 absolute inset-y-0 left-0 transform -translate-x-full transition duration-200 ease-in-out md:relative md:translate-x-0">
 		<LeftSidebar data={data} />
-	  </div>
-  
-	  <!-- Main Content Area -->
-	  <main class="flex-1 overflow-y-auto p-4">
-		<slot />
-	  </main>
-	</div>
-	<div>aaaa</div>
-	<!-- Footer -->
-	<Footer />
-  </div>
+	</aside>
+	<!-- Main Content Area -->
+	<main class="main flex-1 overflow-y-auto">	
+		<div class="p-12">
+			<slot />
+		</div>
+		<!-- Footer -->
+		<Footer />			
+	</main>		
+</div>
+

@@ -10,6 +10,8 @@
     function toggleMobileMenu() {
         isMobileMenuOpen = !isMobileMenuOpen;
     }
+
+
 </script>
 <!-- Header -->
 <Header data={data} />	

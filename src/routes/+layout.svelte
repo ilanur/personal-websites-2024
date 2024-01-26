@@ -4,6 +4,10 @@
 	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	export let data;
+
+	function toggleMobileMenu() {
+		document.querySelector('.sidebar').classList.toggle('-translate-x-full');
+	}
 </script>
 <!-- Header -->
 <Header data={data} />	
@@ -13,7 +17,7 @@
     	<!-- logo -->
     	<a href="/" class="block p-4 text-white font-bold">EUI Intranet</a>
     	<!-- mobile menu button -->
-		<button class="mobile-menu-button p-4 focus:outline-none focus:bg-gray-700">
+		<button class="mobile-menu-button p-4 focus:outline-none focus:bg-gray-700" on:click={toggleMobileMenu} >
 			<svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
 				<path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM9 15a1 1 0 011-1h6a1 1 0 110 2h-6a1 1 0 01-1-1z" clip-rule="evenodd" />
 			</svg>

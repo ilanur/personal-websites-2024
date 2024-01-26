@@ -10,10 +10,7 @@ export async function load({ params }) {
 
   //get entry by slug
   const entry = await get_entryBySlug(params.slug);
-  console.log(entry);
   if (entry){
-
-
     return {
       entry
     };
@@ -35,7 +32,7 @@ async function get_entryBySlug(slug) {
       const url_entry = contensis_delivery + '/entries/'+node.entry.sys.id+'?accessToken=' + contensis_token;
       const response_entry = await fetch(url_entry);
       let entry = await response_entry.json();
-      console.log(entry);
+
       return entry;
 
     }

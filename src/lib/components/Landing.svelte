@@ -5,7 +5,7 @@
     import QuickLinks from '$lib/components/composerLanding/quickLinks.svelte';
 
     export let entry;
-    
+    console.log(entry)
     function getComponentLanding(type) {
         switch (type) {
             case 'automaticListings':
@@ -21,12 +21,12 @@
     }
 </script>
 
-
 <h1>{entry.entryTitle}</h1>
 <div>{@html entry.entryDescription}</div>
-
-{#each entry.composer as item}
-    {#if getComponentLanding(item.type)}
-        <svelte:component this={getComponentLanding(item.type)} {item} />
-    {/if}
-{/each} 
+{#if entry.composer}
+    {#each entry.composer as item}
+        {#if getComponentLanding(item.type)}
+            <svelte:component this={getComponentLanding(item.type)} item={item.value} />
+        {/if}
+    {/each}
+{/if}

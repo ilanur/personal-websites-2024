@@ -4,14 +4,18 @@
 
     export let data;
     let entry = data.entry;
-    console.log(entry)
+    console.log(entry.sys.contentTypeId)
+    
+    if(entry.sys.contentTypeId =="departmentsServices"){
+          entry = entry.intranetPageContent;  
+      }
+
 </script>
 
 {#if entry.sys.contentTypeId === 'euiIntranetLanding'}
-    <Landing {entry} />
+    <Landing entry={entry} />
 {:else if entry.sys.contentTypeId === 'euiIntranetDetail'}
-    <Detail {entry} />
+    <Detail entry={entry} />
 {:else}
     <h1>{entry.entryTitle}</h1>
-    <p>{entry.entryDescription}</p>
 {/if}

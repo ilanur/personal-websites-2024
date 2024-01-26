@@ -1,34 +1,17 @@
 <script>
-   // import SectionFigures from './SectionFigures.svelte';
-   // import SectionOverlapPillars from './SectionOverlapPillars.svelte';
-   // import CardWithTitleImageDescriptionAndURL from './CardWithTitleImageDescriptionAndURL.svelte';
-    //...gli altri import
+    import Landing from '$lib/components/Landing.svelte';
+    import Detail from '$lib/components/Detail.svelte';
 
     export let data;
     let entry = data.entry;
     console.log(entry)
-
-    // scelgo il componente da caricare in base al tipo
-    function getComponent(type) {
-        switch (type) {
-            case 'sectionFigures':
-                return SectionFigures;
-            case 'sectionOverlapPillars':
-                return SectionOverlapPillars;
-            case 'cardWithTitleImageDescriptionAndURL':
-                return CardWithTitleImageDescriptionAndURL;
-            // ...
-            default:
-                return null;
-        }
-    }
 </script>
 
-<h1>{entry.entryTitle}</h1>
-<div>{@html entry.entryDescription}</div>
-
-{#each entry.composer as item}
-    {#if getComponent(item.type)}
-        <svelte:component this={getComponent(item.type)} {item} />
-    {/if}
-{/each}
+{#if entry.sys.contentTypeId === 'euiIntranetLanding'}
+    <Landing {entry} />
+{:else if entry.sys.contentTypeId === 'euiIntranetDetail'}
+    <Detail {entry} />
+{:else}
+    <h1>{entry.entryTitle}</h1>
+    <p>{entry.entryDescription}</p>
+{/if}

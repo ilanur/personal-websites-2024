@@ -1,0 +1,30 @@
+version: "3"
+
+services:
+  external:
+    container_name: intranet
+    # The name of the image that will be created when building this container
+    image: eui-intranet-2024
+    build:
+      context: .
+      dockerfile: Dockerfile
+    user: "node"
+    environment:
+      # Internal server error messages will not send stacktrace to the browser in production
+      - NODE_ENV=production
+      # Sets the timezone of the containers OS
+      - TZ=Europe/Stockholm
+      - SECRET_CLIENT_ID="76c6f434-40c7-418f-ac99-45798540ad25"
+      - SECRET_CLIENT_SECRET="siZ8Q~3UvkNRXnHqhB6KL4WBDnCw0GU-1UVuTa.n"
+      - SECRET_TENANT_ID="d3f434ee-643c-409f-94aa-6db2f23545ce"
+      - SECRET_AUTH_SECRET="ca0020e632248ebe24b9c812ab14a9bf"
+      - PUBLIC_ALGOLIA_ID = "E2MU8FKW2W"
+      - PUBLIC_ALGOLIA_KEY = "6bc5cd451c16fa8b817e006c63ef660c"
+      - PUBLIC_EUI_WEB = "https://www.eui.eu/"
+      - SECRET_PINECONE_API_KEY="c600cf79-5fac-4acf-a755-e9fe123f55fa"
+      - SECRET_PINECONE_ENVIRONMENT="gcp-starter"
+      - SECRET_PINECONE_INDEX="eui-internal-knowledgebase"
+      - OPENAI_API_KEY="sk-xxxxxx"
+    restart: unless-stopped
+    ports:
+      - 5173:3000

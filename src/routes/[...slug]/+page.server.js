@@ -4,7 +4,6 @@ const contensis_delivery = 'https://cms-eui.cloud.contensis.com/api/delivery/pro
 const contensis_management = 'https://cms-eui.cloud.contensis.com/api/management/projects/euiWebsite';
 const contensis_token = "Wj2QPClihD74Kfie162MRMP0gKYkk1NfYjgvz49ceGRQbAeW";
 
-/** @type {import('./$types').PageServerLoad} */
 export async function load({ params }) {
   console.log(params.slug);
   let slug = '/en/eui-intranet/'+params.slug;

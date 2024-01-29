@@ -1,8 +1,6 @@
 <script>
     import Landing from '$lib/components/Landing.svelte';
     import Detail from '$lib/components/Detail.svelte';
-	/** @type {import('./$types').PageData} */
-
     export let data;
     let entry = data.entry;
     console.log(entry.sys.contentTypeId)

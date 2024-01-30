@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 
 services:
   external:
@@ -8,7 +8,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    user: "node"
+    user: 'node'
     environment:
       # Internal server error messages will not send stacktrace to the browser in production
       - NODE_ENV=production

@@ -1,11 +1,16 @@
-import {getAccessToken, getGroupMembers, getMemberGroups, searchGroupsByDisplayName, getUserGroupByEmail} from '$lib/utils/azureGraph';
+import {
+	getAccessToken,
+	getGroupMembers,
+	getMemberGroups,
+	searchGroupsByDisplayName,
+	getUserGroupByEmail
+} from '$lib/utils/azureGraph';
 let groups = [];
 let groupMembers = [];
-let searchQuery = "";
+let searchQuery = '';
 /** @type {import('./$types').Actions} */
 export const actions = {
-	
-	searchGroups: async ({request, event}) => {
+	searchGroups: async ({ request, event }) => {
 		const data = await request.formData();
 		searchQuery = data.get('searchQuery');
 		const accessToken = await getAccessToken();
@@ -14,9 +19,9 @@ export const actions = {
 			//memberGroups: memberGroups,
 			groups: groups,
 			searchQuery: searchQuery
-		}
+		};
 	},
-	fetchUsers: async ({request, event}) => {
+	fetchUsers: async ({ request, event }) => {
 		const data = await request.formData();
 		const selectedGroupIds = data.getAll('selectedGroups');
 
@@ -24,23 +29,23 @@ export const actions = {
 		const accessToken = await getAccessToken();
 
 		// Use Promise.all to fetch members from all selected groups concurrently
-		await Promise.all(selectedGroupIds.map(async groupId => {
-			const groupMembers = await getGroupMembers(groupId, accessToken);
-			allGroupMembers.push(...groupMembers);
-		}));
+		await Promise.all(
+			selectedGroupIds.map(async (groupId) => {
+				const groupMembers = await getGroupMembers(groupId, accessToken);
+				allGroupMembers.push(...groupMembers);
+			})
+		);
 		//console.log(allGroupMembers);
 		return {
-			groupMembers: allGroupMembers,
-
+			groupMembers: allGroupMembers
 		};
-	},
-
+	}
 };
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load( { params, page } ) {
+export async function load({ params, page }) {
 	console.log(params);
-	console.log("load");
+	console.log('load');
 	//const { loggedInccessToken } = await event.locals.getSession();
 
 	return {

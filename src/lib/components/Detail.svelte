@@ -1,29 +1,26 @@
 <script>
-    export let entry;
+	export let entry;
 
-    function getComponentDetail(type) {
-        switch (type) {
-            case 'automaticListings':
-                return AutomaticListings;
-            case 'headerImageLinks':
-                return HeaderImageLinks;
-            case 'quickLinks':
-                return QuickLinks;
-            default:
-                return null;
-        }
-
-    }
-
+	function getComponentDetail(type) {
+		switch (type) {
+			case 'automaticListings':
+				return AutomaticListings;
+			case 'headerImageLinks':
+				return HeaderImageLinks;
+			case 'quickLinks':
+				return QuickLinks;
+			default:
+				return null;
+		}
+	}
 </script>
-
 
 <h1>{entry.entryTitle}</h1>
 <div>{@html entry.entryDescription}</div>
 {#if entry.composer}
-    {#each entry.composer as item}
-        {#if getComponentDetail(item.type)}
-            <svelte:component this={getComponentDetail(item.type)} item={item.value} />
-        {/if}
-    {/each} 
+	{#each entry.composer as item}
+		{#if getComponentDetail(item.type)}
+			<svelte:component this={getComponentDetail(item.type)} item={item.value} />
+		{/if}
+	{/each}
 {/if}

@@ -15,7 +15,7 @@
 // Chat History:
 // {chat_history}
 
-// Follow-Up Input: 
+// Follow-Up Input:
 // {question}
 
 // Standalone Question:`;
@@ -44,12 +44,11 @@
 // 			k: 5,
 // 			returnSourceDocuments: true
 // 		});
-        
+
 // 		const response = await chain.call({ query: text });
 
-
 // 		const { text: responseText, sourceDocuments } = response;
-        
+
 // 		return json({
 // 			text: responseText,
 // 			source: sourceDocuments[0]?.pageContent ?? 'No source document found'

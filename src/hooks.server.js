@@ -57,8 +57,6 @@ async function isAuthenticatedUser({ event, resolve }) {
 			&& session.user.email != 'elena.teagno@eui.eu'
 			)
 		) {
-			console.log(session.user.email);
-
 			redirect(303, '/auth/signin');
 		}
 	}

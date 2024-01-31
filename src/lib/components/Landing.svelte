@@ -26,7 +26,7 @@
 {#if entry.headerComposer}
 	{#each entry.headerComposer as item}
 		{#if getComponentLanding(item.type)}
-			<svelte:component this={getComponentLanding(item.type)} item={item.value} />
+			<svelte:component this={getComponentLanding(item.type)} item={item.value} title={entry.entryTitle} />
 		{/if}
 	{/each}
 {/if}

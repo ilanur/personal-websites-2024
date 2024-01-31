@@ -1,6 +1,18 @@
 <script>
     export let item;
-    console.log(item)
+    export let title;
+
+    console.log(item);
+    console.log(title);
 </script>
 
-<p>aaaa</p>
+
+<div class="grid grid-cols-3 gap-0">
+    <div class="relative col-span-2">
+        <h1 class="absolute text-white drop-shadow-lg bottom-0 left-0">{title}</h1>
+        <img src="https://www.eui.eu/{item.image.asset.sys.uri}" alt="{item.image.altText}" />
+    </div>
+    <div class="col-span-1">
+        <div>{@html item.markup}</div>
+    </div>
+</div>

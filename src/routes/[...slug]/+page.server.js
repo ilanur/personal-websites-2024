@@ -31,7 +31,7 @@ async function get_entryBySlug(slug) {
 	//if entry exists
 	if (node) {
 		const url_entry =
-			contensis_delivery + '/entries/' + node.entry.sys.id + '?accessToken=' + contensis_token;
+			contensis_delivery + '/entries/' + node.entry.sys.id + '?linkDepth=1&accessToken=' + contensis_token;
 		const response_entry = await fetch(url_entry);
 		let entry = await response_entry.json();
 

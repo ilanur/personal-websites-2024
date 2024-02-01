@@ -7,13 +7,25 @@
     //console.log(title);
 </script>
 
-<h1 class="mb-6">H1 The heading defines six levels</h1>
-<h2 class="mb-6">H2 The heading defines six levels of title elements</h2>
-<h3 class="mb-6">H3 The heading defines six levels of title elements</h3>
-<h4 class="mb-6">H4 The heading defines six levels of title elements</h4>
-<h5 class="mb-6">H5 The heading defines six levels of title elements</h5>
-<h6 class="mb-6">H6 The heading defines six levels of title elements</h6>
+<!-- h1 with your specified sizes, adjusting for the excessive size at 6xl -->
+<h1 class="text-4xl md:text-5xl lg:text-6xl">Heading 1</h1>
+
+<!-- h2, one size down from h1 as per your instructions -->
+<h2 class="text-3xl md:text-4xl lg:text-5xl">Heading 2</h2>
+
+<!-- Continuing the pattern, decrementing the sizes for each subsequent heading -->
+<h3 class="text-2xl md:text-3xl lg:text-4xl">Heading 3</h3>
+
+<h4 class="text-xl md:text-2xl lg:text-3xl">Heading 4</h4>
+
+<!-- Assuming the pattern continues, adjusting for smaller headings -->
+<h5 class="text-lg md:text-xl lg:text-2xl">Heading 5</h5>
+
+<!-- For h6, you might start with base text size and increase moderately -->
+<h6 class="text-md md:text-lg lg:text-xl">Heading 6</h6>
+
 <p class="text-xl">Lead paragraph</p>
+<p class="">Paragraph</p>
 
 <div class="grid grid-cols-1 2xl:grid-cols-3 gap-0">
     <div class="relative col-span-2">

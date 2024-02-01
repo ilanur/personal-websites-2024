@@ -29,6 +29,9 @@
 
 <header class="header bg-white shadow py-4 px-4">
 	<div class="header-content flex items-center flex-row">
+		<a href="/" class="w-60">
+			<img src="/logo_intranet.svg" alt="EUI Intranet Logo" class="h-10" />
+		</a>		
 		<form action="/">
 			<div class="hidden md:flex relative">
 				<div

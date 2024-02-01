@@ -39,12 +39,12 @@
 		</button>
 	</div>
 	<!-- Left Sidebar -->
-	<aside class="sidebar bg-white text-blue-100 w-64 space-y-6 absolute inset-y-0 left-0 transform {isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} transition duration-200 ease-in-out md:relative md:translate-x-0 z-40	">
+	<aside class="sidebar bg-white text-blue-100 w-64 absolute inset-y-0 left-0 transform {isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} transition duration-200 ease-in-out xl:relative xl:translate-x-0 z-40	">
 		<LeftSidebar />
 	</aside>
 	<!-- Main Content Area -->
 	<main class="main flex-1 overflow-y-auto">
-		<div class="lg:p-12">
+		<div class="">
 			<slot />
 		</div>
 		<!-- Footer -->

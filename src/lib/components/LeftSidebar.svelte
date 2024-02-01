@@ -1,3 +1,4 @@
+<!--
 <div class="sidebar-header flex items-center justify-center py-4">
 	<div class="inline-flex">
 		<a href="/" class="inline-flex flex-row items-center">
@@ -5,7 +6,8 @@
 		</a>
 	</div>
 </div>
-<div class="sidebar-content px-4 py-6">
+-->
+<div class="sidebar-content py-6">
 	<nav>
 		<ul class="flex flex-col w-full">
 			<li class="my-px">

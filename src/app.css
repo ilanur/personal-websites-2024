@@ -5,7 +5,7 @@
 @layer base {
 	html {
 		font-family: 'Nunito Sans', system-ui, sans-serif;
-		font-size:1rem;
+		font-size: 1rem;
 	}
 
 	body {
@@ -20,35 +20,31 @@
 	h5,
 	h6 {
 		font-family: 'Inter', sans-serif;
-		font-weight: bold;
 	}
 
 	h1 {
 		/*font-size: 2.986rem;*/
-		@apply text-4xl md:text-5xl lg:text-6xl
+		@apply text-h1 font-bold
 	}
 	h2 {
 		/*font-size: 2.488rem;*/
-		@apply text-3xl md:text-4xl lg:text-5xl
+		@apply text-h2 font-bold
 	}
 	h3 {
 		/*font-size: 2.074rem;*/
-		@apply text-2xl md:text-3xl lg:text-4xl
-
+		@apply text-h3 font-bold
 	}
 	h4 {
 		/*font-size: 1.728rem;*/
-		@apply text-xl md:text-2xl lg:text-3xl		
+		@apply text-h4 font-bold
 	}
 	h5 {
 		/*font-size: 1.44rem;*/
-		@apply text-lg md:text-xl lg:text-2xl		
-
+		@apply text-h5 font-bold
 	}
 	h6 {
 		/*font-size: 1.2rem;*/
-		@apply text-base md:text-lg lg:text-xl		
-
+		@apply text-h6 font-bold
 	}
 }
 
@@ -57,11 +53,13 @@
 	html {
 		font-size:1.125rem;
 	}
+	
 }
 
-@screen xl {
+@screen lg {
 
 	html {
 		font-size:1.25rem;
 	}
+	
 }

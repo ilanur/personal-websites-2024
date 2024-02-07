@@ -32,5 +32,7 @@ export default {
 		themes: ['light']
 	},
 
-	plugins: []
+	plugins: [
+		require('@tailwindcss/forms'),
+	]
 };

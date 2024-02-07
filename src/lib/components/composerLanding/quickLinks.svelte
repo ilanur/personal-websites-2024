@@ -1,6 +1,6 @@
 <script>
-    export let item;
-    console.log(item)
+	export let item;
+	console.log(item);
 </script>
 
 <h2>{item.title}</h2>

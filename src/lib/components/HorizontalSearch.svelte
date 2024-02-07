@@ -8,13 +8,7 @@
 	if (browser) {
 		const searchClient = algoliasearch(PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY);
 		let indexName = 'people';
-		const {
-			currentTemplateFunction,
-			currentTransformItems,
-			root_classes,
-			list_classes,
-			item_classes
-		} = setConfigs(indexName);
+		const { currentTemplateFunction, currentTransformItems, root_classes, list_classes, item_classes } = setConfigs(indexName);
 
 		console.log(list_classes);
 		let not_found_classes = 'text-center text-2xl text-gray-500';
@@ -38,9 +32,12 @@
 						return currentTemplateFunction(hit, html, components);
 					},
 					empty(results, { html }) {
-						return html`<div class="${not_found_classes}">
-							No results for <q><strong>${results.query}</strong></q>
-						</div>`;
+						return html`
+							<div class="${not_found_classes}">
+								No results for
+								<q><strong>${results.query}</strong></q>
+							</div>
+						`;
 					}
 				},
 				transformItems(items, { results }) {

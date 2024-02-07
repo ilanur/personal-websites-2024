@@ -18,5 +18,8 @@
 		</div>
 	</div>
 {:else}
-	<p>You are not allowed to see this page. Please <a href="/auth/signin">login</a> first</p>
+	<p>
+		You are not allowed to see this page. Please <a href="/auth/signin">login</a>
+		first
+	</p>
 {/if}

@@ -6,7 +6,7 @@
 	//import { page } from '$app/stores';
 	export let entry;
 	//let entry = $page.data.entry;
-	console.log("entry:",entry)
+	console.log('entry:', entry);
 	function getComponentLanding(type) {
 		switch (type) {
 			case 'automaticListings':
@@ -20,6 +20,7 @@
 		}
 	}
 </script>
+
 <!--
 <h1>{entry.entryTitle}</h1>
 <div>{@html entry.entryDescription}</div>

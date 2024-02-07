@@ -1,8 +1,7 @@
 import { error } from '@sveltejs/kit';
 
 const contensis_delivery = 'https://cms-eui.cloud.contensis.com/api/delivery/projects/euiWebsite';
-const contensis_management =
-	'https://cms-eui.cloud.contensis.com/api/management/projects/euiWebsite';
+const contensis_management = 'https://cms-eui.cloud.contensis.com/api/management/projects/euiWebsite';
 const contensis_token = 'Wj2QPClihD74Kfie162MRMP0gKYkk1NfYjgvz49ceGRQbAeW';
 
 export async function load({ params }) {
@@ -30,8 +29,7 @@ async function get_entryBySlug(slug) {
 
 	//if entry exists
 	if (node) {
-		const url_entry =
-			contensis_delivery + '/entries/' + node.entry.sys.id + '?linkDepth=1&accessToken=' + contensis_token;
+		const url_entry = contensis_delivery + '/entries/' + node.entry.sys.id + '?linkDepth=1&accessToken=' + contensis_token;
 		const response_entry = await fetch(url_entry);
 		let entry = await response_entry.json();
 

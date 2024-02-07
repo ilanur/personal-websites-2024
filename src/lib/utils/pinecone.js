@@ -1,9 +1,5 @@
 import { Pinecone } from '@pinecone-database/pinecone';
-import {
-	SECRET_PINECONE_API_KEY,
-	SECRET_PINECONE_ENVIRONMENT,
-	SECRET_PINECONE_INDEX
-} from '$env/static/private';
+import { SECRET_PINECONE_API_KEY, SECRET_PINECONE_ENVIRONMENT, SECRET_PINECONE_INDEX } from '$env/static/private';
 
 const client = new Pinecone({
 	apiKey: SECRET_PINECONE_API_KEY,

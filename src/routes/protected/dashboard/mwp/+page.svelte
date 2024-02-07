@@ -7,12 +7,9 @@
 	// Function that fetch data from me.eui.eu
 	async function fetchData() {
 		try {
-			const response = await fetch(
-				'https://me.eui.eu/wp-json/eui_multisite/v1/eui_network_users?role=mwp_fellows_map&1234',
-				{
-					headers: {}
-				}
-			);
+			const response = await fetch('https://me.eui.eu/wp-json/eui_multisite/v1/eui_network_users?role=mwp_fellows_map&1234', {
+				headers: {}
+			});
 
 			const json = await response.json();
 			await pushObjectsToAlgoliaIndex(json);

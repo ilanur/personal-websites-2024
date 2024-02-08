@@ -4,6 +4,9 @@
 	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	export let data;
+
+	
+
 </script>
 
 <header class="sticky top-0 z-40 lg:pl-72">

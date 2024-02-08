@@ -1,13 +1,21 @@
+<script>
+	let isSidebarOpen = false;
+
+	function toggleSidebarMenu() {
+		isSidebarOpen = !isSidebarOpen;
+	}
+
+</script>
 <!-- Off-canvas menu for mobile, show/hide based on off-canvas menu state. -->
-<div class="relative z-50 lg:hidden" role="dialog" aria-modal="true">
+<div class="relative z-50 lg:hidden transition-opacity ease-linear duration-300 {isSidebarOpen ? 'opacity-100' : 'opacity-0'}" role="dialog" aria-modal="true">
 	<!-- Off-canvas menu backdrop, show/hide based on off-canvas menu state. -->
 	<div class="fixed inset-0 bg-gray-900/80"></div>
 	<div class="fixed inset-0 flex">
 		<!-- Off-canvas menu, show/hide based on off-canvas menu state. -->
-		<div class="relative mr-16 flex w-full max-w-xs flex-1">
+		<div class="relative mr-16 flex w-full max-w-xs flex-1 transition ease-in-out duration-300 transform {isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}">
 			<!-- Close button, show/hide based on off-canvas menu state. -->
-			<div class="absolute left-full top-0 flex w-16 justify-center pt-5">
-				<button type="button" class="-m-2.5 p-2.5">
+			<div class="absolute left-full top-0 flex w-16 h-12 justify-center">
+				<button type="button" class="p-2.5" on:click={toggleSidebarMenu}>
 					<span class="sr-only">Close sidebar</span>
 					<svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
 						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -25,35 +33,51 @@
 							<ul role="list" class="-mx-2 space-y-1">
 								<li>
 									<!-- Current: "bg-gray-50 text-indigo-600", Default: "text-gray-700 hover:text-indigo-600 hover:bg-gray-50" -->
-									<a href="/" class="bg-gray-50 text-indigo-600 group flex gap-x-3  p-2 text-sm leading-6 font-semibold">
+									<a href="/" class="bg-gray-50 text-eui-blue group flex items-center gap-x-3 p-2 text-sm font-semibold">
 										<span class="fa-solid fa-house fa-fw"></span>
 										Home
 									</a>
 								</li>
 								<li>
-									<a href="#" class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-x-3  p-2 text-sm leading-6 font-semibold">
-										<svg class="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
-											<path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
-										</svg>
-										Team
-									</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<div class="text-xs font-semibold leading-6 text-gray-400">Your teams</div>
-							<ul role="list" class="-mx-2 mt-2 space-y-1">
-								<li>
-									<!-- Current: "bg-gray-50 text-indigo-600", Default: "text-gray-700 hover:text-indigo-600 hover:bg-gray-50" -->
-									<a href="#" class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-x-3  p-2 text-sm leading-6 font-semibold">
-									<span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600">H</span>
-									<span class="truncate">Heroicons</span>
+									<a href="/" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
+										<span class="fa-solid fa-bookmark fa-fw"></span>
+										Favourites
 									</a>
 								</li>
 								<li>
-									<a href="#" class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-x-3  p-2 text-sm leading-6 font-semibold">
-									<span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600">T</span>
-									<span class="truncate">Tailwind Labs</span>
+									<a href="/" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
+										<span class="fa-solid fa-user fa-fw"></span>
+										People
+									</a>
+								</li>
+								<li>
+									<a href="/" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
+										<span class="fa-solid fa-megaphone fa-fw"></span>
+										Announcements
+									</a>
+								</li>
+								<li>
+									<a href="/" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
+										<span class="fa-solid fa-calendar fa-fw"></span>
+										Happenings
+									</a>
+								</li>
+								<li>
+									<a href="/" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
+										<span class="fa-solid fa-grid-2 fa-fw"></span>
+										Units
+									</a>
+								</li>
+								<li>
+									<a href="/" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
+										<span class="fa-solid fa-memo-circle-info fa-fw"></span>
+										Services &amp; procedures
+									</a>
+								</li>
+								<li>
+									<a href="/" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
+										<span class="fa-solid fa-chart-pie fa-fw"></span>
+										Analytics
 									</a>
 								</li>
 							</ul>

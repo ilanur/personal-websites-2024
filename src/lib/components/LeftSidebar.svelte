@@ -17,7 +17,7 @@
 			<!-- Sidebar component, swap this element with another sidebar if you like -->
 			<div class="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
 				<div class="flex h-16 shrink-0 items-center">
-					<img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company">
+					<img class="h-8 w-auto" src="/logo_intranet.svg" alt="EUI Intranet Logo" />
 				</div>
 				<nav class="flex flex-1 flex-col">
 					<ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -25,7 +25,7 @@
 							<ul role="list" class="-mx-2 space-y-1">
 								<li>
 									<!-- Current: "bg-gray-50 text-indigo-600", Default: "text-gray-700 hover:text-indigo-600 hover:bg-gray-50" -->
-									<a href="#" class="bg-gray-50 text-indigo-600 group flex gap-x-3  p-2 text-sm leading-6 font-semibold">
+									<a href="/" class="bg-gray-50 text-indigo-600 group flex gap-x-3  p-2 text-sm leading-6 font-semibold">
 										<span class="fa-solid fa-house fa-fw"></span>
 										Home
 									</a>
@@ -78,7 +78,7 @@
 	<!-- Sidebar component, swap this element with another sidebar if you like -->
 	<div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
 		<div class="flex h-16 shrink-0 items-center">
-			<img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company">
+			<img class="h-8 w-auto" src="/logo_intranet.svg" alt="EUI Intranet Logo" />
 		</div>
 		<nav class="flex flex-1 flex-col">
 			<ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -135,24 +135,6 @@
 						</li>
 					</ul>
 				</li>
-				<li>
-					<div class="text-xs font-semibold leading-6 text-gray-400">Your teams</div>
-					<ul role="list" class="-mx-2 mt-2 space-y-1">
-						<li>
-							<!-- Current: "bg-gray-50 text-indigo-600", Default: "text-gray-700 hover:text-indigo-600 hover:bg-gray-50" -->
-							<a href="#" class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-x-3 p-2 text-sm leading-6 font-semibold">
-							<span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600">H</span>
-							<span class="truncate">Heroicons</span>
-							</a>
-						</li>
-						<li>
-							<a href="#" class="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-x-3 p-2 text-sm leading-6 font-semibold">
-							<span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600">T</span>
-							<span class="truncate">Tailwind Labs</span>
-							</a>
-						</li>
-					</ul>
-				</li>
 				<li class="mt-auto">
 					<a href="#" class="group -mx-2 flex gap-x-3  p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600">
 						<svg class="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -166,76 +148,3 @@
 		</nav>
 	</div>
 </div>
-
-<!--
-<div class="sidebar-content py-6">
-	<nav>
-		<ul class="flex flex-col w-full">
-			<li class="my-px">
-				<a href="/" class="flex flex-row items-center h-10 px-3 text-eui-blue hover:bg-eui-blue hover:text-white">
-					<span class="flex items-center justify-center text-lg">
-						<span class="fa-solid fa-house fa-fw"></span>
-					</span>
-					<span class="ml-3">Home</span>
-				</a>
-			</li>
-			<li class="my-px">
-				<a href="/" class="flex flex-row items-center h-10 px-3 text-eui-blue hover:bg-eui-blue hover:text-white">
-					<span class="flex items-center justify-center text-lg">
-						<span class="fa-solid fa-bookmark fa-fw"></span>
-					</span>
-					<span class="ml-3">Favourites</span>
-				</a>
-			</li>
-			<li class="my-px">
-				<a href="/people" class="flex flex-row items-center h-10 px-3 text-eui-blue hover:bg-eui-blue hover:text-white" data-sveltekit-reload>
-					<span class="flex items-center justify-center text-lg">
-						<span class="fa-solid fa-user fa-fw"></span>
-					</span>
-					<span class="ml-3">People</span>
-				</a>
-			</li>
-			<li class="my-px">
-				<a href="/announcements" class="flex flex-row items-center h-10 px-3 text-eui-blue hover:bg-eui-blue hover:text-white" data-sveltekit-reload>
-					<span class="flex items-center justify-center text-lg">
-						<span class="fa-solid fa-megaphone fa-fw"></span>
-					</span>
-					<span class="ml-3">Announcements</span>
-				</a>
-			</li>
-			<li class="my-px">
-				<a href="/happenings" class="flex flex-row items-center h-10 px-3 text-eui-blue hover:bg-eui-blue hover:text-white" data-sveltekit-reload>
-					<span class="flex items-center justify-center text-lg">
-						<span class="fa-solid fa-calendar fa-fw"></span>
-					</span>
-					<span class="ml-3">Happenings</span>
-				</a>
-			</li>
-			<li class="my-px">
-				<a href="/" class="flex flex-row items-center h-10 px-3 text-eui-blue hover:bg-eui-blue hover:text-white">
-					<span class="flex items-center justify-center text-lg">
-						<span class="fa-solid fa-grid-2 fa-fw"></span>
-					</span>
-					<span class="ml-3">Units</span>
-				</a>
-			</li>
-			<li class="my-px">
-				<a href="/" class="flex flex-row items-center h-10 px-3 text-eui-blue hover:bg-eui-blue hover:text-white">
-					<span class="flex items-center justify-center text-lg">
-						<span class="fa-solid fa-memo-circle-info fa-fw"></span>
-					</span>
-					<span class="ml-3">Services &amp; Procedures</span>
-				</a>
-			</li>
-			<li class="my-px">
-				<a href="/" class="flex flex-row items-center h-10 px-3 text-eui-blue hover:bg-eui-blue hover:text-white">
-					<span class="flex items-center justify-center text-lg">
-						<span class="fa-solid fa-chart-pie fa-fw"></span>
-					</span>
-					<span class="ml-3">Analytics</span>
-				</a>
-			</li>
-		</ul>
-	</nav>
-</div>
--->

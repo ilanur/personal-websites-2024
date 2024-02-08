@@ -5,13 +5,13 @@
 	import Footer from '$lib/components/Footer.svelte';
 	export let data;
 
-	/*
+	
 	let isMobileMenuOpen = false;
 
 	function toggleMobileMenu() {
 		isMobileMenuOpen = !isMobileMenuOpen;
 	}
-	*/
+	
 </script>
 
 <!-- Header -->

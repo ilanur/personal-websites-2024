@@ -57,19 +57,16 @@ export async function getUserGroupByEmail(email, accessToken) {
 		const userId = userData.id;
 
 		// Step 2: Get user groups using the user ID
-		const groupsResponse = await fetch(
-			`https://graph.microsoft.com/v1.0/users/${userId}/getMemberGroups`,
-			{
-				method: 'POST',
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					securityEnabledOnly: true
-				})
-			}
-		);
+		const groupsResponse = await fetch(`https://graph.microsoft.com/v1.0/users/${userId}/getMemberGroups`, {
+			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${accessToken}`,
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				securityEnabledOnly: true
+			})
+		});
 
 		if (!groupsResponse.ok) {
 			throw new Error('Failed to get user groups');

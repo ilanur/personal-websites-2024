@@ -23,7 +23,9 @@ export function setConfigs(indexName) {
 }
 
 function baseTemplateFunction(hit) {
-	return html` <p>${hit.item.entryTitle}</p> `;
+	return html`
+		<p>${hit.item.entryTitle}</p>
+	`;
 }
 function baseTransformItems(items) {
 	return items;

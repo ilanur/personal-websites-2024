@@ -21,24 +21,14 @@
 </script>
 
 <form method="POST">
-	<input
-		name="searchQuery"
-		type="text"
-		bind:value={searchQuery}
-		placeholder="Search groups by name"
-	/>
+	<input name="searchQuery" type="text" bind:value={searchQuery} placeholder="Search groups by name" />
 	<button formaction="?/searchGroups">Search</button>
 
 	<ul>
 		{#each groups as group (group.id)}
 			<!-- Use a key for each loop for better performance -->
 			<li>
-				<input
-					type="checkbox"
-					bind:checked={selectedGroups[group.id]}
-					value={group.id}
-					name="selectedGroups"
-				/>
+				<input type="checkbox" bind:checked={selectedGroups[group.id]} value={group.id} name="selectedGroups" />
 				{group.displayName}
 			</li>
 		{/each}

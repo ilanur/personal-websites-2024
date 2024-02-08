@@ -1,9 +1,4 @@
-import {
-	SECRET_CLIENT_ID,
-	SECRET_CLIENT_SECRET,
-	SECRET_TENANT_ID,
-	SECRET_AUTH_SECRET
-} from '$env/static/private';
+import { SECRET_CLIENT_ID, SECRET_CLIENT_SECRET, SECRET_TENANT_ID, SECRET_AUTH_SECRET } from '$env/static/private';
 
 import AzureAd from '@auth/core/providers/azure-ad';
 import { sequence } from '@sveltejs/kit/hooks';
@@ -47,16 +42,7 @@ async function isAuthenticatedUser({ event, resolve }) {
 	if (event.url.pathname.startsWith('/')) {
 		const session = await event.locals.getSession();
 		console.log(session);
-        if (!session 
-			|| (
-				session.user.email != 'emanuele.strano@eui.eu'
-			&& session.user.email != 'francesco.martino@eui.eu'
-			&& session.user.email != 'federico.diana@eui.eu'
-			&& session.user.email != 'simone.santoro@eui.eu'
-			&& session.user.email != 'angelica.magliocchetti@eui.eu'
-			&& session.user.email != 'elena.teagno@eui.eu'
-			)
-		) {
+		if (!session || (session.user.email != 'emanuele.strano@eui.eu' && session.user.email != 'francesco.martino@eui.eu' && session.user.email != 'federico.diana@eui.eu' && session.user.email != 'simone.santoro@eui.eu' && session.user.email != 'angelica.magliocchetti@eui.eu' && session.user.email != 'elena.teagno@eui.eu')) {
 			redirect(303, '/auth/signin');
 		}
 	}

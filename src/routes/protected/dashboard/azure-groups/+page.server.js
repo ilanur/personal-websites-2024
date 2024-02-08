@@ -1,10 +1,4 @@
-import {
-	getAccessToken,
-	getGroupMembers,
-	getMemberGroups,
-	searchGroupsByDisplayName,
-	getUserGroupByEmail
-} from '$lib/utils/azureGraph';
+import { getAccessToken, getGroupMembers, getMemberGroups, searchGroupsByDisplayName, getUserGroupByEmail } from '$lib/utils/azureGraph';
 let groups = [];
 let groupMembers = [];
 let searchQuery = '';

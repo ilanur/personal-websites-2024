@@ -1,6 +1,9 @@
 <script>
 	import { PUBLIC_EUI_WEB } from '$env/static/public';
 	import { signOut } from '@auth/sveltekit/client';
+    import { isSidebarOpen } from '$lib/utils/stores.js';
+
+	$: sidebarOpen = $isSidebarOpen;
 
 	export let data;
 	let isProfileDropdownOpen = false;
@@ -26,10 +29,14 @@
 		isNotificationDropdownOpen = !isNotificationDropdownOpen;
 	}
 
+    function toggleSidebar() {
+        isSidebarOpen.update(state => !state);
+    }
+
 </script>
 
 <div class="flex h-12 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-	<button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden">
+	<button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden" on:click={toggleSidebar}>
 		<span class="sr-only">Open sidebar</span>
 		<span class="fa-sharp fa-solid fa-bars"></span>
 	</button>

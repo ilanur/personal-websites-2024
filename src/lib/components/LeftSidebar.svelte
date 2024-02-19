@@ -41,32 +41,32 @@
 										Home
 									</a>
 								</li>
-								<li>
+								<!--<li>
 									<a href="/" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
 										<span class="fa-solid fa-bookmark fa-fw"></span>
 										Favourites
 									</a>
-								</li>
+								</li>-->
 								<li>
-									<a href="/" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
+									<a href="/people" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
 										<span class="fa-solid fa-user fa-fw"></span>
 										People
 									</a>
 								</li>
 								<li>
-									<a href="/" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
+									<a href="/announcements" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
 										<span class="fa-solid fa-megaphone fa-fw"></span>
 										Announcements
 									</a>
 								</li>
 								<li>
-									<a href="/" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
+									<a href="/happenings" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
 										<span class="fa-solid fa-calendar fa-fw"></span>
 										Happenings
 									</a>
 								</li>
 								<li>
-									<a href="/" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
+									<a href="/units" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
 										<span class="fa-solid fa-grid-2 fa-fw"></span>
 										Units
 									</a>
@@ -77,12 +77,12 @@
 										Services &amp; procedures
 									</a>
 								</li>
-								<li>
+								<!--<li>
 									<a href="/" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
 										<span class="fa-solid fa-chart-pie fa-fw"></span>
 										Analytics
 									</a>
-								</li>
+								</li>-->
 							</ul>
 						</li>
 						<li class="mt-auto">
@@ -118,12 +118,12 @@
 								Home
 							</a>
 						</li>
-						<li>
+						<!--<li>
 							<a href="/" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
 								<span class="fa-solid fa-bookmark fa-fw"></span>
 								Favourites
 							</a>
-						</li>
+						</li>-->
 						<li>
 							<a href="/people" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
 								<span class="fa-solid fa-user fa-fw"></span>

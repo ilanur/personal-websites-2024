@@ -4,13 +4,16 @@ const contensis_delivery = 'https://cms-eui.cloud.contensis.com/api/delivery/pro
 const contensis_management = 'https://cms-eui.cloud.contensis.com/api/management/projects/euiWebsite';
 const contensis_token = 'Wj2QPClihD74Kfie162MRMP0gKYkk1NfYjgvz49ceGRQbAeW';
 
-export async function load({ params }) {
-	console.log(params.slug);
+
+export async function load({ params,  url}) {
+	let is_preview = false;
+	if(url.hostname =="hostname"){
+		is_preview = true;
+	}
 	let slug = '/en/eui-intranet/' + params.slug;
-	console.log(slug);
 
 	//get entry by slug
-	const entry = await get_entryBySlug(slug);
+	const entry = await get_entryBySlug(slug, is_preview);
 	if (entry) {
 		return {
 			entry
@@ -20,7 +23,7 @@ export async function load({ params }) {
 	error(404, 'Not found');
 }
 
-async function get_entryBySlug(slug) {
+async function get_entryBySlug(slug, is_preview) {
 	const url_node = contensis_delivery + '/nodes/' + slug + '?accessToken=' + contensis_token;
 	const response_node = await fetch(url_node);
 	let node = await response_node.json();
@@ -29,7 +32,11 @@ async function get_entryBySlug(slug) {
 
 	//if entry exists
 	if (node) {
+
 		const url_entry = contensis_delivery + '/entries/' + node.entry.sys.id + '?linkDepth=1&accessToken=' + contensis_token;
+		if(is_preview){
+			url_entry += '&versionStatus=latest';
+		}
 		const response_entry = await fetch(url_entry);
 		let entry = await response_entry.json();
 

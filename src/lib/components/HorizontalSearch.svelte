@@ -9,13 +9,14 @@
 	import { onMount } from 'svelte';
 
     export let item;
+	const option_hitsPerPage = item.customHitsPerPage || 12;
 	
 	onMount((async) => {
 		if (browser) {
 			const searchClient = algoliasearch(PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY);
 			let indexName = item.index; // Dynamically set the index name
 
-			const { currentTemplateFunction, currentTransformItems, select_form_classes, root_classes, list_classes, item_classes, hits_number } = setConfigs(indexName);
+			const { currentTemplateFunction, currentTransformItems, select_form_classes, root_classes, list_classes, item_classes } = setConfigs(indexName);
 
 			let not_found_classes = 'text-center text-2xl text-gray-500';
 
@@ -78,9 +79,9 @@
 	hitsPerPage({
 		container: '#hits-per-page',
 		items: [
-		{ label: `${hits_number} hits per page`, value: hits_number, default: true },
-		{ label: `${hits_number*2} hits per page`, value: hits_number*2 },
-		{ label: `${hits_number*3} hits per page`, value: hits_number*3 },
+		{ label: `${option_hitsPerPage} hits per page`, value: option_hitsPerPage, default: true },
+		{ label: `${option_hitsPerPage*2} hits per page`, value: option_hitsPerPage*2 },
+		{ label: `${option_hitsPerPage*3} hits per page`, value: option_hitsPerPage*3 },
 		],
 		cssClasses: {
 		select: 'form-select border-0 rounded-0',

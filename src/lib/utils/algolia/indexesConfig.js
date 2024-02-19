@@ -6,7 +6,6 @@ export function setConfigs(indexName) {
 	let item_classes = 'border-bottom pb-3 mb-3 mb-lg-4 pb-lg-4 single-item';
 	let select_form_classes = 'mt-3';
 	let search_placeholder = 'Search by name, areas of expertise or language';
-	let hits_number = 12;
 
 	if (indexName === 'people') {
 		currentTemplateFunction = peopleTemplateFunction;
@@ -20,7 +19,7 @@ export function setConfigs(indexName) {
 		item_classes,
 		select_form_classes,
 		search_placeholder,
-		hits_number
+		
 	};
 }
 

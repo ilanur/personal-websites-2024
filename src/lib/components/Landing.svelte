@@ -3,8 +3,8 @@
 	import AutomaticListings from '$lib/components/composerLanding/automaticListings.svelte';
 	import HeaderImageLinks from '$lib/components/composerLanding/headerImageLinks.svelte';
 	import QuickLinks from '$lib/components/composerLanding/quickLinks.svelte';
-	import HorizontalSearch from '$lib/components/horizontalSearch.svelte';
-	
+	import HorizontalSearch from '$lib/components/HorizontalSearch.svelte';
+
 	//import { page } from '$app/stores';
 	export let entry;
 	//let entry = $page.data.entry;

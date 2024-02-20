@@ -72,7 +72,7 @@
 									</a>
 								</li>
 								<li>
-									<a href="/" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
+									<a href="/services-procedures" class="text-gray-700 hover:text-eui-blue hover:bg-gray-50 group flex items-center gap-x-3 p-2 text-sm font-semibold">
 										<span class="fa-solid fa-memo-circle-info fa-fw"></span>
 										Services &amp; procedures
 									</a>

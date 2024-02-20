@@ -6,12 +6,17 @@
     import { setConfigs } from '$lib/utils/algolia/indexesConfig';
     import { eui_refinementList, eui_menuSelect, eui_toggleRefinement } from '$lib/utils/algolia/widgets';
     import { PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY } from '$env/static/public';
-	import { onMount } from 'svelte';
+	import { afterUpdate } from 'svelte';
 
     export let item;
-	const option_hitsPerPage = item.customHitsPerPage || 12;
+	//console.log("item", item);
+	//const algoliaConfig = item;
 	
-	onMount((async) => {
+	afterUpdate( () => {
+		//window.location.reload()
+		//console.log('algoliaConfig:', algoliaConfig);
+		const option_hitsPerPage = item.customHitsPerPage || 12;
+
 		if (browser) {
 			const searchClient = algoliasearch(PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY);
 			let indexName = item.index; // Dynamically set the index name
@@ -28,7 +33,7 @@
 			// Configure widget for additional filters
 			search.addWidgets([
 				configure({
-					filters: item.additionalFilters
+					filters: (item.additionalFilters || '')
 				}),
 				searchBox({
 					container: '#searchbox',
@@ -199,9 +204,6 @@
 
 			]);
 
-		
-
-			
 			// Dynamically add refinement widgets based on the JSON
 			item.filterForHorizontalSearch.forEach((filter) => {
 				const widgetType = mapFilterTypeToWidget(filter.type);
@@ -226,9 +228,6 @@
         };
         return typeMap[type];
     }
-
-
-
 
 </script>
 

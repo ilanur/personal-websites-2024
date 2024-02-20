@@ -11,7 +11,6 @@ export async function load({ params,  url}) {
 		is_preview = true;
 	}
 	let slug = '/en/eui-intranet/' + params.slug;
-
 	//get entry by slug
 	const entry = await get_entryBySlug(slug, is_preview);
 	if (entry) {
@@ -25,10 +24,12 @@ export async function load({ params,  url}) {
 
 async function get_entryBySlug(slug, is_preview) {
 	const url_node = contensis_delivery + '/nodes/' + slug + '?accessToken=' + contensis_token;
+	if(is_preview){
+		url_node += '&versionStatus=latest';
+	}
 	const response_node = await fetch(url_node);
 	let node = await response_node.json();
 	//exclude system and asset CTs and child CTs wich contains __child_ct__(e.g. people__child_ct__hradditional) from cts
-	console.log(node);
 
 	//if entry exists
 	if (node) {
@@ -39,7 +40,6 @@ async function get_entryBySlug(slug, is_preview) {
 		}
 		const response_entry = await fetch(url_entry);
 		let entry = await response_entry.json();
-
 		return entry;
 	}
 

@@ -23,7 +23,8 @@ export function setConfigs(indexName) {
 	};
 }
 
-function baseTemplateFunction(hit) {
+function baseTemplateFunction(hit, html) {
+	console.log("Hit",hit)
 	return html`
 		<p>${hit.item.entryTitle}</p>
 	`;

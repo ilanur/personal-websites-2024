@@ -25,10 +25,6 @@
 	}
 </script>
 
-<!--
-<h1>{entry.entryTitle}</h1>
-<div>{@html entry.entryDescription}</div>
--->
 {#if entry.headerComposer}
 	{#each entry.headerComposer as item}
 		{#if getComponentLanding(item.type)}

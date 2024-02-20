@@ -41,7 +41,7 @@ async function isAuthenticatedUser({ event, resolve }) {
 	// Any page in the protected/ folder will be for authenticated users.
 	if (event.url.pathname.startsWith('/')) {
 		const session = await event.locals.getSession();
-		console.log(session);
+		//console.log(session);
 		if (!session || (session.user.email != 'emanuele.strano@eui.eu' && session.user.email != 'francesco.martino@eui.eu' && session.user.email != 'federico.diana@eui.eu' && session.user.email != 'simone.santoro@eui.eu' && session.user.email != 'angelica.magliocchetti@eui.eu' && session.user.email != 'elena.teagno@eui.eu')) {
 			redirect(303, '/auth/signin');
 		}

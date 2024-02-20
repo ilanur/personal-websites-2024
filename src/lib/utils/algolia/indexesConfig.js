@@ -7,7 +7,7 @@ export function setConfigs(indexName) {
 	let select_form_classes = 'mt-3';
 	let search_placeholder = 'Search by name, areas of expertise or language';
 
-	if (indexName === 'people') {
+	if (indexName === 'people' || indexName === 'peopleIntranet') {
 		currentTemplateFunction = peopleTemplateFunction;
 	}
 

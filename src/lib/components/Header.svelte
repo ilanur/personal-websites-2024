@@ -32,23 +32,26 @@
     function toggleSidebar() {
         isSidebarOpen.update(state => !state);
     }
-
 </script>
 
-<div class="flex h-12 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-	<button type="button" class="-m-2.5 p-2.5 text-gray-700 lg:hidden" on:click={toggleSidebar}>
+<div class="flex w-full h-12 shrink-0 items-center gap-x-4 px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+
+	<button type="button" class="-m-2.5 p-2.5 text-slate-800 lg:hidden" on:click={toggleSidebar}>
 		<span class="sr-only">Open sidebar</span>
 		<span class="fa-sharp fa-solid fa-bars"></span>
 	</button>
 	<!-- Separator -->
 	<div class="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true"></div>
-	<div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-		<form class="relative flex flex-1" action="#" method="GET">
+	<div class="flex h-14 shrink-0 items-center">
+		<img class="h-8 w-auto" src="/logo_intranet.svg" alt="EUI Intranet Logo" />
+	</div>		
+	<div class="flex flex-1 gap-x-4 lg:gap-x-6 justify-end">
+		<form class="relative w-1/3 flex" action="#" method="GET">
 			<label for="search-field" class="sr-only">Search</label>
-			<svg class="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+			<svg class="pointer-events-none absolute inset-y-0 left-2 h-full w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
 				<path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
 			</svg>
-			<input id="search-field" class="block h-full w-full border-0 py-0 pl-8 pr-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm" placeholder="Search..." type="search" name="search">
+			<input id="search-field" class="block h-full w-full border border-slate-200 py-0 pl-10 pr-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm" placeholder="Search..." type="search" name="search">
 		</form>
 		<div class="flex items-center gap-x-4 lg:gap-x-6">
 			<!-- Notification dropdown -->
@@ -60,7 +63,7 @@
 				</button>
 				<!-- Dropdown menu, show/hide based on menu state. -->
 				<div class="absolute right-0 z-10 mt-2.5 min-w-72 origin-top-right bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none {isNotificationDropdownOpen ? 'block' : 'hidden'}" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
-					<ul role="list" class="divide-y divide-gray-100">
+					<ul role="list" class="divide-y divide-slate-100">
 						<!-- Active: "bg-gray-50", Not Active: "" -->
 						<li><a href="/" class="block px-3 py-1 text-sm leading-6" role="menuitem" tabindex="-1">2024 call for applications: International Visegrad Fund Grants at the HAEU</a></li>
 						<li><a href="/" class="block px-3 py-1 text-sm leading-6" role="menuitem" tabindex="-1">Call for applications: the Vibeke Sørensen Grant Programme 2024</a></li>

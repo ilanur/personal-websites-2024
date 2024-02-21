@@ -8,7 +8,8 @@ export default {
 				inter: ['Inter', 'sans-serif']
 			},
 			colors: {
-				'eui-blue': '#004676'
+				'eui-blue': '#004676',
+				'white' : '#FFFFFF'
 			},
 			aspectRatio: {
 				'2-1': '2 / 1',
@@ -27,11 +28,11 @@ export default {
 			}
 		}
 	},
-
+	/*
 	daisyui: {
 		themes: ['light']
 	},
-
+	*/
 	plugins: [
 		require('@tailwindcss/forms'),
 	]

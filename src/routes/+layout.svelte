@@ -6,7 +6,7 @@
 	export let data;
 </script>
 
-<header class="sticky top-0 z-40 lg:pl-72">
+<header class="sticky top-0 z-40 lg:pl-72 bg-white shadow-lg">
 	<Header {data} />
 </header>
 

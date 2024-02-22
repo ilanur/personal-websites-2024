@@ -5,15 +5,12 @@
 	import Footer from '$lib/components/Footer.svelte';
 	export let data;
 </script>
-
-<header class="sticky top-0 z-40 lg:pl-72 bg-white shadow-lg">
+<header class="sticky top-0 z-40 bg-white shadow-lg">
 	<Header {data} />
 </header>
-
 <aside>
 	<LeftSidebar />
 </aside>
-
 <main class="lg:pl-72">
 	<slot />
 </main>

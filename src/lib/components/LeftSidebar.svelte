@@ -6,9 +6,8 @@
 	function toggleSidebarMenu() {
 		isSidebarOpen.update(value => !value);
 	}
-
-
 </script>
+
 <!-- Off-canvas menu for mobile, show/hide based on off-canvas menu state. -->
 <div class="relative w-72 z-30 lg:fixed lg:inset-y-0 lg:flex lg:flex-col" role="dialog" aria-modal="true">
 	<!-- Off-canvas menu backdrop, show/hide based on off-canvas menu state. -->
@@ -27,14 +26,7 @@
 			</div>
 			<!-- Sidebar component, swap this element with another sidebar if you like -->
 			<div class="flex grow flex-col gap-y-5 overflow-y-auto px-6 pb-4">
-			<!--
-				<div class="flex h-14 shrink-0 items-center">
-					<img class="h-8 w-auto" src="/logo_intranet.svg" alt="EUI Intranet Logo" />
-				</div>
-			-->
 				<nav class="flex flex-1 flex-col">
-					<ul role="list" class="flex flex-1 flex-col gap-y-7">
-						<li>
 					<ul role="list" class="flex flex-1 flex-col gap-y-7">
 						<li>
 							<ul role="list" class="-mx-2 space-y-1 divide-y divide-slate-100">

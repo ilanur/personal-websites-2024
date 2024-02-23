@@ -1,9 +1,9 @@
 export function setConfigs(indexName) {
 	let currentTemplateFunction = baseTemplateFunction;
 	let currentTransformItems = baseTransformItems;
-	let root_classes = 'mt-3';
-	let list_classes = 'list-unstyled px-4 border-start border-2 border-primary people-markup';
-	let item_classes = 'border-bottom pb-3 mb-3 mb-lg-4 pb-lg-4 single-item';
+	let root_classes = 'm-6';
+	let list_classes = 'flex flex-wrap';
+	let item_classes = 'my-1 px-1 w-full sm:px-3 sm:w-1/2 md:px-6 lg:my-4 lg:px-4 xl:w-1/3 2xl:w-1/4';
 	let select_form_classes = 'mt-3';
 	let search_placeholder = 'Search by name, areas of expertise or language';
 
@@ -19,7 +19,6 @@ export function setConfigs(indexName) {
 		item_classes,
 		select_form_classes,
 		search_placeholder,
-		
 	};
 }
 
@@ -61,7 +60,7 @@ function peopleTemplateFunction(hit, html, components) {
 	// Iterate over each key (name) in the map.
 	for (let name in affiliationsMap) {
 		// Add the name to the HTML string.
-		htmlAffs += `<p class="mb-2 lh-1 fw-semi-bold text-red">${name}</p>`;
+		htmlAffs += `<p class="text-base leading-7 text-gray-300">${name}</p>`;
 
 		// Iterate over each role in the array for this name.
 		affiliationsMap[name].forEach((role) => {
@@ -71,28 +70,17 @@ function peopleTemplateFunction(hit, html, components) {
 	}
 
 	return `
-        <div class="flex items-start relative bg-white">
-    <figure class="hidden sm:block aspect-square overflow-hidden mb-0" style="max-width: 125px;">
-        <img class="h-auto" src="${photo}" alt="Portrait picture of ${hit.ict.Firstnames + ' ' + hit.ict.Lastnames}">
-    </figure>
-    <div class="flex flex-col flex-grow px-4 lg:px-5">
-        <p class="text-lg font-bold">${hit.ict.Firstnames + ' ' + hit.ict.Lastnames}</p>
-        ${htmlAffs}
-    </div>
-    <div class="self-center">
-        <a class="flex justify-center items-center no-underline font-bold stretched-link text-4xl leading-tight" href="https://www.eui.eu${parent_slug}?id=${hit.objectID}" title="View ${hit.ict.Firstnames + ' ' + hit.ict.Lastnames} profile">
-            <span class="sr-only">View ${hit.ict.Firstnames + ' ' + hit.ict.Lastnames} profile</span>
-            <span class="flex items-center relative ml-3">
-                <!-- The arrow styles need to be handled with custom CSS or inline styles -->
-                <span class="flex items-center">
-                    <span class="the-arrow arrow-dark thick">
-                        <span class="shaft"></span>
-                    </span>
-                </span>
-            </span>
-        </a>
-    </div>
-</div>
-
-      `;
+		<article class="overflow-hidden bg-white shadow-lg">
+			<a href="/">
+				<img class="block h-auto w-full" src="${photo}" alt="Portrait picture of ${hit.ict.Firstnames + ' ' + hit.ict.Lastnames}" />
+			</a>
+			<header class="flex items-center justify-between leading-tight p-2 md:p-4">
+				<h1 class="text-lg">
+					<a class="no-underline hover:underline text-black" href="/">${hit.ict.Firstnames + ' ' + hit.ict.Lastnames}</a>
+				</h1>
+			</header>
+			${htmlAffs}
+			<footer><a href="/" title="Go to ${hit.ict.Firstnames + ' ' + hit.ict.Lastnames} profile">View profile</a></footer>		
+		</article>	
+    `;
 }

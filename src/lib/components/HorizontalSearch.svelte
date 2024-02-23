@@ -2,7 +2,7 @@
     import { browser } from '$app/environment';
     import algoliasearch from 'algoliasearch/lite';
     import instantsearch from 'instantsearch.js';
-    import { searchBox, hits, configure, voiceSearch, hitsPerPage, stats,pagination,currentRefinements } from 'instantsearch.js/es/widgets';
+    import { searchBox, hits, configure, voiceSearch, hitsPerPage, stats, pagination, currentRefinements } from 'instantsearch.js/es/widgets';
     import { setConfigs } from '$lib/utils/algolia/indexesConfig';
     import { eui_refinementList, eui_menuSelect, eui_toggleRefinement } from '$lib/utils/algolia/widgets';
     import { PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY } from '$env/static/public';
@@ -23,7 +23,7 @@
 
 			const { currentTemplateFunction, currentTransformItems, select_form_classes, root_classes, list_classes, item_classes } = setConfigs(indexName);
 
-			let not_found_classes = 'text-center text-2xl text-gray-500';
+			let not_found_classes = 'text-center text-2xl text-eui-red';
 
 			const search = instantsearch({
 				indexName,

@@ -95,39 +95,10 @@
 					}
 				}),
 
-				  // Instantiate the custom widget
+				// Instantiate the custom widget
 				customPagination({
 					container: '#pagination',
 				}),
-				/*pagination({
-					scrollTo: '#current-refinements',
-					container: '#pagination',
-					showLast: false,
-					showFirst: false,
-					cssClasses: {
-					list: [
-						'pagination',
-						'flex-wrap',
-						'justify-content-center',
-						'pb-5',
-						'pb-md-0',
-						'mb-0',
-						'lh-1'
-					],
-					item: 'page-item mx-2',
-					link: 'd-flex align-items-center h-100 border-0 page-link rounded-0',
-					previousPageItem: 'd-flex align-items-center position-absolute bottom-0 start-0 position-md-static ps-2',
-					nextPageItem: 'd-flex align-items-center position-absolute bottom-0 end-0 position-md-static pe-2',
-					selectedItem: 'fw-bold',
-					noRefinementRoot: 'd-none'
-					},
-					templates: {
-						first: '',
-						last: '',
-						previous: '<span class="the-arrow arrow-left short arrow-dark me-3"><span class="shaft"></span></span><span class="fw-bold">Previous</span>',
-						next: '<span class="fw-bold">Next</span><span class="the-arrow short arrow-dark ms-3"><span class="shaft"></span></span>'
-					},
-				}),*/
 
 				stats({
 					container: '#stats',

@@ -4,10 +4,12 @@
     import instantsearch from 'instantsearch.js';
     import { searchBox, hits, configure, voiceSearch, hitsPerPage, stats, pagination, currentRefinements } from 'instantsearch.js/es/widgets';
     import { setConfigs } from '$lib/utils/algolia/indexesConfig';
+	import { customPagination } from '$lib/utils/algolia/customPagination';
     import { eui_refinementList, eui_menuSelect, eui_toggleRefinement } from '$lib/utils/algolia/widgets';
     import { PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY } from '$env/static/public';
 	import { afterUpdate } from 'svelte';
 
+	
     export let item;
 	//console.log("item", item);
 	//const algoliaConfig = item;
@@ -93,7 +95,11 @@
 					}
 				}),
 
-				pagination({
+				  // Instantiate the custom widget
+				customPagination({
+					container: '#pagination',
+				}),
+				/*pagination({
 					scrollTo: '#current-refinements',
 					container: '#pagination',
 					showLast: false,
@@ -121,7 +127,7 @@
 						previous: '<span class="the-arrow arrow-left short arrow-dark me-3"><span class="shaft"></span></span><span class="fw-bold">Previous</span>',
 						next: '<span class="fw-bold">Next</span><span class="the-arrow short arrow-dark ms-3"><span class="shaft"></span></span>'
 					},
-				}),
+				}),*/
 
 				stats({
 					container: '#stats',

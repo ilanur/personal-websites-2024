@@ -79,13 +79,13 @@ function peopleTemplateFunction(hit, html, components) {
     <div>
       <div class="-mt-px flex divide-x divide-gray-200">
         <div class="flex w-0 flex-1">
-          <a href="mailto:janecooper@example.com" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+          <a href="mailto:janecooper@example.com" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900 hover:bg-eui-blue hover:text-white">
             <span class="fa-sharp fa-regular fa-envelope"></span>
             Email
           </a>
         </div>
         <div class="-ml-px flex w-0 flex-1">
-          <a href="/" class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+          <a href="/" class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900 hover:bg-eui-blue hover:text-white">
 		  <span class="fa-sharp fa-regular fa-address-card"></span>   
 		  View profile
           </a>

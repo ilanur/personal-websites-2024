@@ -81,7 +81,6 @@
 						],
 					},
 				}),
-
 				hitsPerPage({
 					container: '#hits-per-page',
 					items: [
@@ -90,30 +89,27 @@
 						{ label: `${option_hitsPerPage*3} hits per page`, value: option_hitsPerPage*3 },
 					],
 					cssClasses: {
-						select: 'form-select border-0 rounded-0',
+						select: 'block w-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6',
 						option: 'bg-white',
 					}
 				}),
-
 				// Instantiate the custom widget
 				customPagination({
 					container: '#pagination',
 				}),
-
 				stats({
 					container: '#stats',
 				}),
-
 				currentRefinements({
 					container: '#current-refinements',
 					cssClasses: {
 						root: '',
-						list: 'd-flex flex-wrap list-unstyled mb-0 mt-3',
-						item: 'd-inline-flex align-items-center flex-wrap mb-0',
+						list: 'm-6 flex items-center',
+						item: 'text-sm me-5',
 						label: 'd-none me-2 mb-2 fw-bold',
-						category: 'd-inline-flex align-items-center badge bg-primary mb-2 me-2 rounded-0',
-						categoryLabel: 'd-inline-block lh-md me-2',
-						delete: 'fw-bold h6 mb-0 bg-transparent border-0 text-white',
+						category: 'py-1 px-2 bg-eui-blue text-sm text-white',
+						categoryLabel: '',
+						delete: 'ms-3 text-sm text-white font-bold',
 					},
 					transformItems(items){
 						//console.log(items);
@@ -183,7 +179,6 @@
 				const widgetType = mapFilterTypeToWidget(filter.type);
 				if (widgetType) {
 					widgetType(search, `#${filter.divIdValue}`, filter.attribute, filter.title, select_form_classes, filter.limit, filter.sortBy, filter.count_value, filter.has_search, filter.show_more);
-		
 				}
 			});
 			search.start();
@@ -202,15 +197,30 @@
     }
 </script>
 
-<div id="searchbox"></div>
-<div id="stats"></div>
-<div id="voicesearch"></div>
-<div id="current-refinements"></div>
-<div id="hits-per-page"></div>
+<div class="m-6 flex justify-between items-center">
+	<div class="s">
+		<label for="searchbox" class="block text-sm font-medium leading-6 text-gray-900">Search</label>
+		<div id="searchbox"></div>
+	</div>
+	<div class="">
+		<div id="voicesearch"></div>
+	</div>
+</div>
 
+<div id="current-refinements"></div>
+	
 <!-- Dynamically created containers for refinement widgets will be here -->
 {#each item.filterForHorizontalSearch as filter}
     <div id={filter.divIdValue}></div>
 {/each}
+
+<div class="m-6 flex justify-between items-center">
+	<div class="">
+		<div id="stats"></div>
+	</div>
+	<div class="">
+		<div id="hits-per-page"></div>
+	</div>
+</div>
 <div id="hits"></div>
 <div id="pagination"></div>

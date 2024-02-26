@@ -2,8 +2,8 @@ export function setConfigs(indexName) {
 	let currentTemplateFunction = baseTemplateFunction;
 	let currentTransformItems = baseTransformItems;
 	let root_classes = 'm-6';
-	let list_classes = 'flex flex-wrap';
-	let item_classes = 'my-1 px-1 w-full sm:px-3 sm:w-1/2 md:px-6 lg:my-4 lg:px-4 xl:w-1/3 2xl:w-1/4';
+	let list_classes = 'grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3';
+	let item_classes = 'col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow';
 	let select_form_classes = 'mt-3';
 	let search_placeholder = 'Search by name, areas of expertise or language';
 
@@ -60,27 +60,37 @@ function peopleTemplateFunction(hit, html, components) {
 	// Iterate over each key (name) in the map.
 	for (let name in affiliationsMap) {
 		// Add the name to the HTML string.
-		htmlAffs += `<p class="text-base leading-7 text-gray-300">${name}</p>`;
-
+		htmlAffs += `<dt class="sr-only">EUI affiliation</dt><dd class="text-sm text-gray-500">${name}</dd>`;
 		// Iterate over each role in the array for this name.
 		affiliationsMap[name].forEach((role) => {
 			// Add the role to the HTML string.
-			htmlAffs += `<p class="mb-2 lh-1 fw-semi-bold text-grey">${role}</p>`;
+			htmlAffs += `<dt class="sr-only">Role</dt><dd class="mb-2 lh-1 fw-semi-bold text-sm text-grey">${role}</dd>`;
 		});
 	}
 
 	return `
-		<article class="overflow-hidden bg-white shadow-lg">
-			<a href="/">
-				<img class="block h-auto w-full" src="${photo}" alt="Portrait picture of ${hit.ict.Firstnames + ' ' + hit.ict.Lastnames}" />
-			</a>
-			<header class="flex items-center justify-between leading-tight p-2 md:p-4">
-				<h1 class="text-lg">
-					<a class="no-underline hover:underline text-black" href="/">${hit.ict.Firstnames + ' ' + hit.ict.Lastnames}</a>
-				</h1>
-			</header>
-			${htmlAffs}
-			<footer><a href="/" title="Go to ${hit.ict.Firstnames + ' ' + hit.ict.Lastnames} profile">View profile</a></footer>		
-		</article>	
+	<div class="flex flex-1 flex-col p-8">
+      <img class="mx-auto w-32 flex-shrink-0 rounded-full" src="${photo}" alt="Portrait picture of ${hit.ict.Firstnames + ' ' + hit.ict.Lastnames}">
+      <h3 class="mt-6 mb-2 text-sm font-bold text-gray-900">${hit.ict.Firstnames + ' ' + hit.ict.Lastnames}</h3>
+      <dl class="mt-1 flex flex-grow flex-col">
+		${htmlAffs}
+      </dl>
+    </div>
+    <div>
+      <div class="-mt-px flex divide-x divide-gray-200">
+        <div class="flex w-0 flex-1">
+          <a href="mailto:janecooper@example.com" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+            <span class="fa-sharp fa-regular fa-envelope"></span>
+            Email
+          </a>
+        </div>
+        <div class="-ml-px flex w-0 flex-1">
+          <a href="/" class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900">
+		  <span class="fa-sharp fa-regular fa-address-card"></span>   
+		  View profile
+          </a>
+        </div>
+      </div>
+    </div>
     `;
 }

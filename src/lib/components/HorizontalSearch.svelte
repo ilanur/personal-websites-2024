@@ -23,7 +23,9 @@
 			const searchClient = algoliasearch(PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY);
 			let indexName = item.index; // Dynamically set the index name
 
-			const { currentTemplateFunction, currentTransformItems, select_form_classes, root_classes, list_classes, item_classes } = setConfigs(indexName);
+			const config = setConfigs(indexName);
+
+			const { templateFunction, transformItems, select_form_classes, root_classes, list_classes, item_classes } = config;
 
 			let not_found_classes = 'text-center text-2xl text-eui-red';
 
@@ -45,7 +47,7 @@
 					container: '#hits',
 					templates: {
 						item(hit, { html, components }) {
-							return currentTemplateFunction(hit, html, components);
+							return templateFunction(hit, html, components);
 						},
 						empty(results, { html }) {
 							return html`
@@ -56,7 +58,7 @@
 						}
 					},
 					transformItems(items, { results }) {
-						return currentTransformItems(items, { results });
+						return transformItems(items, { results });
 					},
 					cssClasses: {
 						root: root_classes,

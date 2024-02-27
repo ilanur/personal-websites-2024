@@ -2,7 +2,7 @@
     import { browser } from '$app/environment';
     import algoliasearch from 'algoliasearch/lite';
     import instantsearch from 'instantsearch.js';
-    import { searchBox, hits, configure, voiceSearch, hitsPerPage, stats, pagination, currentRefinements } from 'instantsearch.js/es/widgets';
+    import { searchBox, hits, configure, voiceSearch, hitsPerPage, stats, currentRefinements } from 'instantsearch.js/es/widgets';
     import { setConfigs } from '$lib/utils/algolia/indexesConfig';
 	import { customPagination } from '$lib/utils/algolia/customPagination';
     import { eui_refinementList, eui_menuSelect, eui_toggleRefinement } from '$lib/utils/algolia/widgets';
@@ -11,13 +11,11 @@
 
 	
     export let item;
-	//console.log("item", item);
-	//const algoliaConfig = item;
-	
+	const option_hitsPerPage = item.customHitsPerPage || 12;
+
 	afterUpdate( () => {
 		//window.location.reload()
 		//console.log('algoliaConfig:', algoliaConfig);
-		const option_hitsPerPage = item.customHitsPerPage || 12;
 
 		if (browser) {
 			const searchClient = algoliasearch(PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY);
@@ -98,7 +96,7 @@
 				// Instantiate the custom widget
 				customPagination({
 					container: '#pagination',
-				}),
+				},option_hitsPerPage),
 				stats({
 					container: '#stats',
 				}),

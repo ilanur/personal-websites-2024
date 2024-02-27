@@ -3,19 +3,21 @@ import { connectPagination } from 'instantsearch.js/es/connectors';
 const renderPagination = (renderOptions, isFirstRender) => {
   const {
     pages,
-    page,
     currentRefinement,
     nbPages,
     isFirstPage,
     isLastPage,
     nbHits,
-    hitsPerPage,
     refine,
-    createURL,
+    createURL
   } = renderOptions;
   
-  const container = document.querySelector('#pagination');
+  // Use config.option_hitsPerPage here
   
+  const option_hitsPerPage = 12;
+  const container = document.querySelector('#pagination');
+  const from = currentRefinement * option_hitsPerPage + 1;
+  const to = Math.min((currentRefinement + 1) * option_hitsPerPage, nbHits);
   container.innerHTML = `
     <div class="flex items-center justify-between px-4 py-3 sm:px-6">
       <div class="flex flex-1 justify-between sm:hidden">
@@ -25,10 +27,14 @@ const renderPagination = (renderOptions, isFirstRender) => {
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
           <p class="text-sm text-gray-700">
-            Showing
-          <span class="font-medium">1</span>
+            Showing 
+          <span class="font-medium"> 
+            ${from}
+          </span>
           to
-          <span class="font-medium">10</span>
+          <span class="font-medium">
+            ${to}
+          </span>
           of
           <span class="font-medium">${nbHits}</span>
           results
@@ -86,7 +92,9 @@ const renderPagination = (renderOptions, isFirstRender) => {
   });
 };
 
-// Create the custom widget
+
 export const customPagination = connectPagination(
   renderPagination
 );
+
+

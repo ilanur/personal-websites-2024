@@ -1,16 +1,16 @@
 import { error } from '@sveltejs/kit';
+import { createDirectus, rest, readItem } from '@directus/sdk';
+
+const client = createDirectus('https://eui-personal-websites.directus.app').with(rest());
 
 export async function load({ params,  url}) {
-	let is_preview = false;
-	if(url.hostname =="hostname"){
-		is_preview = true;
-	}
-	let slug = '/en/eui-intranet/' + params.slug;
-	//get entry by slug
-	const entry = await get_entryBySlug(slug, is_preview);
-	if (entry) {
+	const slug = params.slug;
+	const result = await client.request(readItem('Personal_information', slug));
+
+
+	if (result) {
 		return {
-			entry
+			result
 		};
 	}
 

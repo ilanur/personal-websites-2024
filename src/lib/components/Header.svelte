@@ -1,6 +1,5 @@
 <script>
 	import { PUBLIC_EUI_WEB } from '$env/static/public';
-	import { signOut } from '@auth/sveltekit/client';
     import { isSidebarOpen } from '$lib/utils/stores.js';
 
 	$: sidebarOpen = $isSidebarOpen;
@@ -37,6 +36,10 @@
     function toggleSidebar() {
         isSidebarOpen.update(state => !state);
     }
+
+	function signOut() {
+		// Sign out logic
+	}
 </script>
 
 <div class="flex w-full h-12 shrink-0 items-center gap-x-4 px-4 shadow-sm sm:gap-x-6 sm:px-6">

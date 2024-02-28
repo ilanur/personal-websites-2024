@@ -1,6 +1,6 @@
-# EUI SvelteKit authentication POC
+# EUI SvelteKit Personal websites
 
-Authentication in SvelteKit with Azure.
+Authentication in SvelteKit with Azure connected to Directus
 
 ## Project setup
 

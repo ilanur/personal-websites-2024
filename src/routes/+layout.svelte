@@ -1,12 +1,12 @@
 <script>
 	import '../app.css';
-	import Header from '$lib/components/Header.svelte';
+	import Navigation from '$lib/components/Navigation.svelte';
 	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	export let data;
 </script>
 <header class="sticky top-0 z-40 bg-white shadow-lg">
-	<Header {data} />
+	<Navigation {data} />
 </header>
 <aside>
 	<LeftSidebar />

@@ -9,7 +9,7 @@
 	let isProfileDropdownOpen = false;
 	let isNotificationDropdownOpen = false;
 	let publicProfileUrl;
-
+	console.log("datasession",data.session);
 	const user_data = data.session.algoliaUser;
 	let portrait = '/default-user-dark.png';
 

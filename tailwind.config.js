@@ -10,7 +10,7 @@ export default {
 			colors: {
 				'eui-blue': '#004676',
 				'eui-red': '#A34D3A',
-				'white' : '#FFFFFF'
+				white: '#FFFFFF'
 			},
 			aspectRatio: {
 				'2-1': '2 / 1',
@@ -29,12 +29,5 @@ export default {
 			}
 		}
 	},
-	/*
-	daisyui: {
-		themes: ['light']
-	},
-	*/
-	plugins: [
-		require('@tailwindcss/forms'),
-	]
+	plugins: [require('@tailwindcss/forms')]
 };

@@ -1,7 +1,7 @@
 <script>
-	import { browser } from '$app/environment';
 	import algoliasearch from 'algoliasearch/lite';
 	import instantsearch from 'instantsearch.js';
+	import { browser } from '$app/environment';
 	import { searchBox, hits, configure, voiceSearch, hitsPerPage, stats, currentRefinements } from 'instantsearch.js/es/widgets';
 	import { setConfigs } from '$lib/utils/algolia/indexesConfig';
 	import { customPagination } from '$lib/utils/algolia/customPagination';

@@ -5,6 +5,4 @@
 
 <AppHeader />
 
-<main>
-	<slot />
-</main>
+<slot />

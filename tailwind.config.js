@@ -8,6 +8,7 @@ export default {
 		colors: {
 			'eui-blue': '#004676',
 			'eui-red': '#A34D3A',
+			'eui-yellow': '#F0C16F',
 			'eui-gray': 'EEF3F9',
 			'eui-dark-gray': '#131516',
 			white: '#FFFFFF'

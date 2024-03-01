@@ -1,10 +1,10 @@
 <script>
 	// TODO: Add mobile layout. Waiting for design.
-
+	import clsx from 'clsx';
 	import LogoEui from './icons/LogoEui.svelte';
 </script>
 
-<header class="bg-white">
+<header class={clsx($$props.class, 'bg-white')}>
 	<nav class="container flex justify-between py-2.5">
 		<a href="/" class="h-10" aria-label="EUI logo">
 			<LogoEui />

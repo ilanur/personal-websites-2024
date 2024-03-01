@@ -8,7 +8,11 @@
 	}
 
 	body {
-		@apply text-eui-dark-gray;
+		@apply text-eui-dark-gray h-full;
+	}
+
+	a {
+		@apply underline underline-offset-2 hover:no-underline;
 	}
 
 	h1,

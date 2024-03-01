@@ -1,0 +1,22 @@
+[
+	{
+		"href": "/about",
+		"label": "About"
+	},
+	{
+		"href": "/research",
+		"label": "Research"
+	},
+	{
+		"href": "/teaching",
+		"label": "Teaching"
+	},
+	{
+		"href": "/publications",
+		"label": "Publications"
+	},
+	{
+		"href": "/contact",
+		"label": "Contact"
+	}
+]

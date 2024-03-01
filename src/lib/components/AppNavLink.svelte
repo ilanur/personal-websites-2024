@@ -1,6 +1,6 @@
 <script>
-	import { page } from '$app/stores';
 	import clsx from 'clsx';
+	import { page } from '$app/stores';
 
 	export let href;
 </script>

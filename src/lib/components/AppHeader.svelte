@@ -3,6 +3,7 @@
 	import clsx from 'clsx';
 	import LogoEui from '$lib/components/icons/LogoEui.svelte';
 	import AppNavLink from '$lib/components/AppNavLink.svelte';
+	import navLinks from '$lib/constants/navLinks.json';
 </script>
 
 <header class={clsx($$props.class, 'bg-white')}>
@@ -12,11 +13,9 @@
 		</a>
 
 		<ul class="flex items-center gap-x-14 text-lg uppercase">
-			<li><AppNavLink href="/about">About</AppNavLink></li>
-			<li><AppNavLink href="/research">Research</AppNavLink></li>
-			<li><AppNavLink href="/teaching">Teaching</AppNavLink></li>
-			<li><AppNavLink href="/publications">Publications</AppNavLink></li>
-			<li><AppNavLink href="/contact">Contact</AppNavLink></li>
+			{#each navLinks as { href, label }}
+				<li><AppNavLink {href}>{label}</AppNavLink></li>
+			{/each}
 		</ul>
 	</nav>
 </header>

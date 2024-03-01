@@ -7,7 +7,12 @@
 	export let showArrow = false;
 </script>
 
-<a {href} {target} rel={target === '_blank' ? 'noopener' : null} class={clsx($$props.class, 'group inline-flex items-center')}>
+<a
+	{href}
+	{target}
+	rel={target === '_blank' ? 'noopener' : null}
+	class={clsx($$props.class, 'group inline-flex items-center')}
+>
 	<slot />
 
 	{#if showArrow}

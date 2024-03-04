@@ -8,7 +8,7 @@
 	}
 
 	body {
-		@apply text-eui-dark-gray h-full;
+		@apply h-full text-lg text-eui-dark-gray;
 	}
 
 	a {

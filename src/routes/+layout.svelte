@@ -5,7 +5,7 @@
 </script>
 
 <div class="flex h-full flex-col">
-	<AppHeader class="sticky top-0" />
+	<AppHeader class="sticky top-0 z-10" />
 
 	<main class="flex-1">
 		<slot />

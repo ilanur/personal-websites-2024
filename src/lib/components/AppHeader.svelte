@@ -12,7 +12,7 @@
 			<LogoEui />
 		</a>
 
-		<ul class="flex items-center gap-x-14 text-lg uppercase">
+		<ul class="flex items-center gap-x-14 uppercase">
 			{#each navLinks as { href, label }}
 				<li><AppNavLink {href}>{label}</AppNavLink></li>
 			{/each}

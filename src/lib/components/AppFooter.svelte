@@ -4,7 +4,7 @@
 	import quickLinks from '$lib/constants/quickLinks.json';
 </script>
 
-<footer class="bg-eui-blue text-lg text-white">
+<footer class="bg-eui-blue text-white">
 	<div class="container py-10">
 		<LogoEuiFull class="mb-8 h-14 w-fit [&_path]:fill-white" />
 
@@ -27,8 +27,8 @@
 		</ul>
 
 		<p class="mt-5">
-			© European University Institute 2024, Badia Fiesolana - Via dei
-			Roccettini 9, I-50014 San Domenico di Fiesole (FI) - Italy
+			© European University Institute 2024, Badia Fiesolana - Via dei Roccettini 9, I-50014 San
+			Domenico di Fiesole (FI) - Italy
 		</p>
 	</div>
 </footer>

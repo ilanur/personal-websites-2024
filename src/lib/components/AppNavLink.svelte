@@ -7,7 +7,7 @@
 
 <a
 	{href}
-	class={clsx('text-lg uppercase', {
+	class={clsx('uppercase', {
 		'font-black underline': $page.url.pathname === href,
 		'no-underline': $page.url.pathname !== href
 	})}

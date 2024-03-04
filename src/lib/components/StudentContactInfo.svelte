@@ -14,7 +14,7 @@
 	}
 </script>
 
-<div class="space-y-7 border-l pl-7">
+<div class="space-y-7 border-l border-eui-darker-gray pl-7">
 	<div class="flex flex-col space-y-7">
 		<AppDownloadLink on:click={downloadCV}>CURRICULUM VITAE</AppDownloadLink>
 		<AppDownloadLink on:click={downloadJobMarketPaper}>Job marketing paper</AppDownloadLink>

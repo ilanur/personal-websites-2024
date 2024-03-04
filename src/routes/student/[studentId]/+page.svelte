@@ -1,6 +1,6 @@
 <script>
 	import StudentHeroBanner from '$lib/components/StudentHeroBanner.svelte';
-	import StudentInfo from '$lib/components/StudentInfo.svelte';
+	import StudentContactInfo from '$lib/components/StudentContactInfo.svelte';
 
 	export let data;
 </script>
@@ -51,7 +51,7 @@
 		</div>
 
 		<div class="col-span-1">
-			<StudentInfo />
+			<StudentContactInfo />
 		</div>
 	</div>
 </div>

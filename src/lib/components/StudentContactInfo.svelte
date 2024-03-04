@@ -17,8 +17,8 @@
 <div class="space-y-7 border-l pl-7">
 	<div class="flex flex-col space-y-7">
 		<AppDownloadLink on:click={downloadCV}>CURRICULUM VITAE</AppDownloadLink>
-		<AppDownloadLink on:click={downloadJobMarketPaper}>CURRICULUM VITAE</AppDownloadLink>
-		<AppDownloadLink on:click={downloadResearchPaper}>CURRICULUM VITAE</AppDownloadLink>
+		<AppDownloadLink on:click={downloadJobMarketPaper}>Job marketing paper</AppDownloadLink>
+		<AppDownloadLink on:click={downloadResearchPaper}>Research paper</AppDownloadLink>
 	</div>
 
 	<div class="flex flex-col">

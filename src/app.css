@@ -25,8 +25,8 @@
 	}
 
 	h1 {
-		/* font-size: 40px; */
-		@apply text-h1;
+		/* font-size: 40px; line-height: 61px; */
+		@apply text-h1 leading-[3.85rem];
 	}
 	h2 {
 		/* font-size: 32px; */

@@ -8,9 +8,9 @@
 <div>
 	<StudentHeroBanner student={data.student} />
 
-	<div class="container grid grid-cols-3 gap-x-36 py-16">
-		<div class="col-span-2">
-			<h2 class="mb-5">About</h2>
+	<div class="container grid grid-cols-3 gap-x-16 py-12 md:py-16 xl:gap-x-36">
+		<div class="order-2 col-span-3 lg:order-1 lg:col-span-2">
+			<h2 class="mb-5 font-normal">About</h2>
 			<div>
 				<p class="mb-5">
 					Elena Brodeala holds a PhD in Law from the European University Institute in Florence,
@@ -50,7 +50,7 @@
 			</div>
 		</div>
 
-		<div class="col-span-1">
+		<div class="order-1 col-span-3 mb-10 lg:order-2 lg:col-span-1 lg:mb-0">
 			<StudentContactInfo />
 		</div>
 	</div>

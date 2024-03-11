@@ -3,10 +3,11 @@ export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
 		container: {
-			center: true
+			center: true,
+			padding: '1rem'
 		},
 		colors: {
-			'eui-blue': '#004676',
+			'eui-blue': '#0A3253',
 			'eui-red': '#A34D3A',
 			'eui-yellow': '#F0C16F',
 			'eui-gray': '#EEF3F9',

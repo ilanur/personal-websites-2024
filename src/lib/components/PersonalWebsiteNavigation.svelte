@@ -13,7 +13,7 @@
 	})}
 >
 	{#each navLinks as { href, label }}
-		<li><AppNavLink {href} {isMobile}>{label}</AppNavLink></li>
+		<li><AppNavLink {href}>{label}</AppNavLink></li>
 	{/each}
 </ul>
 

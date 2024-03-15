@@ -1,5 +1,5 @@
 <script>
-	import StudentContactInfo from '$lib/components/StudentContactInfo.svelte';
+	import UserContactInfo from '$lib/components/UserContactInfo.svelte';
 </script>
 
 <div>
@@ -46,9 +46,9 @@
 		</div>
 
 		<div
-			class="border-eui-gray-70 col-span-3 mt-14 border-t pt-14 lg:col-span-1 lg:m-0 lg:border-t-0 lg:p-0"
+			class="col-span-3 mt-14 border-t border-eui-gray-70 pt-14 lg:col-span-1 lg:m-0 lg:border-t-0 lg:p-0"
 		>
-			<StudentContactInfo />
+			<UserContactInfo />
 		</div>
 	</div>
 </div>

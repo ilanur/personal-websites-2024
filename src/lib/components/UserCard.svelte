@@ -1,10 +1,10 @@
 <!-- Replace when design is ready -->
 <script>
-	export let student;
+	export let user;
 </script>
 
-<a href={`/student/${student.id}`} class="flex items-center rounded-lg p-4 no-underline shadow-lg">
-	<div class="text-eui-gray-90 mr-5 w-16 rounded-full bg-eui-gray p-3">
+<a href={`/user/${user.id}`} class="flex items-center rounded-lg p-4 no-underline shadow-lg">
+	<div class="mr-5 w-16 rounded-full bg-eui-gray p-3 text-eui-gray-90">
 		<svg
 			data-slot="icon"
 			fill="currentColor"
@@ -20,5 +20,5 @@
 		</svg>
 	</div>
 
-	<p>{student.firstName}</p>
+	<p>{user.firstName}</p>
 </a>

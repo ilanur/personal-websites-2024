@@ -9,7 +9,7 @@
 <ul
 	class={clsx($$props.class, 'flex items-center gap-x-6 uppercase', {
 		'lg:gap-x-14': !isMobile,
-		'eui-gray container overflow-y-auto pb-0 pt-2 lg:gap-x-10': isMobile
+		'eui-gray container overflow-y-auto py-2 lg:gap-x-10': isMobile
 	})}
 >
 	{#each navLinks as { href, label }}

@@ -1,12 +1,12 @@
 <script>
-	import StudentHeroBanner from '$lib/components/StudentHeroBanner.svelte';
+	import UserHeroBanner from '$lib/components/UserHeroBanner.svelte';
 	import PersonalWebsiteNavigation from '$lib/components/PersonalWebsiteNavigation.svelte';
 
 	export let data;
 </script>
 
 <div>
-	<StudentHeroBanner student={data.student} />
+	<UserHeroBanner user={data.user} />
 
 	<div class="bg-eui-gray">
 		<PersonalWebsiteNavigation isMobile />

@@ -1,4 +1,5 @@
 <script>
+	import { PUBLIC_DIRECTUS_API_URL } from '$env/static/public';
 	import UserHeroBannerSocials from '$lib/components/UserHeroBannerSocials.svelte';
 
 	export let user;
@@ -11,7 +12,7 @@
 			class="col-span-12 flex items-center justify-center bg-eui-gray pt-12 md:col-span-4 md:justify-start md:pt-0"
 		>
 			<img
-				src="https://s3-alpha-sig.figma.com/img/8abf/cd3c/d7a324fe577805318386a603b20a4489?Expires=1711324800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=SUQFeLYw4lgIpt71cGRL~U-Gh5pHBGP6MbNh31FdA3V7EQlqW3rHJQIpHI7LJQSjBWvmLrGVBMVoIS~PTWn8M~0vsgktvxpFhOmXMv2yGLmKnux4TonTFvkCTpcBL2q--dGpjMYz2pFq8CQuTbNc6e7H0WYP6A2PxD1cmxbFlCBjvcLJwnPD2sihBQhK9-QytjOrWxDfRVigDyIQpEiafVm1-pavKj3cLoIu19LDKfOOn-JlFyS46~z8LnwprndGubAu015MG7dYFsma-sA-A9qi1DVLjAz55oyIklCKmYjEY~xAOFXTbLgKbVo8KlYHm8dBHgxgSb65T0tt5RLT1A__"
+				src={`${PUBLIC_DIRECTUS_API_URL}/assets/${user.profile_image}`}
 				alt="user"
 				class="-mb-[125px] size-[250px] min-w-[250px] rounded-full border-8 border-white md:-ml-[150px] md:mb-0 md:mr-9 md:size-[300px] md:min-w-[300px]"
 			/>
@@ -25,8 +26,7 @@
 	<div class="container relative grid grid-cols-12 pb-16 pt-[calc(125px_+_2rem)] md:py-16">
 		<div class="col-span-12 text-white md:col-span-8 md:pr-[200px] xl:pr-[300px]">
 			<h1>
-				{user.firstName}
-				{user.lastName}
+				{user.name}
 			</h1>
 
 			<div class="mb-7 mt-6">

@@ -1,8 +1,11 @@
+import getDirectusInstance from '$lib/utils/directus';
+import { readItems } from '@directus/sdk';
+
 export async function load() {
-	const res = await fetch('https://dummyjson.com/users?limit=50');
-	const users = await res.json();
+	const directus = getDirectusInstance(fetch);
+	const users = await directus.request(readItems('Personal_information'));
 
 	return {
-		users: users.users
+		users
 	};
 }

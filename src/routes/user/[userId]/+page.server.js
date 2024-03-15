@@ -4,7 +4,9 @@ import { readItems } from '@directus/sdk';
 
 export async function load({ fetch }) {
 	const directus = getDirectusInstance(fetch);
+	const pages = await directus.request(readItems('Pages'))
+	console.log(pages);
 	return {
-		global: await directus.request(readItems('Pages'))
+		global: pages
 	};
 }

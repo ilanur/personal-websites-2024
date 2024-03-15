@@ -17,7 +17,7 @@
 			/>
 
 			<StudentHeroBannerSocials
-				class="z-10 hidden flex-col space-y-4 border-l border-eui-darker-gray pl-4 text-eui-darker-gray md:flex"
+				class="border-eui-gray-70 text-eui-gray-70 z-10 hidden flex-col space-y-4 border-l pl-4 md:flex"
 			/>
 		</div>
 	</div>

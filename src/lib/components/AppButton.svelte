@@ -10,7 +10,7 @@
 <button
 	class={clsx(
 		$$props.class,
-		'rounded-md border-2 border-eui-blue px-3 py-2 text-sm font-bold transition duration-200 md:px-4 md:py-2.5 md:text-base',
+		'rounded-md border-2 border-eui-blue px-3 py-2 text-sm font-bold transition duration-200 lg:px-4 lg:py-2.5 lg:text-base',
 		{
 			// Colors
 			'bg-eui-blue text-white hover:bg-opacity-90': !outlined,

@@ -10,9 +10,13 @@ export default {
 			'eui-blue': '#0A3253',
 			'eui-red': '#A34D3A',
 			'eui-yellow': '#F0C16F',
-			'eui-gray': '#EEF3F9',
-			'eui-darker-gray': '#54595E',
-			'eui-dark-gray': '#131516',
+			'eui-gray': {
+				DEFAULT: '#EEF3F9',
+				10: '#F4F4F4',
+				30: '#D9D9D9',
+				70: '#54595E',
+				90: '#131516'
+			},
 			white: '#FFFFFF'
 		},
 		extend: {

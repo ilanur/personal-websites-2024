@@ -4,7 +4,7 @@
 </script>
 
 <a href={`/student/${student.id}`} class="flex items-center rounded-lg p-4 no-underline shadow-lg">
-	<div class="mr-5 w-16 rounded-full bg-eui-gray p-3 text-eui-dark-gray">
+	<div class="text-eui-gray-90 mr-5 w-16 rounded-full bg-eui-gray p-3">
 		<svg
 			data-slot="icon"
 			fill="currentColor"

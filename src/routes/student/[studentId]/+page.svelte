@@ -1,15 +1,10 @@
 <script>
-	import StudentHeroBanner from '$lib/components/StudentHeroBanner.svelte';
 	import StudentContactInfo from '$lib/components/StudentContactInfo.svelte';
-
-	export let data;
 </script>
 
 <div>
-	<StudentHeroBanner student={data.student} />
-
 	<div class="container grid grid-cols-3 gap-x-16 py-12 md:py-16 xl:gap-x-36">
-		<div class="order-2 col-span-3 lg:order-1 lg:col-span-2">
+		<div class="col-span-3 lg:col-span-2">
 			<h2 class="mb-5 font-normal">About</h2>
 			<div>
 				<p class="mb-5">
@@ -50,7 +45,9 @@
 			</div>
 		</div>
 
-		<div class="order-1 col-span-3 mb-10 lg:order-2 lg:col-span-1 lg:mb-0">
+		<div
+			class="border-eui-gray-70 col-span-3 mt-14 border-t pt-14 lg:col-span-1 lg:m-0 lg:border-t-0 lg:p-0"
+		>
 			<StudentContactInfo />
 		</div>
 	</div>

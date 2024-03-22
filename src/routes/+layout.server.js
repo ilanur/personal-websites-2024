@@ -19,7 +19,7 @@ export async function load(event) {
 }
 
 
-/////CODE EXTRACTED FROM DIFFERENT PROJECT, NEEDS ADJUSTMENTS
+/////CODE EXTRACTED FROM DIFFERENT PROJECT, NEEDS ADJUSTMENTS - AZURE AUTHENTICATION
 
 // export async function load(event) {
 // 	let isLoggedIn = false;

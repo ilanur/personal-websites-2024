@@ -1,4 +1,6 @@
 <script>
+    /////CODE EXTRACTED FROM DIFFERENT PROJECT, NEEDS ADJUSTMENTS - AZURE AUTHENTICATION
+
 import { goto } from '$app/navigation';
 import { PUBLIC_DIRECTUS_API_URL } from '$env/static/public';
 import {onMount} from 'svelte';

@@ -8,7 +8,7 @@ export async function handle({ event, resolve }) {
 }
 
 
-/////CODE EXTRACTED FROM DIFFERENT PROJECT, NEEDS ADJUSTMENTS
+/////CODE EXTRACTED FROM DIFFERENT PROJECT, NEEDS ADJUSTMENTS - AZURE AUTHENTICATION
 
 // import { sequence } from '@sveltejs/kit/hooks';
 // import { redirect } from '@sveltejs/kit';

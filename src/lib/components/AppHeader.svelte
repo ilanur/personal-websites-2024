@@ -6,8 +6,8 @@
 	import { PUBLIC_DIRECTUS_API_URL, PUBLIC_FRONTEND_URL } from '$env/static/public';
 
 	    
-    async function signInWithAzure() {
-        const signing_azure_url = PUBLIC_DIRECTUS_API_URL+'/auth/login/microsoft?redirect='+PUBLIC_FRONTEND_URL+'/auth/login/callback';
+    function signInWithAzure() {
+        const signing_azure_url = `${PUBLIC_DIRECTUS_API_URL}/auth/login/microsoft?redirect=${PUBLIC_FRONTEND_URL}/auth/login/callback`;
         window.location.href = signing_azure_url;
     }
     

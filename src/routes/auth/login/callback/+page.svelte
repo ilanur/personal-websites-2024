@@ -4,26 +4,35 @@
 import { goto } from '$app/navigation';
 import { PUBLIC_DIRECTUS_API_URL } from '$env/static/public';
 import {onMount} from 'svelte';
+import { createDirectus, authentication } from '@directus/sdk';
+
+const client = createDirectus(PUBLIC_DIRECTUS_API_URL)
+     .with(authentication('cookie', { credentials: 'include' }));
+
 
 onMount(async () => {
     try{
 
-        const refresh_body =   {
-            "mode": "json",
-        }
+        console.log("Login callback")
 
-        const response =  await fetch(PUBLIC_DIRECTUS_API_URL+'/auth/refresh', {
-            method: 'POST',
-            credentials: 'include', 
-            headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-            body: JSON.stringify(refresh_body)
+        // const refresh_body =   {
+        //     "mode": "cookie",
+        // }
 
-        });
-        const result = await response.json();
-        console.log(result);
+        // const response =  await fetch(PUBLIC_DIRECTUS_API_URL+'/auth/refresh', {
+        //     method: 'POST',
+        //     credentials: 'include', 
+        //     headers: {
+        //                 'Accept': 'application/json',
+        //                 'Content-Type': 'application/json'
+        //             },
+        //    // body: JSON.stringify(refresh_body)
+
+        // });
+        
+
+        const result = await client.refresh();
+        console.log("login callback", result);
 
         document.cookie = `session=${result.data.access_token}; path=/; max-age=900; samesite=lax; ${import.meta.env.PROD ? 'secure;' : ''}`;
         if (result.data.refresh_token) {
@@ -39,3 +48,4 @@ onMount(async () => {
 })
 </script>
 
+<h1>Logging in...</h1>

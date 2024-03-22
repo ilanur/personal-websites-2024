@@ -17,3 +17,26 @@ export async function load(event) {
 		session: session
 	};
 }
+
+
+/////CODE EXTRACTED FROM DIFFERENT PROJECT, NEEDS ADJUSTMENTS
+
+// export async function load(event) {
+// 	let isLoggedIn = false;
+// 	const session = await event.cookies.get('session');
+// 	const user_id = await event.cookies.get('user_id');
+// 	const magicLink_user = await event.cookies.get('magicLink_user');
+// 	const refresh_token = await event.cookies.get('session_refresh');
+
+// 	if (session && user_id) {
+// 		isLoggedIn = true;
+// 	}
+
+// 	return {
+// 		session: session,
+//         refresh_token: refresh_token,
+// 		user_id: user_id,
+// 		magicLink_user: magicLink_user,
+// 		isLoggedIn: isLoggedIn
+// 	};
+// }

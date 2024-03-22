@@ -6,14 +6,13 @@ import { PUBLIC_DIRECTUS_API_URL } from '$env/static/public';
 import {onMount} from 'svelte';
 import { createDirectus, authentication } from '@directus/sdk';
 
-const client = createDirectus(PUBLIC_DIRECTUS_API_URL)
-     .with(authentication('cookie', { credentials: 'include' }));
 
 
 onMount(async () => {
     try{
 
         console.log("Login callback")
+        const client = createDirectus(PUBLIC_DIRECTUS_API_URL).with(authentication('cookie', { credentials: 'include' }));
 
         // const refresh_body =   {
         //     "mode": "cookie",

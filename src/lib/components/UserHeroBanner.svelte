@@ -18,13 +18,13 @@
 			class="col-span-12 flex items-center justify-center bg-eui-gray pt-12 md:col-span-4 md:justify-start md:pt-0"
 		>
 			<div
-				class="-mb-[125px] size-[250px] min-w-[250px] rounded-full border-8 border-white bg-eui-gray text-eui-blue md:-ml-[150px] md:mb-0 md:mr-9 md:size-[300px] md:min-w-[300px]"
+				class="-mb-[125px] size-[250px] min-w-[250px] overflow-hidden rounded-full border-8 border-white bg-eui-gray text-eui-blue md:-ml-[150px] md:mb-0 md:mr-9 md:size-[300px] md:min-w-[300px]"
 			>
 				{#if user.profile_image}
 					<img
 						src={`${PUBLIC_DIRECTUS_API_URL}/assets/${user.profile_image}`}
 						alt="user"
-						class="w-full object-cover"
+						class="size-full object-cover"
 					/>
 				{:else}
 					<div class="p-16">

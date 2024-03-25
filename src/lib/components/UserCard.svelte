@@ -1,7 +1,6 @@
 <!-- Replace when design is ready -->
 <script>
 	export let user;
-	console.log('user', user);
 </script>
 
 <a href={`/${user.slug}`} class="flex items-center rounded-lg p-4 no-underline shadow-lg">

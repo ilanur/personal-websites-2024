@@ -3,13 +3,17 @@
 	import PersonalWebsiteNavigation from '$lib/components/PersonalWebsiteNavigation.svelte';
 
 	export let data;
+	$: user = data.user;
+	$: userPages = data.userPages;
+
+	console.log('user', data.user);
 </script>
 
 <div>
-	<UserHeroBanner user={data.user} />
+	<UserHeroBanner {user} />
 
 	<div class="bg-eui-gray">
-		<PersonalWebsiteNavigation isMobile />
+		<PersonalWebsiteNavigation {user} {userPages} isMobile />
 	</div>
 
 	<slot />

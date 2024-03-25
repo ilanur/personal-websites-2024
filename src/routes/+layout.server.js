@@ -18,7 +18,6 @@ import { PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY } from '$env/static/public';
 // 	};
 // }
 
-
 /////CODE EXTRACTED FROM DIFFERENT PROJECT, NEEDS ADJUSTMENTS - AZURE AUTHENTICATION
 
 export async function load(event) {
@@ -34,7 +33,7 @@ export async function load(event) {
 
 	return {
 		session: session,
-        refresh_token: refresh_token,
+		refresh_token: refresh_token,
 		user_id: user_id,
 		//magicLink_user: magicLink_user,
 		isLoggedIn: isLoggedIn

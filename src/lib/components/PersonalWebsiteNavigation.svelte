@@ -1,8 +1,9 @@
 <script>
 	import clsx from 'clsx';
-	import navLinks from '$lib/constants/navLinks.json';
 	import AppNavLink from '$lib/components/AppNavLink.svelte';
 
+	export let user;
+	export let userPages = [];
 	export let isMobile = false;
 </script>
 
@@ -12,8 +13,10 @@
 		'eui-gray container overflow-y-auto py-2 lg:gap-x-10': isMobile
 	})}
 >
-	{#each navLinks as { href, label }}
-		<li><AppNavLink {href}>{label}</AppNavLink></li>
+	{#each userPages as userPage}
+		<li>
+			<AppNavLink href={`/${user.slug}/${userPage.slug}`}>{userPage.title}</AppNavLink>
+		</li>
 	{/each}
 </ul>
 

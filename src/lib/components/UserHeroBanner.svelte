@@ -14,7 +14,7 @@
 			<img
 				src={`${PUBLIC_DIRECTUS_API_URL}/assets/${user.profile_image}`}
 				alt="user"
-				class="-mb-[125px] size-[250px] min-w-[250px] rounded-full border-8 border-white md:-ml-[150px] md:mb-0 md:mr-9 md:size-[300px] md:min-w-[300px]"
+				class="-mb-[125px] size-[250px] min-w-[250px] rounded-full border-8 border-white object-cover md:-ml-[150px] md:mb-0 md:mr-9 md:size-[300px] md:min-w-[300px]"
 			/>
 
 			<UserHeroBannerSocials

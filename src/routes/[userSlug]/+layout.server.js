@@ -28,6 +28,8 @@ export async function load({ params }) {
 		})
 	);
 
+	console.log('userPages', userPages);
+
 	return {
 		user: user[0],
 		userPages

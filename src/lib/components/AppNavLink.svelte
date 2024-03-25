@@ -7,8 +7,8 @@
 
 <a
 	{href}
-	class={clsx('block py-3 text-base uppercase lg:text-lg', {
-		'font-black underline': $page.url.pathname === href,
+	class={clsx('block py-3 text-base uppercase underline-offset-2 hover:underline lg:text-lg', {
+		underline: $page.url.pathname === href,
 		'no-underline': $page.url.pathname !== href
 	})}
 >

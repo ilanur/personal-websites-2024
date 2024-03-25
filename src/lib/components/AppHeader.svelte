@@ -1,6 +1,6 @@
 <script>
 	import clsx from 'clsx';
-	import LogoEui from '$lib/components/icons/LogoEui.svelte';
+	import IconLogoEui from '$lib/components/icons/IconLogoEui.svelte';
 	import AppButton from '$lib/components/AppButton.svelte';
 	import PersonalWebsiteNavigation from '$lib/components/PersonalWebsiteNavigation.svelte';
 	import { page } from '$app/stores';
@@ -15,10 +15,10 @@
 	}
 </script>
 
-<header class={clsx($$props.class, 'bg-white')}>
+<header class={clsx($$props.class, 'bg-white shadow-sm')}>
 	<nav class="container flex justify-between py-2.5">
 		<a href="/" class="h-10 min-h-10" aria-label="EUI logo">
-			<LogoEui />
+			<IconLogoEui />
 		</a>
 
 		<div class="flex items-center">

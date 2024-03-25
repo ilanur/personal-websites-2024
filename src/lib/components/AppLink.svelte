@@ -1,6 +1,6 @@
 <script>
 	import clsx from 'clsx';
-	import ArrowShort from '$lib/components/icons/ArrowShort.svelte';
+	import IconArrowShort from '$lib/components/icons/IconArrowShort.svelte';
 
 	export let href = null;
 	export let target = null;
@@ -16,6 +16,6 @@
 	<slot />
 
 	{#if showArrow}
-		<ArrowShort class="ml-0.5 size-6 duration-300 group-hover:translate-x-1" />
+		<IconArrowShort class="ml-0.5 size-6 duration-300 group-hover:translate-x-1" />
 	{/if}
 </a>

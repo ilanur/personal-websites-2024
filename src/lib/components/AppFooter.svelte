@@ -1,12 +1,12 @@
 <script>
 	import AppLink from '$lib/components/AppLink.svelte';
-	import LogoEuiFull from '$lib/components/icons/LogoEuiFull.svelte';
+	import IconLogoEuiFull from '$lib/components/icons/IconLogoEuiFull.svelte';
 	import quickLinks from '$lib/constants/quickLinks.json';
 </script>
 
 <footer class="bg-eui-blue text-white">
 	<div class="container py-10">
-		<LogoEuiFull class="mb-8 h-14 w-fit [&_path]:fill-white" />
+		<IconLogoEuiFull class="mb-8 h-14 w-fit [&_path]:fill-white" />
 
 		<p>
 			<a href="/personal-websites" class="text-eui-yellow">Personal websites</a>

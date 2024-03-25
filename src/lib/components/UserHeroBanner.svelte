@@ -1,11 +1,16 @@
 <script>
 	import { PUBLIC_DIRECTUS_API_URL } from '$env/static/public';
 	import UserHeroBannerSocials from '$lib/components/UserHeroBannerSocials.svelte';
+	import HeroBannerGraphic from '$lib/components/graphics/HeroBannerGraphic.svelte';
 
 	export let user;
 </script>
 
 <div class="relative bg-eui-blue pt-0 md:bg-[transparent] md:py-20">
+	<HeroBannerGraphic
+		class="absolute bottom-0 left-0 top-0 z-10 m-auto ml-5 hidden opacity-10 xl:block"
+	/>
+
 	<div class="bottom-0 left-0 right-0 top-0 grid grid-cols-12 md:absolute">
 		<div class="col-span-12 hidden bg-eui-blue md:col-span-8 md:block" />
 		<div

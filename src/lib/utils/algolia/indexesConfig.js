@@ -1,14 +1,24 @@
 import { peopleConfig } from '$lib/utils/algolia/indexes/people';
 import { announcementsConfig } from '$lib/utils/algolia/indexes/announcements';
+import { happeningsConfig } from '$lib/utils/algolia/indexes/happenings';
+import { unitsConfig } from '$lib/utils/algolia/indexes/units';
+import { servicesProceduresConfig } from '$lib/utils/algolia/indexes/servicesProcedures';
+
 
 export function setConfigs(indexName) {
     let config;
 
     if (indexName === 'people' || indexName === 'peopleIntranet') {
         config = peopleConfig;
-    } else if(indexName == 'announcements'){
+    } else if(indexName == 'cms_announcements'){
         config = announcementsConfig;
-    } 
+    } else if (indexName === 'cms_happenings') {
+        config = happeningsConfig;
+    } else if (indexName === 'cms_departmentsServices') {
+        config = unitsConfig;
+    } else if (indexName === 'cms_servicesProcedures') {
+        config = servicesProceduresConfig;
+    }
 	
 	//for each of the attributes in the config, if it's not present, use the default one
     return {

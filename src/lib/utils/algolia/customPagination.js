@@ -59,7 +59,7 @@ const renderPagination = (renderOptions, isFirstRender) => {
               .map(
                 page => 
                   `
-                    <a href="${createURL(page)}" data-value="${page}" class="relative inline-flex items-center px-4 py-2 text-sm bg-white text-gray-900 ${currentRefinement === page ? 'text-eui-blue font-bold' : ''} ring-1 ring-inset ring-gray-300 hover:bg-eui-blue hover:text-white focus:z-20 focus:outline-offset-0">
+                    <a href="${createURL(page)}" data-value="${page}" class="relative inline-flex items-center px-4 py-2 text-sm bg-white  ${currentRefinement === page ? 'text-eui-blue font-bold' : ''} ring-1 ring-inset ring-gray-300 hover:bg-eui-blue hover:text-white focus:z-20 focus:outline-offset-0">
                       ${page + 1}
                     </a>
                   `

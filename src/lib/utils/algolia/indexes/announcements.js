@@ -1,72 +1,56 @@
+import { PUBLIC_EUI_WEB } from '$env/static/public';
+import { formatDate, formatTime, affiliationsGroupsAndCategory} from '$lib/utils/utils.js';
+
 export const announcementsConfig = {
     templateFunction: templateFunction,
-    root_classes: 'm-6',
+    root_classes: 'my-6',
     list_classes: 'grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3',
-    item_classes: 'col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white text-center shadow',
+    item_classes: 'col-span-1 flex flex-col rounded-md bg-white',
     select_form_classes: 'mt-3',
-    search_placeholder: 'Search by name, areas of expertise or language',
+    search_placeholder: 'Search',
 };
 
-
 function templateFunction(hit, html, components) {
-	let parent_slug = 'people/';
-	let photo = 'https://www.eui.eu/web-production/code/assets/img/default-user-dark.jpg';
-	if (/*hit.cms.photoConsent.consentGiven &&*/ hit.cms.photo) {
-		photo = 'https://www.eui.eu' + hit.cms.photo.asset.sys.uri;
-	}
-
-	let affiliationsMap = {};
-	// Iterate over each affiliation.
-	hit.ict.Affiliations.forEach((aff) => {
-		// If the affiliation name is not already a key in the map, add it and
-		// set its value to an empty array.
-		if (!affiliationsMap.hasOwnProperty(aff.Name)) {
-			affiliationsMap[aff.Name] = [];
-		}
-
-		// If the role is not already in the array for this affiliation name, add it.
-		if (!affiliationsMap[aff.Name].includes(aff.Role)) {
-			affiliationsMap[aff.Name].push(aff.Role);
-		}
-	});
-
-	// Generate the HTML string.
-	let htmlAffs = '';
-
-	// Iterate over each key (name) in the map.
-	for (let name in affiliationsMap) {
-		// Add the name to the HTML string.
-		htmlAffs += `<dt class="sr-only">EUI affiliation</dt><dd class="text-sm text-gray-500">${name}</dd>`;
-		// Iterate over each role in the array for this name.
-		affiliationsMap[name].forEach((role) => {
-			// Add the role to the HTML string.
-			htmlAffs += `<dt class="sr-only">Role</dt><dd class="mb-2 lh-1 fw-semi-bold text-sm text-grey">${role}</dd>`;
-		});
-	}
+  const { groups, affiliations, userTypes, filterByAffiliation } = affiliationsGroupsAndCategory(hit.item.affiliationsGroupsAndCategory);
+  let dep = hit.item.euiUnit;
 
 	return `
-	<div class="flex flex-1 flex-col p-8">
-      <img class="mx-auto w-32 flex-shrink-0 rounded-full" src="${photo}" alt="Portrait picture of ${hit.ict.Firstnames + ' ' + hit.ict.Lastnames}">
-      <h3 class="mt-6 mb-2 text-sm font-bold text-gray-900">${hit.ict.Firstnames + ' ' + hit.ict.Lastnames}</h3>
-      <dl class="mt-1 flex flex-grow flex-col">
-		${htmlAffs}
-      </dl>
-    </div>
-    <div>
-      <div class="-mt-px flex divide-x divide-gray-200">
-        <div class="flex w-0 flex-1">
-          <a href="mailto:janecooper@example.com" class="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-transparent py-4 text-sm font-semibold text-gray-900 hover:bg-eui-blue hover:text-white">
-            <span class="fa-sharp fa-regular fa-envelope"></span>
-            Email
-          </a>
-        </div>
-        <div class="-ml-px flex w-0 flex-1">
-          <a href="/" class="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-transparent py-4 text-sm font-semibold text-gray-900 hover:bg-eui-blue hover:text-white">
-		  <span class="fa-sharp fa-regular fa-address-card"></span>   
-		  View profile
-          </a>
-        </div>
+    <article class="flex flex-1 flex-col items-start relative hover:shadow-xl">
+      <div class="w-full">
+				<img class="aspect-[2/1] w-full rounded-t-md bg-gray-100 object-cover" src="${PUBLIC_EUI_WEB + hit.item.image.asset.sys.uri}" alt="${hit.item.image.altText}">
       </div>
-    </div>
-    `;
+			<div class="w-full px-6 mb-6">
+        <div class="mt-6 flex flex-wrap justify-between gap-x-4 font-bold">
+          <p class="text-sm text-slate-500"><span class="fa-regular fa-calendar me-1"></span><time datetime="${hit.item.date}">${formatDate(hit.item.date)}</time></p>
+          ${dep ?`<p class="text-sm text-cyan-700">${dep.entryTitle}</p>` : ''}
+        </div>
+        <div class="group">
+          <h1 class="mt-3 text-base font-semibold leading-5 line-clamp-3">
+            <a href="?id=${hit.item.sys.slug}" title="Read: ${hit.item.entryTitle}">
+              <span class="absolute inset-0"></span>
+              ${hit.item.entryTitle}
+            </a>
+          </h1> 
+				  <p class="mt-3 line-clamp-3 text-sm leading-5">${hit.item.summary}</p>
+			  </div>
+      </div>
+      <div class="w-full px-6 my-6 border-t mt-auto">
+        <div class="flex flex-wrap items-center gap-x-2 gap-y-2 mt-4 text-xs">
+          <p class="font-bold text-xs">Relevant for:</p>
+          ${groups.map(
+            (group) =>
+              `<span class="inline-flex items-center rounded-sm bg-cyan-700 px-1.5 py-0.5 text-xs text-white">${group}</span>`
+          ).join('')}
+          ${affiliations.map(
+            (affiliation) =>
+              `<span class="inline-flex items-center rounded-sm bg-cyan-700 px-1.5 py-0.5 text-xs text-white">${affiliation.entryTitle}</span>`
+          ).join('')}
+          ${userTypes.map(
+            (userType) => 
+              `<span class="inline-flex items-center rounded-sm bg-cyan-700 px-1.5 py-0.5 text-xs text-white">${userType}</span>`
+            ).join('')}                   
+        </div>
+      </div>    
+    </article>
+  `;
 }

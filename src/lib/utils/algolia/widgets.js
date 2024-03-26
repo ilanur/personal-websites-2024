@@ -8,7 +8,8 @@ export function eui_menuSelect(search, container, attribute, title, select_form_
       limit: limit,
       sortBy: [sort],
       cssClasses: {
-        select: `block w-full border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6 ${select_form_classes}` ,
+        root: '',
+        select: `block w-full border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${select_form_classes}`,
         option: 'bg-white',
       },
       templates: {
@@ -40,8 +41,8 @@ export function eui_toggleRefinement(search, container, attribute, title){
   ]);
 }
  
-export function eui_refinementList(search, container, attribute, limit, sort = 'name:asc', count_value = 'd-none', has_search = false, show_more = false){
-  let searchableInput = "d-none";
+export function eui_refinementList(search, container, attribute, limit, sort = 'name:asc', count_value = 'hidden', has_search = false, show_more = false){
+  let searchableInput = "hidden";
   let showSearch = "false";
   if(has_search === true){
     searchableInput = "form-control form-control-lg mb-3 rounded-0";

@@ -29,6 +29,6 @@
 		"@sveltejs/adapter-node": "^4.0.1",
 		"algoliasearch": "^4.22.1",
 		"clsx": "^2.1.0",
-		"instantsearch.js": "^4.64.1"
+		"instantsearch.js": "^4.66.0"
 	}
 }

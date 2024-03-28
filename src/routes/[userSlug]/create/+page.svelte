@@ -1,7 +1,9 @@
 <script>
 	import AppInput from '$lib/components/AppInput.svelte';
+	import AppSelect from '$lib/components/AppSelect.svelte';
 	import AppButton from '$lib/components/AppButton.svelte';
 	import IconPencil from '$lib/components/icons/IconPencil.svelte';
+	import nationalities from '$lib/constants/nationalities.json';
 	import { PUBLIC_EUI_WEB } from '$env/static/public';
 
 	export let data;
@@ -27,6 +29,13 @@
 		/>
 
 		<AppInput name="email" type="email" label="E-mail" value={data.user.ict.EuiEmail} disabled />
+
+		<AppSelect
+			name="nationality"
+			options={nationalities}
+			label="Nationality"
+			placeholder="-- Select a value --"
+		/>
 
 		<div class="relative size-60 overflow-hidden rounded-md">
 			<input bind:this={fileInputRef} type="file" class="hidden" accept=".jpg,.jpeg,.png,.webp" />

@@ -11,7 +11,7 @@
 </script>
 
 <div class={clsx('flex flex-col', $$props.class)}>
-	<label for={name}>{label}</label>
+	<label for={name} class="mb-1 text-sm">{label}</label>
 	<select
 		bind:value
 		{name}

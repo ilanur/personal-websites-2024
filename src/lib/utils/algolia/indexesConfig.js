@@ -4,44 +4,43 @@ import { happeningsConfig } from '$lib/utils/algolia/indexes/happenings';
 import { unitsConfig } from '$lib/utils/algolia/indexes/units';
 import { servicesProceduresConfig } from '$lib/utils/algolia/indexes/servicesProcedures';
 
-
 export function setConfigs(indexName) {
-    let config;
+	let config;
 
-    if (indexName === 'people' || indexName === 'peopleIntranet') {
-        config = peopleConfig;
-    } else if(indexName == 'cms_announcements'){
-        config = announcementsConfig;
-    } else if (indexName === 'cms_happenings') {
-        config = happeningsConfig;
-    } else if (indexName === 'cms_departmentsServices') {
-        config = unitsConfig;
-    } else if (indexName === 'cms_servicesProcedures') {
-        config = servicesProceduresConfig;
-    }
-	
+	if (indexName === 'people' || indexName === 'peopleIntranet') {
+		config = peopleConfig;
+	} else if (indexName == 'cms_announcements') {
+		config = announcementsConfig;
+	} else if (indexName === 'cms_happenings') {
+		config = happeningsConfig;
+	} else if (indexName === 'cms_departmentsServices') {
+		config = unitsConfig;
+	} else if (indexName === 'cms_servicesProcedures') {
+		config = servicesProceduresConfig;
+	}
+
 	//for each of the attributes in the config, if it's not present, use the default one
-    return {
-        ...getDefaultConfig(),
-        ...config
-    };
+	return {
+		...getDefaultConfig(),
+		...config
+	};
 }
 
 function getDefaultConfig() {
-    //X SIMO, qui puoi mettere i valori di default per ogni attributo
-    return {
-        templateFunction: baseTemplateFunction,
-        transformItems: baseTransformItems,
-        root_classes: '',
-        list_classes: '',
-        item_classes: '',
-        select_form_classes: '',
-        search_placeholder: 'Search'
-    };
+	//X SIMO, qui puoi mettere i valori di default per ogni attributo
+	return {
+		templateFunction: baseTemplateFunction,
+		transformItems: baseTransformItems,
+		root_classes: '',
+		list_classes: '',
+		item_classes: '',
+		select_form_classes: '',
+		search_placeholder: 'Search'
+	};
 }
 
 function baseTemplateFunction(hit, html) {
-	console.log("Hit",hit)
+	// console.log("Hit",hit)
 	return html`
 		<p>${hit.item.entryTitle}</p>
 	`;
@@ -49,4 +48,3 @@ function baseTemplateFunction(hit, html) {
 function baseTransformItems(items) {
 	return items;
 }
-

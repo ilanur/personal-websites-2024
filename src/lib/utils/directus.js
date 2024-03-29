@@ -12,10 +12,10 @@ export async function getCurrentUser() {
 		method: 'GET',
 		credentials: 'include',
 		headers: {
-			'Accept': 'application/json',
-		},
+			Accept: 'application/json'
+		}
 	});
 	const my_data = await my_user.json();
-	console.log("qui",my_data);
+	// console.log("qui",my_data);
 	return my_data.data;
 }

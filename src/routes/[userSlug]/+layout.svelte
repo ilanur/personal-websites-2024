@@ -6,7 +6,7 @@
 	$: user = data.user;
 	$: userPages = data.userPages;
 
-	console.log('user', data.user);
+	// console.log('user', data.user);
 </script>
 
 <div>

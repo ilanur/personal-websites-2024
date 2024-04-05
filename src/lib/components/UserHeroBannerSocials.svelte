@@ -2,7 +2,7 @@
 	import clsx from 'clsx';
 </script>
 
-<div class={clsx($$props.class, 'grid')}>
+<div class={clsx($$props.class)}>
 	<a href="https://google.com" class="flex justify-center no-underline">
 		<i class="fa-brands fa-linkedin-in fa-xl h-6 leading-none" />
 	</a>

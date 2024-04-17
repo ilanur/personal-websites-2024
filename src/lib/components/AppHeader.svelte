@@ -5,13 +5,27 @@
 	import PersonalWebsiteNavigation from '$lib/components/PersonalWebsiteNavigation.svelte';
 	import { page } from '$app/stores';
 	import { PUBLIC_DIRECTUS_API_URL, PUBLIC_FRONTEND_URL } from '$env/static/public';
+	import Oidc from 'oidc-client';
+	import { onMount } from 'svelte';
 
 	$: user = $page.data.user;
 	$: userPages = $page.data.userPages ?? [];
 
+	const settings = {
+			authority: 'https://cms-eui.cloud.contensis.com/authenticate/',
+			client_id: 'WebsiteAdfsClient',
+			redirect_uri: PUBLIC_FRONTEND_URL + '/auth/login/callback',
+			post_logout_redirect_uri: PUBLIC_FRONTEND_URL,
+			response_type: 'id_token',
+			scope: 'openid',
+			filterProtocolClaims: false
+		};
+
+
+
 	async function signInWithAzure() {
-		const signing_azure_url = `${PUBLIC_DIRECTUS_API_URL}/auth/login/microsoft?redirect=${PUBLIC_FRONTEND_URL}/auth/login/callback`;
-		window.location.href = signing_azure_url;
+		let mgr = new Oidc.UserManager(settings);
+		await mgr.signinRedirect();
 	}
 </script>
 

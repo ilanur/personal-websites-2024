@@ -1,7 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import jwt from 'jsonwebtoken';
 
 
 	export let user = null;
@@ -9,27 +8,21 @@
 	onMount(async () => {
 		const hashParams = getHashParams();
 		console.log('hashParams', hashParams)
-		const receivedIdToken = hashParams.id_token;
-		console.log('receivedIdToken', receivedIdToken)
 
-		//now validate the token with the server
-		const response = await fetch('https://cms-eui.cloud.contensis.com/authenticate/.well-known/openid-configuration');
-			const { jwks_uri } = await response.json();
-			const jwksResponse = await fetch(jwks_uri);
-			const jwks = await jwksResponse.json();
-			
-			// Assuming the JWT includes the `kid` header to match the key
-			const signingKey = jwks.keys.find(key => key.use === 'sig' && key.kty === 'RSA');
-			console.log('signingKey', signingKey)
+		const response = await fetch('/auth/login/validate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_token: hashParams.id_token })
+        });
+		const data = await response.json();
+		console.log('data', data)
 
-			if (!signingKey) {
-				throw new Error('Valid signing key not found in jwks');
-			}
 
-			// Convert the RSA public key to a PEM format for jwt.verify
-			const pem = `-----BEGIN PUBLIC KEY-----\n${signingKey.x5c[0]}\n-----END PUBLIC KEY-----`;
-			user = jwt.verify(receivedIdToken, pem, { algorithms: ['RS256'] });
-			console.log('user', user)
+        if (data) {
+            user = data.user;
+        } else {
+            console.error('Failed to validate token');
+        }
 
 
 

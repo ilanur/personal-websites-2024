@@ -1,31 +1,37 @@
 <script>
 	import clsx from 'clsx';
+	import Oidc from 'oidc-client';
 	import IconLogoEui from '$lib/components/icons/IconLogoEui.svelte';
 	import AppButton from '$lib/components/AppButton.svelte';
 	import PersonalWebsiteNavigation from '$lib/components/PersonalWebsiteNavigation.svelte';
 	import { page } from '$app/stores';
-	import { PUBLIC_DIRECTUS_API_URL, PUBLIC_FRONTEND_URL } from '$env/static/public';
-	import Oidc from 'oidc-client';
-	import { onMount } from 'svelte';
+	import { PUBLIC_FRONTEND_URL } from '$env/static/public';
+
+	let promise;
 
 	$: user = $page.data.user;
 	$: userPages = $page.data.userPages ?? [];
 
 	const settings = {
-			authority: 'https://cms-eui.cloud.contensis.com/authenticate/',
-			client_id: 'WebsiteAdfsClient',
-			redirect_uri: PUBLIC_FRONTEND_URL + '/auth/login/callback',
-			post_logout_redirect_uri: PUBLIC_FRONTEND_URL,
-			response_type: 'id_token',
-			scope: 'openid',
-			filterProtocolClaims: false
-		};
-
-
+		authority: 'https://cms-eui.cloud.contensis.com/authenticate/',
+		client_id: 'WebsiteAdfsClient',
+		redirect_uri: PUBLIC_FRONTEND_URL + '/auth/login/callback',
+		post_logout_redirect_uri: PUBLIC_FRONTEND_URL,
+		response_type: 'id_token',
+		scope: 'openid',
+		filterProtocolClaims: false
+	};
 
 	async function signInWithAzure() {
 		let mgr = new Oidc.UserManager(settings);
 		await mgr.signinRedirect();
+	}
+
+	async function onContentMigration() {
+		// const res = await fetch('/api/content-migration');
+		// const data = await res.json();
+		// console.log('data', data);
+		promise = fetch('/api/content-migration');
 	}
 </script>
 
@@ -37,6 +43,19 @@
 
 		<div class="flex items-center">
 			<PersonalWebsiteNavigation class="hidden md:flex" {user} {userPages} />
+
+			<div class="flex items-center">
+				{#await promise}
+					<span class="mr-4 text-xs">Content migrating...</span>
+				{:then value}
+					{#if value}
+						<span class="mr-4 text-xs">Content migrated</span>
+					{/if}
+				{/await}
+
+				<button on:click={onContentMigration}>Migrate data</button>
+			</div>
+
 			<AppButton class="ml-10 whitespace-nowrap lg:ml-12" outlined on:click={signInWithAzure}>
 				Log in
 			</AppButton>

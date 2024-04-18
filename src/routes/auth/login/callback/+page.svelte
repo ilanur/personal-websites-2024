@@ -51,7 +51,7 @@
 </script>
 
 {#if user != null}
-	<h1>Welcome, {user.first_name} {user.last_name}</h1>
+	<h1>Welcome, {user.firstName} {user.lastName} {user.email}</h1>
 {:else}
 	<h1>Logging in...</h1>
 {/if}

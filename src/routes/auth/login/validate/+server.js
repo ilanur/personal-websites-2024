@@ -58,21 +58,6 @@ async function getUserInfo(userid, accessToken) {
         throw new Error('Empty response from user information endpoint');
     }
     return user;
-
-    try {
-        const user = JSON.parse(userText);
-        console.log("Parsed user info:", user);
-        return user;
-    } catch (parseError) {
-        console.error("Error parsing user info:", parseError);
-        throw new Error('Failed to retrieve or parse user information');
-    }
-    
-    if (user) {
-        return user;
-    } else {
-        throw new Error('Failed to retrieve user information');
-    }
 }
 
 
@@ -90,5 +75,5 @@ async function getAccessToken() {
     });
     
     const data = await response.json();
-    return data.access_token;  // This is the access token you need
+    return data.access_token;
 }

@@ -64,6 +64,7 @@
 
 			{#if !isSmall}
 				<UserHeroBannerSocials
+					{user}
 					class="z-10 hidden flex-col space-y-4 border-l border-eui-gray-70 pl-4 text-eui-gray-70 md:flex"
 				/>
 			{/if}
@@ -71,7 +72,7 @@
 	</div>
 
 	<div
-		class={clsx('container relative grid grid-cols-12 pb-16', {
+		class={clsx('container relative z-10 grid grid-cols-12 pb-16', {
 			'pt-[calc(84px_+_2rem)] md:py-2': isSmall,
 			'pt-[calc(125px_+_2rem)] md:py-16': !isSmall
 		})}
@@ -82,11 +83,11 @@
 					'text-3xl': isSmall
 				})}
 			>
-				{user.name}
+				{user.display_name}
 			</h1>
 
 			<div class="mt-6">
-				<p class="font-bold">PhD Candidate in Economics</p>
+				<p class="font-bold">{user.description}</p>
 				<a href="/">European University Institute</a>
 			</div>
 
@@ -100,6 +101,7 @@
 			{/if}
 
 			<UserHeroBannerSocials
+				{user}
 				class={clsx(
 					'mt-10 grid grid-cols-4 justify-between gap-12 border-t pt-10 md:w-fit md:gap-x-6 md:gap-y-0 md:pt-6',
 					{

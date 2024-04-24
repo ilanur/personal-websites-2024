@@ -4,7 +4,7 @@
 </script>
 
 <a href={`/${user.slug}`} class="flex items-center rounded-lg p-4 no-underline shadow-lg">
-	<div class="mr-5 w-16 rounded-full bg-eui-gray p-3 text-eui-gray-90">
+	<div class="mr-5 w-16 shrink-0 rounded-full bg-eui-gray p-3 text-eui-gray-90">
 		<svg
 			data-slot="icon"
 			fill="currentColor"
@@ -20,5 +20,5 @@
 		</svg>
 	</div>
 
-	<p>{user.name}</p>
+	<p>{user.display_name}</p>
 </a>

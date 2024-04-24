@@ -1,13 +1,14 @@
 import slugify from 'slugify';
 import { json, error } from '@sveltejs/kit';
-import { withToken, readItems, deleteItems, createItem } from '@directus/sdk';
+import { withToken, readItems, deleteItems, createItem, createItems } from '@directus/sdk';
 import { getDirectusInstance } from '../../../lib/utils/directus';
 import { DIRECTUS_API_KEY } from '$env/static/private';
+import {
+	PUBLIC_PAGES_COLLECTION,
+	PUBLIC_PERSONAL_INFORMATION_COLLECTION
+} from '$env/static/public';
 
 export const GET = async () => {
-	const personalInformationCollection = 'Personal_information_TEST';
-	const pagesCollection = 'Pages_TEST';
-
 	try {
 		// 1. Collect old CMS data from Wordpress.
 		const res = await fetch('https://me.eui.eu/wp-json/eui/v1/sites');
@@ -20,7 +21,7 @@ export const GET = async () => {
 		await directus.request(
 			withToken(
 				DIRECTUS_API_KEY,
-				deleteItems(personalInformationCollection, {
+				deleteItems(PUBLIC_PERSONAL_INFORMATION_COLLECTION, {
 					filter: {
 						query: {
 							limit: -1
@@ -37,16 +38,13 @@ export const GET = async () => {
 			// 5. Check if personal information is already in Directus.
 			// This step could be removed since we are flushing the collections.
 			const usersInDirectus = await directus.request(
-				withToken(
-					DIRECTUS_API_KEY,
-					readItems(personalInformationCollection, {
-						filter: {
-							email: {
-								_eq: personalData.user.user_email
-							}
+				readItems(PUBLIC_PERSONAL_INFORMATION_COLLECTION, {
+					filter: {
+						email: {
+							_eq: personalData.user.user_email
 						}
-					})
-				)
+					}
+				})
 			);
 
 			// 6. Add personal information and pages
@@ -55,30 +53,68 @@ export const GET = async () => {
 				const createdUser = await directus.request(
 					withToken(
 						DIRECTUS_API_KEY,
-						createItem(personalInformationCollection, {
+						createItem(PUBLIC_PERSONAL_INFORMATION_COLLECTION, {
+							description: personalData.description,
 							email: personalData.user.user_email,
 							display_name: personalData.user.display_name,
-							slug: slugify(personalData.user.display_name, { lower: true })
+							slug: slugify(personalData.user.display_name, { lower: true }),
+							socials: {
+								facebook: personalData.user.facebook,
+								google_scholar: personalData.user.google_scholar,
+								research_gate: personalData.user.research_gate,
+								linkedin: personalData.user.linkedin,
+								twitter: personalData.user.twitter,
+								instagram: personalData.user.instagram,
+								pinterest: personalData.user.pinterest,
+								skype: personalData.user.skype,
+								academia: personalData.user.academia,
+								orcid_id: '',
+								youtube: '',
+								github: ''
+							}
 						})
 					)
 				);
 
 				if (createdUser) {
+					let pages = [];
+
 					for (let j = 0, jlen = personalData.pages.length; j < jlen; j++) {
 						const page = personalData.pages[j];
 
-						await directus.request(
-							withToken(
-								DIRECTUS_API_KEY,
-								createItem(pagesCollection, {
-									related_personal_info: createdUser.id,
-									title: page.title.rendered,
-									content: page.content.rendered,
-									slug: slugify(page.title.rendered, { lower: true })
-								})
-							)
-						);
+						// Create about page
+						if (page.title.rendered === 'Biography') {
+							pages.push({
+								related_personal_info: createdUser.id,
+								title: 'About',
+								content: page.content.rendered,
+								slug: slugify(page.title.rendered, { lower: true })
+							});
+						} else {
+							pages.push({
+								related_personal_info: createdUser.id,
+								title: page.title.rendered,
+								content: page.content.rendered,
+								slug: slugify(page.title.rendered, { lower: true })
+							});
+						}
+
+						// await directus.request(
+						// 	withToken(
+						// 		DIRECTUS_API_KEY,
+						// 		createItem(PUBLIC_PAGES_COLLECTION, {
+						// 			related_personal_info: createdUser.id,
+						// 			title: page.title.rendered,
+						// 			content: page.content.rendered,
+						// 			slug: slugify(page.title.rendered, { lower: true })
+						// 		})
+						// 	)
+						// );
 					}
+
+					await directus.request(
+						withToken(DIRECTUS_API_KEY, createItems(PUBLIC_PAGES_COLLECTION, pages))
+					);
 				}
 			}
 		}

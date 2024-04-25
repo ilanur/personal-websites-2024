@@ -15,7 +15,9 @@
 >
 	{#each userPages as userPage}
 		<li>
-			<AppNavLink href={`/${user.slug}/${userPage.slug}`}>{userPage.title}</AppNavLink>
+			<AppNavLink href={`/${user.slug}/${userPage.slug === 'about' ? '' : userPage.slug}`}>
+				{userPage.title}
+			</AppNavLink>
 		</li>
 	{/each}
 </ul>

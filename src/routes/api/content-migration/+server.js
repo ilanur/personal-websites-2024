@@ -81,36 +81,30 @@ export const GET = async () => {
 
 					for (let j = 0, jlen = personalData.pages.length; j < jlen; j++) {
 						const page = personalData.pages[j];
+						let title = page.title.rendered;
 
-						// Create about page
 						if (page.title.rendered === 'Biography') {
-							pages.push({
-								related_personal_info: createdUser.id,
-								title: 'About',
-								content: page.content.rendered,
-								slug: slugify(page.title.rendered, { lower: true })
-							});
-						} else {
-							pages.push({
-								related_personal_info: createdUser.id,
-								title: page.title.rendered,
-								content: page.content.rendered,
-								slug: slugify(page.title.rendered, { lower: true })
-							});
+							title = 'About';
 						}
 
-						// await directus.request(
-						// 	withToken(
-						// 		DIRECTUS_API_KEY,
-						// 		createItem(PUBLIC_PAGES_COLLECTION, {
-						// 			related_personal_info: createdUser.id,
-						// 			title: page.title.rendered,
-						// 			content: page.content.rendered,
-						// 			slug: slugify(page.title.rendered, { lower: true })
-						// 		})
-						// 	)
-						// );
+						if (page.title.rendered === 'List of publications') {
+							title = 'Publications';
+						}
+
+						pages.push({
+							related_personal_info: createdUser.id,
+							title,
+							content: page.content.rendered,
+							slug: slugify(title, { lower: true })
+						});
 					}
+
+					pages = pages.filter(
+						(page) =>
+							page.title !== 'Blog' &&
+							page.title !== 'Contact Me' &&
+							page.title !== 'Personal Website Settings'
+					);
 
 					await directus.request(
 						withToken(DIRECTUS_API_KEY, createItems(PUBLIC_PAGES_COLLECTION, pages))

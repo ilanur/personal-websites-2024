@@ -28,8 +28,6 @@ export const actions = {
 		const formData = Object.fromEntries(await request.formData());
 		const { fileToUpload } = formData;
 
-		console.log('formData', formData);
-
 		if (fileToUpload) {
 			// Check if a new image is uploaded.
 			if (!fileToUpload.name || !fileToUpload.name === 'undefined') {

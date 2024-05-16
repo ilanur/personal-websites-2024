@@ -15,8 +15,10 @@
 		option_hitsPerPage: 12,
 		index: 'people',
 		placeholderText: 'Search personal websites',
+		filterForHorizontalSearch: []
 
 	}
+	let option_hitsPerPage = item.option_hitsPerPage;
 
 	afterUpdate(() => {
 		//window.location.reload()

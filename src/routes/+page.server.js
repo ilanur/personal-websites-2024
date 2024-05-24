@@ -6,7 +6,7 @@ export async function load() {
 	const directus = getDirectusInstance(fetch);
 	const users = await directus.request(
 		readItems(PUBLIC_PERSONAL_INFORMATION_COLLECTION, {
-			sort: ['display_name']
+			sort: ['name']
 		})
 	);
 	const current_user = await getCurrentUser();

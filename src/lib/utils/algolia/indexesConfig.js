@@ -1,13 +1,14 @@
 import { peopleConfig } from '$lib/utils/algolia/indexes/people';
+import { PUBLIC_ALGOLIA_INDEX } from '$env/static/public';
 
 export function setConfigs(indexName) {
 	let config;
 
-	if (indexName === 'people' || indexName === 'peopleIntranet') {
+	if (indexName === PUBLIC_ALGOLIA_INDEX) {
 		config = peopleConfig;
 	}
 
-	//for each of the attributes in the config, if it's not present, use the default one
+	// For each of the attributes in the config, if it's not present, use the default one
 	return {
 		...getDefaultConfig(),
 		...config
@@ -15,7 +16,7 @@ export function setConfigs(indexName) {
 }
 
 function getDefaultConfig() {
-	//X SIMO, qui puoi mettere i valori di default per ogni attributo
+	// Here you can put the default values for each attribute
 	return {
 		templateFunction: baseTemplateFunction,
 		transformItems: baseTransformItems,
@@ -28,11 +29,13 @@ function getDefaultConfig() {
 }
 
 function baseTemplateFunction(hit, html) {
-	// console.log("Hit",hit)
-	return html`
-		<p>${hit.item.entryTitle}</p>
-	`;
+	return hit.item
+		? html`
+				<p>${hit.item.entryTitle}</p>
+			`
+		: '';
 }
+
 function baseTransformItems(items) {
 	return items;
 }

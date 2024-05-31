@@ -18,7 +18,7 @@
 >
 	{#if !isSmall}
 		<HeroBannerGraphic
-			class="absolute bottom-0 left-0 top-0 z-10 m-auto ml-5 hidden text-white opacity-10 xl:block"
+			class="absolute bottom-0 left-0 top-0 z-10 m-auto ml-5 hidden w-fit text-white opacity-10 xl:block"
 		/>
 	{:else}
 		<HeroBannerGraphicSmall
@@ -65,7 +65,7 @@
 			{#if !isSmall}
 				<UserHeroBannerSocials
 					{user}
-					class="z-10 hidden flex-col space-y-4 border-l border-eui-gray-70 pl-4 text-eui-gray-70 md:flex"
+					class="z-20 hidden flex-col space-y-4 border-l border-eui-gray-70 pl-4 text-eui-gray-70 md:flex"
 				/>
 			{/if}
 		</div>
@@ -83,12 +83,12 @@
 					'text-3xl': isSmall
 				})}
 			>
-				{user.display_name}
+				{user.name}
 			</h1>
 
 			<div class="mt-6">
 				<p class="font-bold">{user.description}</p>
-				<a href="/">European University Institute</a>
+				<a href="/">European University Institute (HARDCODED)</a>
 			</div>
 
 			{#if !isSmall}
@@ -96,7 +96,7 @@
 					I am a Postdoctoral Prize Research Fellow in Politics at Nuffield College, University of
 					Oxford. I earned my PhD at the European University Institute (Florence) in July 2021. I
 					study what citizens think is acceptable to do in a democracy, why that is, and how it
-					changes.
+					changes. (HARDCODED)
 				</p>
 			{/if}
 

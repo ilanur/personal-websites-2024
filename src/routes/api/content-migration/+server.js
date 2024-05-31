@@ -56,8 +56,10 @@ export const GET = async () => {
 						createItem(PUBLIC_PERSONAL_INFORMATION_COLLECTION, {
 							description: personalData.description,
 							email: personalData.user.user_email,
-							display_name: personalData.user.display_name,
+							name: personalData.user.display_name,
 							slug: slugify(personalData.user.display_name, { lower: true }),
+							role: '',
+							profile_image: null,
 							socials: {
 								facebook: personalData.user.facebook,
 								google_scholar: personalData.user.google_scholar,
@@ -75,6 +77,8 @@ export const GET = async () => {
 						})
 					)
 				);
+
+				console.log('created user', createdUser);
 
 				if (createdUser) {
 					let pages = [];

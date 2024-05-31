@@ -368,25 +368,25 @@
 	<div class="my-6 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-12">
 		<div class="flex items-center sm:col-span-12 2xl:col-span-6">
 			<label for="searchbox" class="sr-only text-sm font-medium leading-6">Search</label>
-			<div id="searchbox" class="w-full"></div>
-			<div id="voicesearch" class="h-full"></div>
+			<div id="searchbox" class="w-full" />
+			<div id="voicesearch" class="h-full" />
 		</div>
 
 		<!-- Dynamically created containers for refinement widgets will be here -->
 		{#each item.filterForHorizontalSearch as filter}
 			{#key filter.divIdValue}
-				<div id={filter.divIdValue} class="sm:col-span-6 xl:col-span-4 2xl:col-span-3"></div>
+				<div id={filter.divIdValue} class="sm:col-span-6 xl:col-span-4 2xl:col-span-3" />
 			{/key}
 		{/each}
 	</div>
 
-	<div id="current-refinements"></div>
+	<div id="current-refinements" />
 
 	<div class="my-6 flex items-center justify-between">
-		<div id="stats"></div>
-		<div id="hits-per-page"></div>
+		<div id="stats" />
+		<div id="hits-per-page" />
 	</div>
 
-	<div id="hits"></div>
-	<div id="pagination"></div>
+	<div id="hits" />
+	<div id="pagination" />
 </div>

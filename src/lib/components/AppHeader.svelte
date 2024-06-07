@@ -7,6 +7,7 @@
 	import { page } from '$app/stores';
 	import { PUBLIC_FRONTEND_URL } from '$env/static/public';
 	import MigrateButton from './MigrateButton.svelte';
+	import { PUBLIC_FRONTEND_URL , PUBLIC_DIRECTUS_API_URL} from '$env/static/public';
 
 	$: user = $page.data.user;
 	$: userPages = $page.data.userPages ?? [];
@@ -22,8 +23,12 @@
 	};
 
 	async function signInWithAzure() {
-		let mgr = new Oidc.UserManager(settings);
-		await mgr.signinRedirect();
+		// let mgr = new Oidc.UserManager(settings);
+		// await mgr.signinRedirect();
+				
+        const signing_azure_url = PUBLIC_DIRECTUS_API_URL+'/auth/login/azure?redirect='+PUBLIC_FRONTEND_URL+'/auth/login/callback';
+        window.location.href = signing_azure_url;
+
 	}
 </script>
 

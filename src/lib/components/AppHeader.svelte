@@ -5,9 +5,8 @@
 	import AppButton from '$lib/components/AppButton.svelte';
 	import PersonalWebsiteNavigation from '$lib/components/PersonalWebsiteNavigation.svelte';
 	import { page } from '$app/stores';
-	import { PUBLIC_FRONTEND_URL } from '$env/static/public';
+	import { PUBLIC_FRONTEND_URL , PUBLIC_DIRECTUS_API_URL } from '$env/static/public';
 	import MigrateButton from './MigrateButton.svelte';
-	import { PUBLIC_FRONTEND_URL , PUBLIC_DIRECTUS_API_URL} from '$env/static/public';
 
 	$: user = $page.data.user;
 	$: userPages = $page.data.userPages ?? [];

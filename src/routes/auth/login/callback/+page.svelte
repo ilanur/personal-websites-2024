@@ -1,4 +1,6 @@
 <script>
+	import { PUBLIC_DIRECTUS_API_URL } from '$env/static/public';
+	import { createDirectus, authentication, rest, login, refresh } from '@directus/sdk';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
@@ -6,46 +8,20 @@
 	export let user = null;
 
 	onMount(async () => {
-		const hashParams = getHashParams();
-		console.log('hashParams', hashParams)
+  
+        const client = createDirectus(PUBLIC_DIRECTUS_API_URL)
+        .with(authentication("cookie", { credentials: "include" }))
+        .with(rest());
+        console.log("client", client)
+        const res = await client.refresh();
+        console.log("res", res)
 
-		const response = await fetch('/auth/login/validate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id_token: hashParams.id_token })
-        });
-		const data = await response.json();
-		console.log('data', data)
-
-
-        if (data) {
-            user = data.user;
-        } else {
-            console.error('Failed to validate token');
-        }
-
-
-
-		if (user) {
-			// Token is valid
-			console.log('User authenticated:', user);
-			// Proceed with user session creation or other logic
-		} else {
-			// Token is invalid or expired
-			console.error('Invalid token');
-		}
+        user = await client.request(readMe());
+        console.log("user", user)
+                
 
 
 	});
-
-	function getHashParams() {
-    const hash = window.location.hash.substr(1);
-    return hash.split('&').reduce(function (result, item) {
-        const parts = item.split('=');
-        result[parts[0]] = decodeURIComponent(parts[1]);
-        return result;
-    }, {});
-}
 
 
 </script>

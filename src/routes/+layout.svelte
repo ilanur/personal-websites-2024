@@ -4,9 +4,9 @@
 	import '../app.css';
 </script>
 
-<div class="flex h-full flex-col">
-	<AppHeader class="sticky top-0 z-20" />
+<AppHeader class="sticky top-0 z-20" />
 
+<div class="flex h-full flex-col">
 	<main class="flex-1">
 		<slot />
 	</main>

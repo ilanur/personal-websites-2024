@@ -5,8 +5,8 @@
 	import AppButton from '$lib/components/AppButton.svelte';
 	import PersonalWebsiteNavigation from '$lib/components/PersonalWebsiteNavigation.svelte';
 	import { page } from '$app/stores';
-	import { PUBLIC_FRONTEND_URL , PUBLIC_DIRECTUS_API_URL } from '$env/static/public';
-	import MigrateButton from './MigrateButton.svelte';
+	import { PUBLIC_FRONTEND_URL, PUBLIC_DIRECTUS_API_URL } from '$env/static/public';
+	// import MigrateButton from './MigrateButton.svelte';
 
 	$: user = $page.data.user;
 	$: userPages = $page.data.userPages ?? [];
@@ -24,10 +24,13 @@
 	async function signInWithAzure() {
 		// let mgr = new Oidc.UserManager(settings);
 		// await mgr.signinRedirect();
-				
-        const signing_azure_url = PUBLIC_DIRECTUS_API_URL+'/auth/login/azure?redirect='+PUBLIC_FRONTEND_URL+'/auth/login/callback';
-        window.location.href = signing_azure_url;
 
+		const signing_azure_url =
+			PUBLIC_DIRECTUS_API_URL +
+			'/auth/login/azure?redirect=' +
+			PUBLIC_FRONTEND_URL +
+			'/auth/login/callback';
+		window.location.href = signing_azure_url;
 	}
 </script>
 
@@ -40,7 +43,7 @@
 		<div class="flex items-center">
 			<PersonalWebsiteNavigation class="hidden md:flex" {user} {userPages} />
 
-			<MigrateButton />
+			<!-- <MigrateButton /> -->
 
 			<AppButton class="ml-10 whitespace-nowrap lg:ml-12" outlined on:click={signInWithAzure}>
 				Log in

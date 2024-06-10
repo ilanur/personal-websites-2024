@@ -1,28 +1,16 @@
-// import { PUBLIC_DIRECTUS_API_URL } from '$env/static/public';
-// import { createDirectus, authentication, rest, login, refresh } from '@directus/sdk';
+import { PUBLIC_DIRECTUS_API_URL } from '$env/static/public';
+import * as directus from '@directus/sdk';
 
-// let user = null;
-// export async function load({ request, url }) {
-  
-//     try{
+export async function load(event) {
+	// Code from José. Wait untill they have replied.
+	const client = directus
+		.createDirectus(PUBLIC_DIRECTUS_API_URL)
+		.with(directus.authentication('cookie', { credentials: 'include' }))
+		.with(directus.rest());
 
-//         const client = createDirectus(PUBLIC_DIRECTUS_API_URL)
-//         .with(authentication("cookie", { credentials: "include" }))
-//         .with(rest());
-        
-//         const res = await client.refresh();
-//         console.log("res", res)
+	const result = await client.request(
+		directus.withOptions(directus.refresh(), { credentials: 'include' })
+	);
 
-//         const me = await client.request(readMe());
-//         console.log("me", me)
-//         user = me;
-
-//     }
-//     catch(error){
-//         console.log(error)
-//     }
-//     return {
-//         user
-//             };
-//  }
-
+	console.log('refresh', result);
+}

@@ -1,5 +1,5 @@
-import { getDirectusInstance, getCurrentUser } from '$lib/utils/directus';
 import { readItems } from '@directus/sdk';
+import { getDirectusInstance } from '$lib/utils/directus';
 import { PUBLIC_PERSONAL_INFORMATION_COLLECTION } from '$env/static/public';
 
 export async function load() {
@@ -9,8 +9,7 @@ export async function load() {
 			sort: ['name']
 		})
 	);
-	const current_user = await getCurrentUser();
-	// console.log('current_user!', current_user);
+
 	return {
 		users
 	};

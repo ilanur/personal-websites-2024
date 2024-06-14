@@ -12,8 +12,6 @@
 	let fileInputRef;
 	let imageChanged = false;
 
-	console.log('Session user', data.user);
-
 	function onChangeProfileImageClick() {
 		console.log('Change');
 		fileInputRef.click();

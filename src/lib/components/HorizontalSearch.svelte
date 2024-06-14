@@ -32,9 +32,6 @@
 	let option_hitsPerPage = item.option_hitsPerPage;
 
 	afterUpdate(() => {
-		//window.location.reload()
-		//console.log('algoliaConfig:', algoliaConfig);
-
 		if (browser) {
 			const searchClient = algoliasearch(PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY);
 			let indexName = item.index; // Dynamically set the index name
@@ -188,7 +185,6 @@
 						delete: 'group relative -mr-1 h-3.5 w-3.5 rounded-sm hover:bg-sky-700'
 					},
 					transformItems(items) {
-						//console.log(items);
 						items.forEach(function (item) {
 							if (item.refinements[0].label == 'true') {
 								item.refinements[0].label = '';

@@ -7,19 +7,6 @@ export function getDirectusInstance(fetch) {
 	return directus;
 }
 
-export async function getCurrentUser() {
-	const my_user = await fetch(`${PUBLIC_DIRECTUS_API_URL}/users/me`, {
-		method: 'GET',
-		credentials: 'include',
-		headers: {
-			Accept: 'application/json'
-		}
-	});
-	const my_data = await my_user.json();
-	// console.log("qui",my_data);
-	return my_data.data;
-}
-
 export async function getPageContent(userId, pageSlug) {
 	const directus = getDirectusInstance();
 

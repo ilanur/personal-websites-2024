@@ -3,7 +3,6 @@ import { parseStringPromise } from 'xml2js';
 export async function load({ parent, params }) {
 	const cadmus_author = 'CALZOLARI';
 	const url = `https://cadmus.eui.eu/search/select?q=*&fq=author:%22${cadmus_author}%22&fl=&rows=999&fl=title,author,dc.identifier.uri,dateIssued.year,citation,type,abstract,RelationIspartofseries,handle&sort=dc.date.issued_dt+desc`;
-	console.log('url: ', url);
 	const response = await fetch(url);
 	const data = await response.text();
 

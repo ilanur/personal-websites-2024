@@ -25,6 +25,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@auth/sveltekit": "^1.2.0",
 		"@directus/sdk": "^16.1.0",
 		"@sveltejs/adapter-node": "^4.0.1",
 		"algoliasearch": "^4.22.1",

@@ -10,10 +10,10 @@
 
 <div class="fixed inset-0 z-50 bg-[#F8FAFC]">
 	<div class="relative size-full">
-		<div class="ellipse ellipse-1 size-[676px] bg-[#0555A280]" />
-		<div class="ellipse ellipse-2 size-[497px] bg-[#2181C480]" />
-		<div class="ellipse ellipse-3 size-[1060px] bg-[#F0F2F5]" />
-		<div class="ellipse ellipse-4 size-[858px] bg-[#EFF6FF]" />
+		<img class="ellipse ellipse-1 size-[80vw]" src="/ellipse-1.png" alt="Background ellipse 1" />
+		<img class="ellipse ellipse-2 size-[80vw]" src="/ellipse-2.png" alt="Background ellipse 2" />
+		<img class="ellipse ellipse-3 size-[70vw]" src="/ellipse-3.png" alt="Background ellipse 3" />
+		<img class="ellipse ellipse-4 size-[70vw]" src="/ellipse-4.png" alt="Background ellipse 4" />
 
 		<div class="container relative z-10 flex h-full flex-col items-start py-10">
 			<div class="h-[52px]">
@@ -46,72 +46,94 @@
 	.ellipse {
 		position: absolute;
 		border-radius: 99999px;
-		animation-duration: 6s;
+		animation-duration: 12s;
 		animation-iteration-count: infinite;
 		animation-timing-function: ease-in-out;
 	}
 
 	/* bottom left corner */
 	.ellipse-1 {
-		bottom: 0;
-		left: 0;
 		z-index: 4;
-		filter: blur(250px);
-		transform: translate(-40%, 40%);
+		transform-origin: center;
 		animation-name: ellipse-1;
 	}
 
 	/* top right corner */
 	.ellipse-2 {
-		right: 0;
-		top: 0;
 		z-index: 3;
-		filter: blur(150px);
-		transform: translate(-20%, -20%);
+		transform-origin: center;
 		animation-name: ellipse-2;
 	}
 
 	/* bottom right corner */
 	.ellipse-3 {
-		right: 0;
-		bottom: 0;
 		z-index: 2;
-		filter: blur(250px);
-		transform: translate(0, 55%);
 		animation-name: ellipse-3;
 	}
 
 	/* top left corner */
 	.ellipse-4 {
-		left: 0;
-		top: 0;
 		z-index: 1;
-		filter: blur(250px);
-		transform: translate(15%, -45%);
 		animation-name: ellipse-4;
 	}
 
 	@keyframes ellipse-1 {
 		0% {
-			transform: translate(-40%, 40%);
+			bottom: -40%;
+			left: -30%;
 		}
 		50% {
-			transform: translate(80%, -30%);
+			bottom: 30%;
+			left: 35%;
 		}
 		100% {
-			transform: translate(-40%, 40%);
+			bottom: -40%;
+			left: -30%;
 		}
 	}
 
 	@keyframes ellipse-2 {
 		0% {
-			transform: translate(-20%, -20%);
+			right: -5%;
+			top: -25%;
 		}
 		50% {
-			transform: translate(-150%, 80%);
+			right: 35%;
+			top: 35%;
 		}
 		100% {
-			transform: translate(-20%, -20%);
+			right: -5%;
+			top: -25%;
+		}
+	}
+
+	@keyframes ellipse-3 {
+		0% {
+			right: 0;
+			bottom: -50%;
+		}
+		50% {
+			right: 50%;
+			bottom: 30%;
+		}
+		100% {
+			right: 0;
+			bottom: -50%;
+		}
+	}
+
+	@keyframes ellipse-4 {
+		0% {
+			left: 5%;
+			top: -20%;
+		}
+		50% {
+			left: 30%;
+			top: 50%;
+		}
+		100% {
+			left: 5%;
+			top: -20%;
 		}
 	}
 </style>

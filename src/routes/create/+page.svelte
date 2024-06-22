@@ -1,11 +1,14 @@
 <script>
 	import { enhance } from '$app/forms';
+	import { PUBLIC_EUI_WEB } from '$env/static/public';
 	import AppInput from '$lib/components/AppInput.svelte';
 	import AppSelect from '$lib/components/AppSelect.svelte';
 	import AppButton from '$lib/components/AppButton.svelte';
 	import IconPencil from '$lib/components/icons/IconPencil.svelte';
 	import nationalities from '$lib/constants/nationalities.json';
-	import { PUBLIC_EUI_WEB } from '$env/static/public';
+	import useAlgolia from '$lib/composables/useAlgolia.js';
+	import slugify from 'slugify';
+	import { page } from '$app/stores';
 
 	export let data;
 
@@ -13,78 +16,93 @@
 	let imageChanged = false;
 
 	function onChangeProfileImageClick() {
-		console.log('Change');
 		fileInputRef.click();
 	}
 
 	function onImageSelected() {
 		imageChanged = true;
-		console.log('file selected');
+	}
+
+	async function getUserByEmail(email) {
+		const { getAlgoliaUserByEmail } = useAlgolia();
+		const res = await getAlgoliaUserByEmail('people', email);
+		console.log('res', res);
+		return res;
 	}
 </script>
 
-{#if data.user}
-	<div class="container py-16">
-		<form
-			method="POST"
-			class="space-y-5 sm:w-fit sm:min-w-80"
-			enctype="multipart/form-data"
-			use:enhance={({ formData }) => {
-				if (!imageChanged) {
-					formData.delete('fileToUpload');
-				}
+<div class="container py-16">
+	{#await getUserByEmail(data.authUser.email)}
+		<p>Promise is pending</p>
+	{:then user}
+		{#if user}
+			<form
+				method="POST"
+				class="space-y-5 sm:w-fit sm:min-w-80"
+				enctype="multipart/form-data"
+				use:enhance={({ formData }) => {
+					if (!imageChanged) {
+						formData.delete('fileToUpload');
+					}
 
-				return async ({ update }) => await update({ reset: false });
-			}}
-		>
-			<AppInput
-				class="col-span-2 sm:col-span-1"
-				name="title"
-				label="Title of your personal website"
-				value={data.user.name}
-				readonly
-			/>
-
-			<AppInput
-				class="col-span-2 sm:col-span-1"
-				name="slug"
-				label="Your personal website URL"
-				value={`${PUBLIC_EUI_WEB}/${data.user.slug}`}
-				readonly
-			/>
-
-			<AppInput name="email" type="email" label="E-mail" value={data.user.email} readonly />
-
-			<AppSelect
-				name="nationality"
-				options={nationalities}
-				label="Nationality"
-				placeholder="-- Select a value --"
-			/>
-
-			<div class="relative size-60 overflow-hidden rounded-md">
-				<input
-					bind:this={fileInputRef}
-					id="file"
-					type="file"
-					name="fileToUpload"
-					class="hidden"
-					accept=".jpg,.jpeg,.png,.webp"
-					on:change={onImageSelected}
+					return async ({ update }) => await update({ reset: false });
+				}}
+			>
+				<AppInput
+					class="col-span-2 sm:col-span-1"
+					name="title"
+					label="Title of your personal website"
+					value={`${user.ict.Firstnames} ${user.ict.Lastnames}`}
+					readonly
 				/>
 
-				<img src={data.user.profile_image} class="size-full object-cover" alt={data.user.name} />
+				<AppInput
+					class="col-span-2 sm:col-span-1"
+					name="slug"
+					label="Your personal website URL"
+					value={`${PUBLIC_EUI_WEB}/${slugify(`${user.ict.Firstnames} ${user.ict.Lastnames}`, { lower: true })}`}
+					readonly
+				/>
 
-				<button
-					class="absolute right-2 top-2 size-10 rounded-full bg-eui-gray-90 bg-opacity-70 p-2.5 text-white duration-150 hover:p-2"
-					type="button"
-					on:click={onChangeProfileImageClick}
-				>
-					<IconPencil />
-				</button>
-			</div>
+				<AppInput name="email" type="email" label="E-mail" value={user.ict.EuiEmail} readonly />
 
-			<AppButton type="submit">Submit</AppButton>
-		</form>
-	</div>
-{/if}
+				<AppSelect
+					name="nationality"
+					options={nationalities}
+					label="Nationality"
+					placeholder="-- Select a value --"
+				/>
+
+				<div class="relative size-60 overflow-hidden rounded-md">
+					<input
+						bind:this={fileInputRef}
+						id="file"
+						type="file"
+						name="fileToUpload"
+						class="hidden"
+						accept=".jpg,.jpeg,.png,.webp"
+						on:change={onImageSelected}
+					/>
+
+					<img
+						src={user.ict.Photo}
+						class="size-full object-cover"
+						alt={`${user.ict.Firstnames} ${user.ict.Lastnames}`}
+					/>
+
+					<button
+						class="absolute right-2 top-2 size-10 rounded-full bg-eui-gray-90 bg-opacity-70 p-2.5 text-white duration-150 hover:p-2"
+						type="button"
+						on:click={onChangeProfileImageClick}
+					>
+						<IconPencil />
+					</button>
+				</div>
+
+				<AppButton type="submit">Submit</AppButton>
+			</form>
+		{:else}
+			There is no user found
+		{/if}
+	{/await}
+</div>

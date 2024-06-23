@@ -8,7 +8,6 @@
 	import nationalities from '$lib/constants/nationalities.json';
 	import useAlgolia from '$lib/composables/useAlgolia.js';
 	import slugify from 'slugify';
-	import { page } from '$app/stores';
 
 	export let data;
 

@@ -2,8 +2,9 @@
 	import clsx from 'clsx';
 	import IconLogoEui from '$lib/components/icons/IconLogoEui.svelte';
 	import PersonalWebsiteNavigation from '$lib/components/PersonalWebsiteNavigation.svelte';
+	import AppSignIn from './auth/AppSignIn.svelte';
+	import AppSignOut from './auth/AppSignOut.svelte';
 	import { page } from '$app/stores';
-	import { SignIn, SignOut } from '@auth/sveltekit/components';
 
 	$: authUser = $page.data.authUser;
 	$: user = $page.data.user;
@@ -21,13 +22,9 @@
 
 			{#if authUser}
 				{authUser.name}
-				<SignOut signOutPage="auth/logout" className="ml-3">
-					<div slot="submitButton">Sign out</div>
-				</SignOut>
+				<AppSignOut class="ml-3" />
 			{:else}
-				<SignIn signInPage="auth/login">
-					<div slot="submitButton">Sign in</div>
-				</SignIn>
+				<AppSignIn />
 			{/if}
 		</div>
 	</nav>

@@ -18,13 +18,17 @@
 		eui_menuSelect,
 		eui_toggleRefinement
 	} from '$lib/utils/algolia/widgets';
-	import { PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY, PUBLIC_ALGOLIA_INDEX } from '$env/static/public';
+	import {
+		PUBLIC_ALGOLIA_PERSONAL_INFORMATION_INDEX,
+		PUBLIC_ALGOLIA_ID,
+		PUBLIC_ALGOLIA_KEY
+	} from '$env/static/public';
 	import { afterUpdate } from 'svelte';
 
 	//export let item;
 	const item = {
 		option_hitsPerPage: 12,
-		index: PUBLIC_ALGOLIA_INDEX,
+		index: PUBLIC_ALGOLIA_PERSONAL_INFORMATION_INDEX,
 		placeholderText: 'Search personal websites',
 		filterForHorizontalSearch: []
 	};
@@ -130,10 +134,7 @@
 						]
 					},
 					templates: {
-						buttonText(
-							{ isListening, status, errorCode, transcript, isSpeechFinal, isBrowserSupported },
-							{ html }
-						) {
+						buttonText({ isListening }, { html }) {
 							return html`
 								<span
 									class="fa-regular fa-fw ${isListening ? 'fa-regular' : 'fa-solid'} fa-microphone"

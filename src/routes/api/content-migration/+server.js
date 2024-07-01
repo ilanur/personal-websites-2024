@@ -2,7 +2,7 @@ import slugify from 'slugify';
 import { json, error } from '@sveltejs/kit';
 import { withToken, readItems, deleteItems, createItem, createItems } from '@directus/sdk';
 import { getDirectusInstance } from '../../../lib/utils/directus';
-import { DIRECTUS_API_KEY } from '$env/static/private';
+import { DIRECTUS_API_KEY, PRIVATE_DIRECTUS_ROLE_REGULAR_USER_ID } from '$env/static/private';
 import {
 	PUBLIC_PAGES_COLLECTION,
 	PUBLIC_PERSONAL_INFORMATION_COLLECTION
@@ -50,6 +50,7 @@ export const GET = async () => {
 			// 6. Add personal information and pages
 			// to empty array to post to Directus.
 			if (!usersInDirectus.length) {
+				console.log('Hello');
 				const createdUser = await directus.request(
 					withToken(
 						DIRECTUS_API_KEY,
@@ -58,7 +59,7 @@ export const GET = async () => {
 							email: personalData.user.user_email,
 							name: personalData.user.display_name,
 							slug: slugify(personalData.user.display_name, { lower: true }),
-							role: '',
+							role: PRIVATE_DIRECTUS_ROLE_REGULAR_USER_ID,
 							profile_image: null,
 							socials: {
 								facebook: personalData.user.facebook,
@@ -77,8 +78,6 @@ export const GET = async () => {
 						})
 					)
 				);
-
-				console.log('created user', createdUser);
 
 				if (createdUser) {
 					let pages = [];

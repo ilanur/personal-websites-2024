@@ -1,12 +1,5 @@
-import useDirectus from '$lib/composables/useDirectus.js';
+import { redirect } from '@sveltejs/kit'
 
-export async function load({ parent }) {
-	const { getPageContent } = useDirectus();
-	const parentRes = await parent();
-	const userId = parentRes.user.id;
-	const pageRes = await getPageContent(userId, 'about');
-
-	return {
-		page: pageRes.length ? pageRes[0] : []
-	};
+export async function load({ params }) {
+	redirect(302, `/${params.userSlug}/about`)
 }

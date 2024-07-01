@@ -1,22 +1,24 @@
 <script>
-	import UserHeroBanner from '$lib/components/UserHeroBanner.svelte';
-	import PersonalWebsiteNavigation from '$lib/components/PersonalWebsiteNavigation.svelte';
-	import { writable } from 'svelte/store';
-	import { setContext } from 'svelte';
+	import UserHeroBanner from '$lib/components/UserHeroBanner.svelte'
+	import PersonalWebsiteNavigation from '$lib/components/PersonalWebsiteNavigation.svelte'
+	import { writable } from 'svelte/store'
+	import { setContext } from 'svelte'
 
-	export let data;
-	$: user = data.user;
-	$: userPages = data.userPages;
+	export let data
 
-	let smallHeroBanner = writable(false);
-	setContext('smallHeroBanner', smallHeroBanner);
+	let smallHeroBanner = writable(false)
+
+	$: personalInformation = data.personalInformation
+	$: userPages = data.userPages
+
+	setContext('smallHeroBanner', smallHeroBanner)
 </script>
 
 <div>
-	<UserHeroBanner {user} isSmall={$smallHeroBanner} />
+	<UserHeroBanner {personalInformation} isSmall={$smallHeroBanner} />
 
 	<div class="bg-eui-gray">
-		<PersonalWebsiteNavigation {user} {userPages} isMobile />
+		<PersonalWebsiteNavigation {personalInformation} {userPages} isMobile />
 	</div>
 
 	<slot />

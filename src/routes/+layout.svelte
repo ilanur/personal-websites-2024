@@ -2,6 +2,9 @@
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import AppFooter from '$lib/components/AppFooter.svelte';
 	import '../app.css';
+
+	export let data;
+	console.log('data', data);
 </script>
 
 <div class="flex min-h-screen flex-col">

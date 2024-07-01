@@ -1,10 +1,10 @@
 import { peopleConfig } from '$lib/utils/algolia/indexes/people';
-import { PUBLIC_ALGOLIA_INDEX } from '$env/static/public';
+import { PUBLIC_ALGOLIA_PERSONAL_INFORMATION_INDEX } from '$env/static/public';
 
 export function setConfigs(indexName) {
 	let config;
 
-	if (indexName === PUBLIC_ALGOLIA_INDEX) {
+	if (indexName === PUBLIC_ALGOLIA_PERSONAL_INFORMATION_INDEX) {
 		config = peopleConfig;
 	}
 

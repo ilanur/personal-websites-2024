@@ -2,7 +2,7 @@
 	import clsx from 'clsx';
 	import AppNavLink from '$lib/components/AppNavLink.svelte';
 
-	export let user;
+	export let personalInformation;
 	export let userPages = [];
 	export let isMobile = false;
 </script>
@@ -15,7 +15,9 @@
 >
 	{#each userPages as userPage}
 		<li>
-			<AppNavLink href={`/${user.slug}/${userPage.slug === 'about' ? '' : userPage.slug}`}>
+			<AppNavLink
+				href={`/${personalInformation.slug}/${userPage.slug === 'about' ? '' : userPage.slug}`}
+			>
 				{userPage.title}
 			</AppNavLink>
 		</li>

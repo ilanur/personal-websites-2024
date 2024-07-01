@@ -15,7 +15,7 @@ import {
 	PUBLIC_PAGES_COLLECTION,
 	PUBLIC_PERSONAL_INFORMATION_COLLECTION
 } from '$env/static/public'
-import { DIRECTUS_API_KEY } from '$env/static/private'
+import { PRIVATE_DIRECTUS_API_KEY } from '$env/static/private'
 
 const directusInstance = writable(null)
 
@@ -29,7 +29,7 @@ function request(callback) {
 }
 
 function tokenRequest(callback) {
-	return get(directusInstance).request(withToken(DIRECTUS_API_KEY, callback()))
+	return get(directusInstance).request(withToken(PRIVATE_DIRECTUS_API_KEY, callback()))
 }
 
 export default function useDirectus() {

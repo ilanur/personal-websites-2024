@@ -1,26 +1,26 @@
-import slugify from 'slugify';
-import { json, error } from '@sveltejs/kit';
-import { withToken, readItems, deleteItems, createItem, createItems } from '@directus/sdk';
-import { getDirectusInstance } from '../../../lib/utils/directus';
-import { DIRECTUS_API_KEY, PRIVATE_DIRECTUS_ROLE_REGULAR_USER_ID } from '$env/static/private';
+import slugify from 'slugify'
+import { json, error } from '@sveltejs/kit'
+import { withToken, readItems, deleteItems, createItem, createItems } from '@directus/sdk'
+import { getDirectusInstance } from '../../../lib/utils/directus'
 import {
-	PUBLIC_PAGES_COLLECTION,
-	PUBLIC_PERSONAL_INFORMATION_COLLECTION
-} from '$env/static/public';
+	PRIVATE_DIRECTUS_API_KEY,
+	PRIVATE_DIRECTUS_ROLE_REGULAR_USER_ID
+} from '$env/static/private'
+import { PUBLIC_PAGES_COLLECTION, PUBLIC_PERSONAL_INFORMATION_COLLECTION } from '$env/static/public'
 
 export const GET = async () => {
 	try {
 		// 1. Collect old CMS data from Wordpress.
-		const res = await fetch('https://me.eui.eu/wp-json/eui/v1/sites');
-		const data = await res.json();
+		const res = await fetch('https://me.eui.eu/wp-json/eui/v1/sites')
+		const data = await res.json()
 
 		// 2. Get Directus instance.
-		const directus = getDirectusInstance();
+		const directus = getDirectusInstance()
 
 		// 3. Flush Personal data collection.
 		await directus.request(
 			withToken(
-				DIRECTUS_API_KEY,
+				PRIVATE_DIRECTUS_API_KEY,
 				deleteItems(PUBLIC_PERSONAL_INFORMATION_COLLECTION, {
 					filter: {
 						query: {
@@ -29,11 +29,11 @@ export const GET = async () => {
 					}
 				})
 			)
-		);
+		)
 
 		// 4. Loop through data and create items in Directus.
 		for (let i = 0, ilen = data.length; i < ilen; i++) {
-			const personalData = data[i];
+			const personalData = data[i]
 
 			// 5. Check if personal information is already in Directus.
 			// This step could be removed since we are flushing the collections.
@@ -45,15 +45,15 @@ export const GET = async () => {
 						}
 					}
 				})
-			);
+			)
 
 			// 6. Add personal information and pages
 			// to empty array to post to Directus.
 			if (!usersInDirectus.length) {
-				console.log('Hello');
+				console.log('Hello')
 				const createdUser = await directus.request(
 					withToken(
-						DIRECTUS_API_KEY,
+						PRIVATE_DIRECTUS_API_KEY,
 						createItem(PUBLIC_PERSONAL_INFORMATION_COLLECTION, {
 							description: personalData.description,
 							email: personalData.user.user_email,
@@ -77,21 +77,21 @@ export const GET = async () => {
 							}
 						})
 					)
-				);
+				)
 
 				if (createdUser) {
-					let pages = [];
+					let pages = []
 
 					for (let j = 0, jlen = personalData.pages.length; j < jlen; j++) {
-						const page = personalData.pages[j];
-						let title = page.title.rendered;
+						const page = personalData.pages[j]
+						let title = page.title.rendered
 
 						if (page.title.rendered === 'Biography') {
-							title = 'About';
+							title = 'About'
 						}
 
 						if (page.title.rendered === 'List of publications') {
-							title = 'Publications';
+							title = 'Publications'
 						}
 
 						pages.push({
@@ -99,7 +99,7 @@ export const GET = async () => {
 							title,
 							content: page.content.rendered,
 							slug: slugify(title, { lower: true })
-						});
+						})
 					}
 
 					pages = pages.filter(
@@ -107,18 +107,18 @@ export const GET = async () => {
 							page.title !== 'Blog' &&
 							page.title !== 'Contact Me' &&
 							page.title !== 'Personal Website Settings'
-					);
+					)
 
 					await directus.request(
-						withToken(DIRECTUS_API_KEY, createItems(PUBLIC_PAGES_COLLECTION, pages))
-					);
+						withToken(PRIVATE_DIRECTUS_API_KEY, createItems(PUBLIC_PAGES_COLLECTION, pages))
+					)
 				}
 			}
 		}
 
-		return json('OK');
+		return json('OK')
 	} catch (err) {
-		console.log(err.errors[0]);
-		throw error(500, 'Error migrating the content!');
+		console.log(err.errors[0])
+		throw error(500, 'Error migrating the content!')
 	}
-};
+}

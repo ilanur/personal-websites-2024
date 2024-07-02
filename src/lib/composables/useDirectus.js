@@ -92,12 +92,12 @@ export default function useDirectus() {
 		return tokenRequest(() => DCreateItems(PUBLIC_PAGES_COLLECTION, pages))
 	}
 
-	function getPageContent(userId, pageSlug) {
+	function getPageContent(personalInformationId, pageSlug) {
 		return request(() =>
-			readItems(PUBLIC_PAGES_COLLECTION, {
+			readSingleton(PUBLIC_PAGES_COLLECTION, {
 				filter: {
 					personal_information_id: {
-						_eq: userId
+						_eq: personalInformationId
 					},
 					slug: {
 						_eq: pageSlug

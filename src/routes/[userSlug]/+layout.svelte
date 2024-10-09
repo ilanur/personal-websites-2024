@@ -8,17 +8,18 @@
 
 	let smallHeroBanner = writable(false)
 
-	$: personalInformation = data.personalInformation
-	$: userPages = data.userPages
+	$: personalWebsite = data.personalWebsite
 
 	setContext('smallHeroBanner', smallHeroBanner)
+
+	console.log('Data', data)
 </script>
 
 <div>
-	<UserHeroBanner {personalInformation} isSmall={$smallHeroBanner} />
+	<UserHeroBanner {personalWebsite} isSmall={$smallHeroBanner} />
 
 	<div class="bg-eui-gray">
-		<PersonalWebsiteNavigation {personalInformation} {userPages} isMobile />
+		<PersonalWebsiteNavigation {personalWebsite} isMobile />
 	</div>
 
 	<slot />

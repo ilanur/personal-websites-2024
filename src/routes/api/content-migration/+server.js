@@ -1,7 +1,7 @@
 import slugify from 'slugify'
 import { json, error } from '@sveltejs/kit'
 import { withToken, readItems, deleteItems, createItem, createItems } from '@directus/sdk'
-import { getDirectusInstance } from '../../../lib/utils/directus'
+import { getDirectusInstance } from '$/lib/utils/directus'
 import {
 	PRIVATE_DIRECTUS_API_KEY,
 	PRIVATE_DIRECTUS_ROLE_REGULAR_USER_ID

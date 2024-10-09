@@ -8,6 +8,6 @@
 </script>
 
 <div class="container py-12">
-	<h2 class="mb-5 font-normal">{data.page.title}</h2>
+	<h1 class="mb-5 font-normal">{data.page.title}</h1>
 	{@html data.page.content}
 </div>

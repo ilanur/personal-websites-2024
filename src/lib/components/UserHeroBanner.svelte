@@ -1,13 +1,11 @@
 <script>
-	import { PUBLIC_DIRECTUS_API_URL } from '$env/static/public'
+	import clsx from 'clsx'
 	import UserHeroBannerSocials from '$lib/components/UserHeroBannerSocials.svelte'
 	import HeroBannerGraphic from '$lib/components/graphics/HeroBannerGraphic.svelte'
 	import HeroBannerGraphicSmall from '$lib/components/graphics/HeroBannerGraphicSmall.svelte'
 	import IconUser from '$lib/components/icons/IconUser.svelte'
-	import clsx from 'clsx'
-	import { page } from '$app/stores'
 
-	export let personalInformation
+	export let personalWebsite
 	export let isSmall
 </script>
 
@@ -46,12 +44,8 @@
 						}
 					)}
 				>
-					{#if personalInformation.profile_image}
-						<img
-							src={`${PUBLIC_DIRECTUS_API_URL}/assets/${personalInformation.profile_image}`}
-							alt="user"
-							class="size-full object-cover"
-						/>
+					{#if personalWebsite.profileImage}
+						<img src={personalWebsite.profileImage} alt="user" class="size-full object-cover" />
 					{:else}
 						<div
 							class={clsx({
@@ -66,7 +60,7 @@
 
 				{#if !isSmall}
 					<UserHeroBannerSocials
-						{personalInformation}
+						socials={personalWebsite.socials}
 						class="z-20 hidden flex-col space-y-4 border-l border-eui-gray-70 pl-4 text-eui-gray-70 md:flex"
 					/>
 				{/if}
@@ -85,25 +79,15 @@
 						'text-3xl': isSmall
 					})}
 				>
-					{personalInformation.name}
+					{personalWebsite.title}
 				</h1>
 
-				<div class="mt-6">
-					<p class="font-bold">{personalInformation.description}</p>
-					<a href="/">European University Institute (HARDCODED)</a>
+				<div class={clsx({ 'mt-6': isSmall, 'mt-7': !isSmall })}>
+					{@html personalWebsite.description}
 				</div>
 
-				{#if !isSmall}
-					<p class="mt-7">
-						I am a Postdoctoral Prize Research Fellow in Politics at Nuffield College, University of
-						Oxford. I earned my PhD at the European University Institute (Florence) in July 2021. I
-						study what citizens think is acceptable to do in a democracy, why that is, and how it
-						changes. (HARDCODED)
-					</p>
-				{/if}
-
 				<UserHeroBannerSocials
-					{personalInformation}
+					socials={personalWebsite.socials}
 					class={clsx(
 						'mt-10 grid grid-cols-4 justify-between gap-12 border-t pt-10 md:w-fit md:gap-x-6 md:gap-y-0 md:pt-6',
 						{

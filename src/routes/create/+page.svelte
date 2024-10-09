@@ -1,23 +1,23 @@
 <script>
-	import { enhance } from '$app/forms';
-	import { PUBLIC_EUI_WEB } from '$env/static/public';
-	import AppInput from '$lib/components/AppInput.svelte';
-	import AppSelect from '$lib/components/AppSelect.svelte';
-	import AppButton from '$lib/components/AppButton.svelte';
-	import IconPencil from '$lib/components/icons/IconPencil.svelte';
-	import nationalities from '$lib/constants/nationalities_2.json';
+	import { enhance } from '$app/forms'
+	import { PUBLIC_EUI_WEB } from '$env/static/public'
+	import InputField from '$lib/components/form-elements/InputField.svelte'
+	import AppSelect from '$lib/components/AppSelect.svelte'
+	import AppButton from '$lib/components/AppButton.svelte'
+	import IconPencil from '$lib/components/icons/IconPencil.svelte'
+	import nationalities from '$lib/constants/nationalities.json'
 
-	export let data;
+	export let data
 
-	let fileInputRef;
-	let imageChanged = false;
-	let formLoading = false;
+	let fileInputRef
+	let imageChanged = false
+	let formLoading = false
 
 	function onChangeProfileImageClick() {
-		fileInputRef.click();
+		fileInputRef.click()
 	}
 
-	$: user = data.algoliaUser;
+	$: user = data.algoliaUser
 </script>
 
 <div class="container py-16">
@@ -26,19 +26,19 @@
 		class="space-y-5 sm:w-fit sm:min-w-80"
 		enctype="multipart/form-data"
 		use:enhance={({ formData }) => {
-			formLoading = true;
+			formLoading = true
 
 			if (!imageChanged) {
-				formData.delete('fileToUpload');
+				formData.delete('fileToUpload')
 			}
 
 			return async ({ update }) => {
-				await update({ reset: false });
-				formLoading = false;
-			};
+				await update({ reset: false })
+				formLoading = false
+			}
 		}}
 	>
-		<AppInput
+		<InputField
 			class="col-span-2 sm:col-span-1"
 			name="title"
 			label="Title of your personal website"
@@ -46,7 +46,7 @@
 			readonly
 		/>
 
-		<AppInput
+		<InputField
 			class="col-span-2 sm:col-span-1"
 			name="slug"
 			label="Your personal website URL"
@@ -54,17 +54,23 @@
 			readonly
 		/>
 
-		<AppInput name="email" type="email" label="E-mail" value={user.ict.EuiEmail} readonly />
+		<InputField name="email" type="email" label="E-mail" value={user.ict.EuiEmail} readonly />
 
 		<div class="grid grid-cols-2 gap-5">
-			<AppInput
+			<InputField
 				name="first_name"
 				type="text"
 				label="Firstname"
 				value={user.ict.Firstnames}
 				readonly
 			/>
-			<AppInput name="last_name" type="text" label="Lastname" value={user.ict.Lastnames} readonly />
+			<InputField
+				name="last_name"
+				type="text"
+				label="Lastname"
+				value={user.ict.Lastnames}
+				readonly
+			/>
 		</div>
 
 		<AppSelect

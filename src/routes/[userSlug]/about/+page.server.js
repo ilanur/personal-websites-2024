@@ -1,11 +1,13 @@
-import useDirectus from '$lib/composables/useDirectus.js'
+import { redirect } from '@sveltejs/kit'
 
 export async function load({ parent }) {
-	const { getPageContent } = useDirectus()
-	const parentRes = await parent()
-	const pageRes = await getPageContent(parentRes.personalInformation.id, 'about')
+	const parentData = await parent()
+	const pages = parentData.personalWebsite.pages
+	const page = pages.find((page) => page.pageSlug === 'about')
+
+	if (!page) redirect(301, '/')
 
 	return {
-		page: pageRes.length ? pageRes[0] : []
+		page
 	}
 }

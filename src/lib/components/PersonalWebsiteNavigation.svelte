@@ -1,10 +1,9 @@
 <script>
-	import clsx from 'clsx';
-	import AppNavLink from '$lib/components/AppNavLink.svelte';
+	import clsx from 'clsx'
+	import AppNavLink from '$lib/components/AppNavLink.svelte'
 
-	export let personalInformation;
-	export let userPages = [];
-	export let isMobile = false;
+	export let personalWebsite
+	export let isMobile = false
 </script>
 
 <ul
@@ -13,12 +12,10 @@
 		'eui-gray container overflow-y-auto py-2 lg:gap-x-10': isMobile
 	})}
 >
-	{#each userPages as userPage}
+	{#each personalWebsite.pages as page}
 		<li>
-			<AppNavLink
-				href={`/${personalInformation.slug}/${userPage.slug === 'about' ? '' : userPage.slug}`}
-			>
-				{userPage.title}
+			<AppNavLink href={`/${personalWebsite.sys.slug}/${page.pageSlug}`}>
+				{page.title}
 			</AppNavLink>
 		</li>
 	{/each}

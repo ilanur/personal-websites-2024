@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit'
-import { getPersonalWebsiteByUserSlug } from '$lib/utils/contensis.js'
+import getPersonalWebsiteByUserSlug from '$lib/utils/contensis/getPersonalWebsiteByUserSlug'
 
 export async function load({ params }) {
 	if (!params.userSlug) throw redirect(302, '/')

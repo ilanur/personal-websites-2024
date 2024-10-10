@@ -3,7 +3,7 @@ import { error } from '@sveltejs/kit'
 import { PUBLIC_CONTENSIS_DELIVERY_URL } from '$env/static/public'
 import { PRIVATE_CONTENSIS_ACCESS_TOKEN } from '$env/static/private'
 
-export async function getPersonalWebsiteByUserSlug(slug, versionStatus = 'published') {
+async function getPersonalWebsiteByUserSlug(slug, versionStatus = 'published') {
 	try {
 		const url = `${PUBLIC_CONTENSIS_DELIVERY_URL}/entries/${slug}`
 		const data = await ofetch(url, {
@@ -20,3 +20,5 @@ export async function getPersonalWebsiteByUserSlug(slug, versionStatus = 'publis
 		error(e.status, e.data)
 	}
 }
+
+export default getPersonalWebsiteByUserSlug

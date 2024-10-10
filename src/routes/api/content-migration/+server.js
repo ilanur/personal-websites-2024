@@ -1,124 +1,138 @@
 import slugify from 'slugify'
+import { ofetch } from 'ofetch'
 import { json, error } from '@sveltejs/kit'
-import { withToken, readItems, deleteItems, createItem, createItems } from '@directus/sdk'
-import { getDirectusInstance } from '$/lib/utils/directus'
-import {
-	PRIVATE_DIRECTUS_API_KEY,
-	PRIVATE_DIRECTUS_ROLE_REGULAR_USER_ID
-} from '$env/static/private'
-import { PUBLIC_PAGES_COLLECTION, PUBLIC_PERSONAL_INFORMATION_COLLECTION } from '$env/static/public'
+import createContensisEntry from '../../../lib/utils/contensis/createContensisEntry'
+import listEntriesByContentType from '../../../lib/utils/contensis/listEntriesByContentType'
+import deleteContensisEntry from '../../../lib/utils/contensis/deleteContensisEntry'
+import authenticateContensis from '$lib/utils/contensis/authenticateContensis'
 
-export const GET = async () => {
+async function delteContensisEntriesByContentType(contentType) {
 	try {
-		// 1. Collect old CMS data from Wordpress.
-		const res = await fetch('https://me.eui.eu/wp-json/eui/v1/sites')
-		const data = await res.json()
+		const authData = await authenticateContensis()
+		const entriesToBeDeleted = await listEntriesByContentType(contentType)
+		let progress = 0
 
-		// 2. Get Directus instance.
-		const directus = getDirectusInstance()
-
-		// 3. Flush Personal data collection.
-		await directus.request(
-			withToken(
-				PRIVATE_DIRECTUS_API_KEY,
-				deleteItems(PUBLIC_PERSONAL_INFORMATION_COLLECTION, {
-					filter: {
-						query: {
-							limit: -1
-						}
-					}
-				})
-			)
-		)
-
-		// 4. Loop through data and create items in Directus.
-		for (let i = 0, ilen = data.length; i < ilen; i++) {
-			const personalData = data[i]
-
-			// 5. Check if personal information is already in Directus.
-			// This step could be removed since we are flushing the collections.
-			const usersInDirectus = await directus.request(
-				readItems(PUBLIC_PERSONAL_INFORMATION_COLLECTION, {
-					filter: {
-						email: {
-							_eq: personalData.user.user_email
-						}
-					}
-				})
-			)
-
-			// 6. Add personal information and pages
-			// to empty array to post to Directus.
-			if (!usersInDirectus.length) {
-				console.log('Hello')
-				const createdUser = await directus.request(
-					withToken(
-						PRIVATE_DIRECTUS_API_KEY,
-						createItem(PUBLIC_PERSONAL_INFORMATION_COLLECTION, {
-							description: personalData.description,
-							email: personalData.user.user_email,
-							name: personalData.user.display_name,
-							slug: slugify(personalData.user.display_name, { lower: true }),
-							role: PRIVATE_DIRECTUS_ROLE_REGULAR_USER_ID,
-							profile_image: null,
-							socials: {
-								facebook: personalData.user.facebook,
-								google_scholar: personalData.user.google_scholar,
-								research_gate: personalData.user.research_gate,
-								linkedin: personalData.user.linkedin,
-								twitter: personalData.user.twitter,
-								instagram: personalData.user.instagram,
-								pinterest: personalData.user.pinterest,
-								skype: personalData.user.skype,
-								academia: personalData.user.academia,
-								orcid_id: '',
-								youtube: '',
-								github: ''
-							}
-						})
-					)
-				)
-
-				if (createdUser) {
-					let pages = []
-
-					for (let j = 0, jlen = personalData.pages.length; j < jlen; j++) {
-						const page = personalData.pages[j]
-						let title = page.title.rendered
-
-						if (page.title.rendered === 'Biography') {
-							title = 'About'
-						}
-
-						if (page.title.rendered === 'List of publications') {
-							title = 'Publications'
-						}
-
-						pages.push({
-							related_personal_info: createdUser.id,
-							title,
-							content: page.content.rendered,
-							slug: slugify(title, { lower: true })
-						})
-					}
-
-					pages = pages.filter(
-						(page) =>
-							page.title !== 'Blog' &&
-							page.title !== 'Contact Me' &&
-							page.title !== 'Personal Website Settings'
-					)
-
-					await directus.request(
-						withToken(PRIVATE_DIRECTUS_API_KEY, createItems(PUBLIC_PAGES_COLLECTION, pages))
-					)
-				}
-			}
+		for (let i = 0, ilen = entriesToBeDeleted.length; i < ilen; i++) {
+			const entry = entriesToBeDeleted[i]
+			await deleteContensisEntry(entry.sys.id, true, authData)
+			progress += 1
+			console.log(`${progress}/${ilen} "${contentType}" entries deleted.`)
 		}
 
-		return json('OK')
-	} catch (err) {
-		console.log(err.errors[0])
-		throw error(500, 'Error migrating the content!')
+		return json({ success: true }, { status: 200 })
+	} catch (e) {
+		error(e.status, e.data)
+	}
+}
+
+export const DELETE = async ({ url }) => {
+	try {
+		const collectionTypeToDelete = url.searchParams.get('deleteAllEntriesOfType')
+
+		// Delete entries with specific content type.
+		if (collectionTypeToDelete) {
+			await delteContensisEntriesByContentType(collectionTypeToDelete)
+		}
+
+		return json({ success: true }, { status: 200 })
+	} catch (e) {
+		error(e.status, e.data)
+	}
+}
+
+export const POST = async () => {
+	try {
+		// Get old CMS data from Wordpress.
+		const oldCMSData = await ofetch('https://me.eui.eu/wp-json/eui/v1/sites')
+		let progress = 0
+
+		// Delete entries so we have a clean slate.
+		await delteContensisEntriesByContentType('personalWebsite')
+		await delteContensisEntriesByContentType('pages')
+
+		// Get auth data so it doesn't have to be fetched every loop.
+		const authData = await authenticateContensis()
+
+		// Loop over data and create items in Contensis.
+		for (let i = 0, ilen = oldCMSData.length; i < ilen; i++) {
+			const personalData = oldCMSData[i]
+			const createdPages = []
+
+			// Loop over pages
+			for (let j = 0, jlen = personalData.pages.length; j < jlen; j++) {
+				const page = personalData.pages[j]
+				let title = page.title.rendered
+
+				if (title === 'Blog' || title === 'Contact Me' || title === 'Personal Website Settings') {
+					continue
+				}
+
+				if (page.title.rendered === 'Biography') {
+					title = 'About'
+				}
+
+				if (page.title.rendered === 'List of publications') {
+					title = 'Publications'
+				}
+
+				const createdPage = await createContensisEntry(
+					{
+						title,
+						content: page.content.rendered,
+						pageTemplate: slugify(title, { lower: true }),
+						sys: {
+							contentTypeId: 'pages',
+							language: 'en',
+							dataFormat: 'entry'
+						}
+					},
+					authData
+				)
+
+				createdPages.push(createdPage)
+			}
+
+			// Create personalWebsite in Contensis.
+			await createContensisEntry(
+				{
+					title: personalData.title.rendered,
+					description: personalData.description,
+					socials: [
+						{ type: 'facebook', value: personalData.facebook },
+						{ type: 'googleScholar', value: personalData.google_scholar },
+						{ type: 'researchGate', value: personalData.research_gate },
+						{ type: 'linkedIn', value: personalData.linked_in },
+						{ type: 'x', value: personalData.twitter },
+						{ type: 'instagram', value: personalData.instagram },
+						{ type: 'pinterest', value: personalData.pinterest },
+						{ type: 'skype', value: personalData.skype },
+						{ type: 'academia', value: personalData.academia },
+						{ type: 'orcidID', value: '' },
+						{ type: 'youtube', value: '' },
+						{ type: 'github', value: '' }
+					],
+					pages: createdPages.map((page) => ({
+						sys: {
+							id: page.sys.id,
+							contentTypeId: 'pages'
+						}
+					})),
+					sys: {
+						contentTypeId: 'personalWebsite',
+						language: 'en',
+						dataFormat: 'entry'
+					}
+				},
+				authData
+			)
+
+			progress += 1
+			console.log(`${progress}/${ilen} "personalWebsite" entries created.`)
+		}
+
+		return json({ success: true, data: oldCMSData }, { status: 200 })
+	} catch (e) {
+		console.error('Failed to migrate content to Contensis:', e)
+		error(e.status, e.data)
 	}
 }

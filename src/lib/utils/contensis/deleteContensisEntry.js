@@ -3,12 +3,17 @@ import { error } from '@sveltejs/kit'
 import { PUBLIC_CONTENSIS_MANAGEMENT_URL } from '$env/static/public'
 import authenticateContensis from './authenticateContensis'
 
-async function deleteContensisEntry(entryId, permanent = false, auth = null) {
+async function deleteContensisEntry(
+	entryId,
+	permanent = false,
+	auth = null,
+	contensisProject = 'personalWebsites'
+) {
 	try {
 		const authData = auth ?? (await authenticateContensis())
-		const url = `${PUBLIC_CONTENSIS_MANAGEMENT_URL}/entries/${entryId}`
+		const url = `${PUBLIC_CONTENSIS_MANAGEMENT_URL}/${contensisProject}/entries/${entryId}`
 
-		await ofetch(url, {
+		const response = await ofetch(url, {
 			method: 'DELETE',
 			headers: {
 				Authorization: `Bearer ${authData.access_token}`
@@ -19,7 +24,7 @@ async function deleteContensisEntry(entryId, permanent = false, auth = null) {
 			}
 		})
 
-		return true
+		return response
 	} catch (e) {
 		console.error('Error while deleting Contensis entry:', e.data)
 		error(e.status, e.data)

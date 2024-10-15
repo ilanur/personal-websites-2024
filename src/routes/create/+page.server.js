@@ -1,55 +1,51 @@
-import { error, fail, json, redirect } from '@sveltejs/kit'
-import { PRIVATE_DIRECTUS_ROLE_REGULAR_USER_ID } from '$env/static/private'
-import useDirectus from '$lib/composables/useDirectus.js'
-import useAlgolia from '$lib/composables/useAlgolia.js'
-import getPersonalWebsiteByUserSlug from '$lib/utils/contensis/getPersonalWebsiteByUserSlug.js'
+import { error, json, redirect } from '@sveltejs/kit'
+import getComponentById from '$lib/utils/contensis/getComponentById.js'
+import getPeopleEntryByEmail from '$lib/utils/contensis/getPeopleEntryByEmail.js'
 
 export async function load(event) {
-	const { getAlgoliaUserByEmail } = useAlgolia()
-
 	const session = await event.locals.auth()
 
 	if (!session) redirect(302, '/')
 
-	// const algoliaUser = await getAlgoliaUserByEmail(session.user.email);
-	const algoliaUser = await getAlgoliaUserByEmail('emanuele.strano@eui.eu')
+	const contensisUser = await getPeopleEntryByEmail('emanuele.strano@eui.eu')
+	// const contensisUser = await getPeopleEntryByEmail('session.user.email') --> Enable this line to use real user
 
-	if (!algoliaUser) redirect(302, '/')
+	if (!contensisUser) redirect(302, '/')
 
-	return { algoliaUser }
+	const nationalities = await getComponentById('nationalities')
+
+	return { contensisUser, nationalities }
 }
 
 export const actions = {
 	default: async ({ request, locals, url }) => {
 		try {
-			console.log('url', url)
-			const session = await locals.auth()
-			const { getAlgoliaUserByEmail } = useAlgolia()
-			const { createUser, readUsersByEmail, createPersonalInformationItem, createPages } =
-				useDirectus()
+			// const session = await locals.auth()
 
 			const formData = Object.fromEntries(await request.formData())
-			// const algoliaUser = await getAlgoliaUserByEmail(session.user.email);
-			const algoliaUser = await getAlgoliaUserByEmail('emanuele.strano@eui.eu')
+			console.log('Form data', formData)
 
-			console.log('formData', formData)
+			// Get user from Contensis
+			const contensisUser = await getPeopleEntryByEmail('emanuele.strano@eui.eu')
+
+			console.log('contensisUser', contensisUser)
 
 			// TEMP
-			formData.email = 'PieterJan.DeRidder@ext.eui.eu'
+			// formData.email = 'PieterJan.DeRidder@ext.eui.eu'
 
 			// Create slug.
-			const slug = formData.slug.split('/')[formData.slug.split('/').length - 1]
+			// const slug = formData.slug.split('/')[formData.slug.split('/').length - 1]
 
 			// Check if personal website already exists in Contensis.
-			let personalWebsite
-			try {
-				personalWebsite = await getPersonalWebsiteByUserSlug(slug)
-			} catch (e) {
-				console.log('User not found in Contensis')
-				return fail(404, { error: 'User not found in Contensis' })
-			}
+			// let personalWebsite
+			// try {
+			// 	personalWebsite = await getPersonalWebsiteByUserSlug(slug)
+			// } catch (e) {
+			// 	console.log('User not found in Contensis')
+			// 	return fail(404, { error: 'User not found in Contensis' })
+			// }
 
-			console.log('User in contensis')
+			// console.log('User in contensis')
 
 			// const userInDirectus = await readUsersByEmail(formData.email)
 

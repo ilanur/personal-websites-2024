@@ -3,7 +3,7 @@ import { error } from '@sveltejs/kit'
 import { PUBLIC_CONTENSIS_MANAGEMENT_URL } from '$env/static/public'
 import authenticateContensis from './authenticateContensis'
 
-async function createContensisEntry(payload, auth = null, contensisProject = 'personalWebsites') {
+async function createEntry(payload, auth = null, contensisProject = 'personalWebsites') {
 	try {
 		const authData = auth ?? (await authenticateContensis())
 		const url = `${PUBLIC_CONTENSIS_MANAGEMENT_URL}/${contensisProject}/entries`
@@ -22,4 +22,4 @@ async function createContensisEntry(payload, auth = null, contensisProject = 'pe
 	}
 }
 
-export default createContensisEntry
+export default createEntry

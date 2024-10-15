@@ -1,12 +1,13 @@
 import slugify from 'slugify'
 import { ofetch } from 'ofetch'
 import { json, error } from '@sveltejs/kit'
-import createContensisEntry from '../../../lib/utils/contensis/createContensisEntry'
-import listEntriesByContentType from '../../../lib/utils/contensis/listEntriesByContentType'
-import deleteContensisEntry from '../../../lib/utils/contensis/deleteContensisEntry'
+import createEntry from '$lib/utils/contensis/createEntry'
+import listEntriesByContentType from '$lib/utils/contensis/listEntriesByContentType'
+import deleteEntry from '$lib/utils/contensis/deleteEntry'
 import authenticateContensis from '$lib/utils/contensis/authenticateContensis'
+import getPeopleEntryByEmail from '$lib/utils/contensis/getPeopleEntryByEmail.js'
 
-async function delteContensisEntriesByContentType(contentType) {
+async function deleteAllEntriesByContentType(contentType) {
 	try {
 		const authData = await authenticateContensis()
 		const entriesToBeDeleted = await listEntriesByContentType(contentType)
@@ -14,7 +15,7 @@ async function delteContensisEntriesByContentType(contentType) {
 
 		for (let i = 0, ilen = entriesToBeDeleted.length; i < ilen; i++) {
 			const entry = entriesToBeDeleted[i]
-			await deleteContensisEntry(entry.sys.id, true, authData)
+			await deleteEntry(entry.sys.id, true, authData)
 			progress += 1
 			console.log(`${progress}/${ilen} "${contentType}" entries deleted.`)
 		}
@@ -31,7 +32,7 @@ export const DELETE = async ({ url }) => {
 
 		// Delete entries with specific content type.
 		if (collectionTypeToDelete) {
-			await delteContensisEntriesByContentType(collectionTypeToDelete)
+			await deleteAllEntriesByContentType(collectionTypeToDelete)
 		}
 
 		return json({ success: true }, { status: 200 })
@@ -40,18 +41,25 @@ export const DELETE = async ({ url }) => {
 	}
 }
 
-export const POST = async () => {
+export const POST = async ({ url }) => {
 	try {
 		// Get old CMS data from Wordpress.
+		const clearEntriesParam = url.searchParams.get('clearEntries')
+		const clearEntries = !clearEntriesParam ? true : clearEntriesParam === 'true'
 		const oldCMSData = await ofetch('https://me.eui.eu/wp-json/eui/v1/sites')
 		let progress = 0
 
 		// Delete entries so we have a clean slate.
-		await delteContensisEntriesByContentType('personalWebsite')
-		await delteContensisEntriesByContentType('pages')
+		if (clearEntries) {
+			await deleteAllEntriesByContentType('personalWebsite')
+			await deleteAllEntriesByContentType('pages')
+		}
 
 		// Get auth data so it doesn't have to be fetched every loop.
 		const authData = await authenticateContensis()
+
+		// Define pages to exclude from migration.
+		const pagesToExclude = ['Blog', 'Contact Me', 'Personal Website Settings']
 
 		// Loop over data and create items in Contensis.
 		for (let i = 0, ilen = oldCMSData.length; i < ilen; i++) {
@@ -63,9 +71,7 @@ export const POST = async () => {
 				const page = personalData.pages[j]
 				let title = page.title.rendered
 
-				if (title === 'Blog' || title === 'Contact Me' || title === 'Personal Website Settings') {
-					continue
-				}
+				if (pagesToExclude.includes(page.title.rendered)) continue
 
 				if (page.title.rendered === 'Biography') {
 					title = 'About'
@@ -75,7 +81,7 @@ export const POST = async () => {
 					title = 'Publications'
 				}
 
-				const createdPage = await createContensisEntry(
+				const createdPage = await createEntry(
 					{
 						title,
 						content: page.content.rendered,
@@ -92,11 +98,21 @@ export const POST = async () => {
 				createdPages.push(createdPage)
 			}
 
-			// Create personalWebsite in Contensis.
-			await createContensisEntry(
+			// Create personalWebsite in Contensis and link created pages.
+			const personalDataEmail = personalData.user.user_email?.toLowerCase()
+			let contensisPeopleEntry
+
+			if (personalDataEmail) {
+				contensisPeopleEntry = await getPeopleEntryByEmail(personalDataEmail)
+			}
+
+			await createEntry(
 				{
 					title: personalData.title.rendered,
 					description: personalData.description,
+					email: personalDataEmail ?? '',
+					websiteSlug: personalData.user.personal_site?.split('/').pop() || '',
+					peopleEntryId: contensisPeopleEntry?.sys?.id ?? '',
 					socials: [
 						{ type: 'facebook', value: personalData.facebook },
 						{ type: 'googleScholar', value: personalData.google_scholar },

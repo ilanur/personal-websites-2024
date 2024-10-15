@@ -3,7 +3,7 @@ import { error } from '@sveltejs/kit'
 import { PUBLIC_CONTENSIS_MANAGEMENT_URL } from '$env/static/public'
 import authenticateContensis from './authenticateContensis'
 
-async function deleteContensisEntry(
+async function deleteEntry(
 	entryId,
 	permanent = false,
 	auth = null,
@@ -31,4 +31,4 @@ async function deleteContensisEntry(
 	}
 }
 
-export default deleteContensisEntry
+export default deleteEntry

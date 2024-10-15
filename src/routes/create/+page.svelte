@@ -37,13 +37,17 @@
 			readonly
 		/>
 
-		<InputField
-			class="col-span-2 sm:col-span-1"
-			name="slug"
-			label="Your personal website URL"
-			value={`${PUBLIC_EUI_WEB}/${user.sys.slug}`}
-			readonly
-		/>
+		<div class="flex items-end gap-x-2">
+			<InputField
+				class="col-span-2 sm:col-span-1"
+				name="websiteURL"
+				label="Your personal website URL"
+				value={`${PUBLIC_EUI_WEB}/`}
+				readonly
+			/>
+
+			<InputField class="col-span-2 sm:col-span-1" name="slug" value={user.sys.slug} />
+		</div>
 
 		<InputField name="email" type="email" label="E-mail" value={user.euiEmail} readonly />
 

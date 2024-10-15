@@ -1,28 +1,27 @@
-import { ofetch } from 'ofetch'
 import { error } from '@sveltejs/kit'
-import { PUBLIC_CONTENSIS_DELIVERY_URL } from '$env/static/public'
-import { PRIVATE_CONTENSIS_ACCESS_TOKEN } from '$env/static/private'
+import deliverySearch from './deliverySearch'
 
-async function getPersonalWebsiteByUserSlug(
-	slug,
-	versionStatus = 'published',
-	contensisProject = 'personalWebsites'
-) {
+async function getPersonalWebsiteBySlug(slug) {
 	try {
-		const url = `${PUBLIC_CONTENSIS_DELIVERY_URL}/${contensisProject}/entries/${slug}`
-		const data = await ofetch(url, {
-			query: {
-				accessToken: PRIVATE_CONTENSIS_ACCESS_TOKEN,
-				versionStatus,
-				linkDepth: 1
-			}
-		})
+		const personalWebsite = await deliverySearch(
+			{
+				where: [
+					{ field: 'sys.contentTypeId', equalTo: 'personalWebsite' },
+					// { field: 'sys.versionStatus', equalTo: 'draft' },
+					{ field: 'websiteSlug', equalTo: slug }
+				]
+			},
+			1
+		)
 
-		return data
+		if (!personalWebsite || !personalWebsite.length) return null
+
+		return personalWebsite[0]
 	} catch (e) {
-		console.error('Error while getting Contensis data:', e.data)
+		console.error('Error while getting personal website:', e.data)
+		if (e.status === 404) return null
 		error(e.status, e.data)
 	}
 }
 
-export default getPersonalWebsiteByUserSlug
+export default getPersonalWebsiteBySlug

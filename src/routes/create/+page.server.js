@@ -1,17 +1,23 @@
 import { error, json, redirect } from '@sveltejs/kit'
 import getComponentById from '$lib/utils/contensis/getComponentById.js'
 import getPeopleEntryByEmail from '$lib/utils/contensis/getPeopleEntryByEmail.js'
+import getPersonalWebsiteByUserSlug from '$lib/utils/contensis/getPersonalWebsiteByUserSlug.js'
 
 export async function load(event) {
+	// Check if has session
 	const session = await event.locals.auth()
-
 	if (!session) redirect(302, '/')
 
-	const contensisUser = await getPeopleEntryByEmail('emanuele.strano@eui.eu')
+	// Check if user exists in the people collection in Contensis
+	const contensisUser = await getPeopleEntryByEmail('diego.garzia@eui.eu')
 	// const contensisUser = await getPeopleEntryByEmail('session.user.email') --> Enable this line to use real user
-
 	if (!contensisUser) redirect(302, '/')
 
+	// Check if the user already has a personal website
+	const personalWebsite = await getPersonalWebsiteByUserSlug(contensisUser.sys.slug)
+	if (personalWebsite) redirect(302, `/${personalWebsite.websiteSlug}`)
+
+	// Get nationalities for creation page
 	const nationalities = await getComponentById('nationalities')
 
 	return { contensisUser, nationalities }
@@ -27,6 +33,9 @@ export const actions = {
 
 			// Get user from Contensis
 			const contensisUser = await getPeopleEntryByEmail('emanuele.strano@eui.eu')
+
+			if (contensisUser) {
+			}
 
 			console.log('contensisUser', contensisUser)
 

@@ -9,8 +9,6 @@
 
 	let formLoading = false
 
-	console.log('data', data)
-
 	$: user = data.contensisUser
 	$: nationalities = data.nationalities.fields[0].validations.allowedValues.values
 </script>
@@ -37,16 +35,15 @@
 			readonly
 		/>
 
-		<div class="flex items-end gap-x-2">
+		<div class="grid grid-cols-1 items-end gap-2 md:grid-cols-2">
 			<InputField
-				class="col-span-2 sm:col-span-1"
 				name="websiteURL"
 				label="Your personal website URL"
 				value={`${PUBLIC_EUI_WEB}/`}
 				readonly
 			/>
 
-			<InputField class="col-span-2 sm:col-span-1" name="slug" value={user.sys.slug} />
+			<InputField name="slug" value={user.sys.slug} />
 		</div>
 
 		<InputField name="email" type="email" label="E-mail" value={user.euiEmail} readonly />

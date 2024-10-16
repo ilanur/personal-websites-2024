@@ -14,8 +14,6 @@ async function getComponentById(componentId, auth = null, contensisProject = 'pe
 			}
 		})
 
-		console.log('component', component)
-
 		return component
 	} catch (e) {
 		console.error('Error while getting Contensis component:', e.data)

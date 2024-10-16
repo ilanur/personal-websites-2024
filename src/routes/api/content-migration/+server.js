@@ -6,6 +6,7 @@ import listEntriesByContentType from '$lib/utils/contensis/listEntriesByContentT
 import deleteEntry from '$lib/utils/contensis/deleteEntry'
 import authenticateContensis from '$lib/utils/contensis/authenticateContensis'
 import getPeopleEntryByEmail from '$lib/utils/contensis/getPeopleEntryByEmail.js'
+import DOMPurify from 'isomorphic-dompurify'
 
 async function deleteAllEntriesByContentType(contentType) {
 	try {
@@ -84,7 +85,7 @@ export const POST = async ({ url }) => {
 				const createdPage = await createEntry(
 					{
 						title,
-						content: page.content.rendered,
+						content: DOMPurify.sanitize(page.content.rendered),
 						pageTemplate: slugify(title, { lower: true }),
 						sys: {
 							contentTypeId: 'pages',

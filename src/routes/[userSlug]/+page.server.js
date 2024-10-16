@@ -2,6 +2,9 @@ import { redirect } from '@sveltejs/kit'
 
 export async function load({ params, parent }) {
 	const parentData = await parent()
+
+	if (!parentData.personalWebsite) redirect(302, '/')
+
 	const pages = parentData.personalWebsite.pages
 	const aboutPage = pages.find((page) => page.pageTemplate === 'about')
 

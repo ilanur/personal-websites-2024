@@ -1,9 +1,9 @@
 <script>
+	import { page } from '$app/stores'
 	import clsx from 'clsx'
 	import IconLogoEui from '$lib/components/icons/IconLogoEui.svelte'
 	import AppSignIn from './auth/AppSignIn.svelte'
 	import AppSignOut from './auth/AppSignOut.svelte'
-	import { page } from '$app/stores'
 
 	$: authUser = $page.data.authUser
 </script>
@@ -13,8 +13,6 @@
 		<a href="/" class="h-10 shrink-0" aria-label="EUI logo">
 			<IconLogoEui />
 		</a>
-
-		<!-- <MigrateButton /> -->
 
 		<div class="flex items-center">
 			{#if authUser}

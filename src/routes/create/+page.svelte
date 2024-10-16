@@ -1,5 +1,6 @@
 <script>
 	import { enhance } from '$app/forms'
+	import { goto } from '$app/navigation'
 	import { PUBLIC_EUI_WEB } from '$env/static/public'
 	import InputField from '$lib/components/form-elements/InputField.svelte'
 	import SelectField from '$lib/components/form-elements/SelectField.svelte'
@@ -21,9 +22,10 @@
 		use:enhance={() => {
 			formLoading = true
 
-			return async ({ update }) => {
+			return async ({ update, result }) => {
 				await update({ reset: false })
 				formLoading = false
+				goto(`/${result.data.createdPersonalWebsite.websiteSlug}`)
 			}
 		}}
 	>

@@ -4,11 +4,11 @@
 
 @layer base {
 	html {
-		@apply font-nunito;
+		@apply overflow-y-scroll font-nunito;
 	}
 
 	body {
-		@apply text-eui-gray-90 h-full text-lg;
+		@apply h-full text-lg text-eui-gray-90;
 	}
 
 	a {

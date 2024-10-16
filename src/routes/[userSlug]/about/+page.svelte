@@ -10,7 +10,7 @@
 
 <div class="container grid grid-cols-3 gap-x-16 py-12 md:py-16 xl:gap-x-36">
 	<div class="col-span-3 lg:col-span-2">
-		<h1 class="mb-5 font-normal">{data.page.title}</h1>
+		<h2 class="mb-5 font-normal">{data.page.title}</h2>
 		{@html data.page.content ?? 'This page is empty'}
 	</div>
 

@@ -1,4 +1,4 @@
-import { fail, json, redirect } from '@sveltejs/kit'
+import { fail, redirect } from '@sveltejs/kit'
 import getComponentById from '$lib/utils/contensis/getComponentById.js'
 import getPeopleEntryByEmail from '$lib/utils/contensis/getPeopleEntryByEmail.js'
 import getPersonalWebsiteByUserSlug from '$lib/utils/contensis/getPersonalWebsiteByUserSlug.js'

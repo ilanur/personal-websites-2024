@@ -14,7 +14,7 @@
 >
 	{#each personalWebsite.pages as page}
 		<li>
-			<AppNavLink href={`/${personalWebsite.sys.slug}/${page.pageTemplate}`}>
+			<AppNavLink href={`/${personalWebsite.websiteSlug}/${page.pageTemplate}`}>
 				{page.title}
 			</AppNavLink>
 		</li>

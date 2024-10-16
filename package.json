@@ -31,7 +31,6 @@
 		"algoliasearch": "^4.24.0",
 		"clsx": "^2.1.0",
 		"instantsearch.js": "^4.66.0",
-		"isomorphic-dompurify": "^2.16.0",
 		"jsonwebtoken": "^9.0.2",
 		"jwt-decode": "^4.0.0",
 		"ofetch": "^1.4.1",

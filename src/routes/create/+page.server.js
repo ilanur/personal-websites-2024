@@ -1,8 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit'
-import getComponentById from '$lib/utils/contensis/getComponentById.js'
+import { PwManagementClient, PwDeliveryClient } from '$lib/utils/contensis-clients.js'
 import getPeopleEntryByEmail from '$lib/utils/contensis/getPeopleEntryByEmail.js'
-import getPersonalWebsiteByUserSlug from '$lib/utils/contensis/getPersonalWebsiteByUserSlug.js'
-import createEntry from '$lib/utils/contensis/createEntry.js'
 import slugify from 'slugify'
 
 export async function load(event) {
@@ -12,24 +10,40 @@ export async function load(event) {
 
 	// Check if user exists in the people collection in Contensis
 	const contensisUser = await getPeopleEntryByEmail('emanuele.strano@eui.eu')
-	// const contensisUser = await getPeopleEntryByEmail('session.user.email') --> Enable this line to use real user
+	// const contensisUser = await getPeopleEntryByEmail(session.user.email) // --> Enable this line to use real user
+
 	if (!contensisUser) redirect(302, '/')
 
 	// Check if the user already has a personal website
-	const personalWebsite = await getPersonalWebsiteByUserSlug(contensisUser.sys.slug)
+	const results = await PwDeliveryClient.entries.search(
+		{
+			where: [
+				{ field: 'sys.contentTypeId', equalTo: 'personalWebsite' },
+				{ field: 'sys.versionStatus', equalTo: 'published' },
+				{ field: 'websiteSlug', equalTo: contensisUser.sys.slug }
+			]
+		},
+		1
+	)
+
+	const personalWebsite = results.items.length ? results.items[0] : null
+
 	if (personalWebsite) redirect(302, `/${personalWebsite.websiteSlug}`)
 
 	// Get nationalities for creation page
-	const nationalities = await getComponentById('nationalities')
+	const nationalities = await PwManagementClient.components.get('nationalities')
 
-	return { contensisUser, nationalities }
+	return {
+		contensisUser,
+		nationalities: nationalities.fields.length
+			? nationalities.fields[0].validations.allowedValues.values
+			: []
+	}
 }
 
 export const actions = {
-	default: async ({ request, locals }) => {
+	default: async ({ request }) => {
 		try {
-			// const session = await locals.auth()
-
 			const formData = Object.fromEntries(await request.formData())
 
 			// Get contensis user from the People collection in the euiWebsite project.
@@ -40,7 +54,7 @@ export const actions = {
 			const createdPages = []
 
 			for (let i = 0, ilen = pagesToCreate.length; i < ilen; i++) {
-				const createdPage = await createEntry({
+				const createdPage = await PwManagementClient.entries.create({
 					title: pagesToCreate[i],
 					pageTemplate: slugify(pagesToCreate[i], { lower: true }),
 					content: '',
@@ -51,11 +65,13 @@ export const actions = {
 					}
 				})
 
+				await PwManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
+
 				createdPages.push(createdPage)
 			}
 
 			// Create personal website
-			const createdPersonalWebsite = await createEntry({
+			const createdPersonalWebsite = await PwManagementClient.entries.create({
 				title: contensisUser?.nameAndSurnameForTheWeb ?? formData.title,
 				description: contensisUser?.aboutMe ?? '',
 				email: contensisUser?.email ?? formData.email,
@@ -76,6 +92,8 @@ export const actions = {
 					dataFormat: 'entry'
 				}
 			})
+
+			await PwManagementClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
 
 			return { createdPersonalWebsite }
 		} catch (e) {

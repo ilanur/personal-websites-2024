@@ -1,21 +1,24 @@
-import slugify from 'slugify'
 import { ofetch } from 'ofetch'
 import { json, error } from '@sveltejs/kit'
-import createEntry from '$lib/utils/contensis/createEntry'
-import listEntriesByContentType from '$lib/utils/contensis/listEntriesByContentType'
-import deleteEntry from '$lib/utils/contensis/deleteEntry'
-import authenticateContensis from '$lib/utils/contensis/authenticateContensis'
+import { PwDeliveryClient, PwManagementClient } from '$lib/utils/contensis-clients.js'
+import slugify from 'slugify'
 import getPeopleEntryByEmail from '$lib/utils/contensis/getPeopleEntryByEmail.js'
 
 async function deleteAllEntriesByContentType(contentType) {
 	try {
-		const authData = await authenticateContensis()
-		const entriesToBeDeleted = await listEntriesByContentType(contentType)
+		const entriesToBeDeleted = await PwDeliveryClient.entries.search({
+			where: [
+				{ field: 'sys.contentTypeId', equalTo: contentType },
+				{ field: 'sys.versionStatus', equalTo: 'published' }
+			],
+			pageSize: 999999
+		})
+
 		let progress = 0
 
 		for (let i = 0, ilen = entriesToBeDeleted.length; i < ilen; i++) {
 			const entry = entriesToBeDeleted[i]
-			await deleteEntry(entry.sys.id, true, authData)
+			await PwManagementClient.entries.delete(entry.sys.id, ['en'], true)
 			progress += 1
 			console.log(`${progress}/${ilen} "${contentType}" entries deleted.`)
 		}
@@ -55,9 +58,6 @@ export const POST = async ({ url }) => {
 			await deleteAllEntriesByContentType('pages')
 		}
 
-		// Get auth data so it doesn't have to be fetched every loop.
-		const authData = await authenticateContensis()
-
 		// Define pages to exclude from migration.
 		const pagesToExclude = ['Blog', 'Contact Me', 'Personal Website Settings']
 
@@ -81,19 +81,18 @@ export const POST = async ({ url }) => {
 					title = 'Publications'
 				}
 
-				const createdPage = await createEntry(
-					{
-						title,
-						content: page.content.rendered,
-						pageTemplate: slugify(title, { lower: true }),
-						sys: {
-							contentTypeId: 'pages',
-							language: 'en',
-							dataFormat: 'entry'
-						}
-					},
-					authData
-				)
+				const createdPage = await PwManagementClient.entries.create({
+					title,
+					content: page.content.rendered,
+					pageTemplate: slugify(title, { lower: true }),
+					sys: {
+						contentTypeId: 'pages',
+						language: 'en',
+						dataFormat: 'entry'
+					}
+				})
+
+				await PwManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
 
 				createdPages.push(createdPage)
 			}
@@ -106,41 +105,40 @@ export const POST = async ({ url }) => {
 				contensisPeopleEntry = await getPeopleEntryByEmail(personalDataEmail)
 			}
 
-			await createEntry(
-				{
-					title: personalData.title.rendered,
-					description: personalData.description,
-					email: personalDataEmail ?? '',
-					websiteSlug: personalData.user.personal_site?.split('/').pop() || '',
-					peopleEntryId: contensisPeopleEntry?.sys?.id ?? '',
-					socials: [
-						{ type: 'facebook', value: personalData.facebook },
-						{ type: 'googleScholar', value: personalData.google_scholar },
-						{ type: 'researchGate', value: personalData.research_gate },
-						{ type: 'linkedIn', value: personalData.linked_in },
-						{ type: 'x', value: personalData.twitter },
-						{ type: 'instagram', value: personalData.instagram },
-						{ type: 'pinterest', value: personalData.pinterest },
-						{ type: 'skype', value: personalData.skype },
-						{ type: 'academia', value: personalData.academia },
-						{ type: 'orcidID', value: '' },
-						{ type: 'youtube', value: '' },
-						{ type: 'github', value: '' }
-					],
-					pages: createdPages.map((page) => ({
-						sys: {
-							id: page.sys.id,
-							contentTypeId: 'pages'
-						}
-					})),
+			const createdPersonalWebsite = await PwManagementClient.entries.create({
+				title: personalData.title.rendered,
+				description: personalData.description,
+				email: personalDataEmail ?? '',
+				websiteSlug: personalData.user.personal_site?.split('/').pop() || '',
+				peopleEntryId: contensisPeopleEntry?.sys?.id ?? '',
+				socials: [
+					{ type: 'facebook', value: personalData.facebook },
+					{ type: 'googleScholar', value: personalData.google_scholar },
+					{ type: 'researchGate', value: personalData.research_gate },
+					{ type: 'linkedIn', value: personalData.linked_in },
+					{ type: 'x', value: personalData.twitter },
+					{ type: 'instagram', value: personalData.instagram },
+					{ type: 'pinterest', value: personalData.pinterest },
+					{ type: 'skype', value: personalData.skype },
+					{ type: 'academia', value: personalData.academia },
+					{ type: 'orcidID', value: '' },
+					{ type: 'youtube', value: '' },
+					{ type: 'github', value: '' }
+				],
+				pages: createdPages.map((page) => ({
 					sys: {
-						contentTypeId: 'personalWebsite',
-						language: 'en',
-						dataFormat: 'entry'
+						id: page.sys.id,
+						contentTypeId: 'pages'
 					}
-				},
-				authData
-			)
+				})),
+				sys: {
+					contentTypeId: 'personalWebsite',
+					language: 'en',
+					dataFormat: 'entry'
+				}
+			})
+
+			await PwManagementClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
 
 			progress += 1
 			console.log(`${progress}/${ilen} "personalWebsite" entries created.`)

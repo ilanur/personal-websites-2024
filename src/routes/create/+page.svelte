@@ -11,7 +11,7 @@
 	let formLoading = false
 
 	$: user = data.contensisUser
-	$: nationalities = data.nationalities.fields[0].validations.allowedValues.values
+	$: nationalities = data.nationalities
 </script>
 
 <div class="container py-16">

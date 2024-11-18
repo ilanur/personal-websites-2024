@@ -1,23 +1,19 @@
 import { error } from '@sveltejs/kit'
-import deliverySearch from './deliverySearch'
+import { EuiDeliveryClient } from '../contensis-clients'
 
 async function getPeopleEntryByEmail(email) {
 	try {
-		const contensisUser = await deliverySearch(
-			{
-				where: [
-					{ field: 'sys.contentTypeId', equalTo: 'people' },
-					{ field: 'sys.versionStatus', equalTo: 'published' },
-					{ field: 'euiEmail', equalTo: email }
-				]
-			},
-			0,
-			'euiWebsite'
-		)
+		const contensisUsers = await EuiDeliveryClient.entries.search({
+			where: [
+				{ field: 'sys.contentTypeId', equalTo: 'people' },
+				{ field: 'sys.versionStatus', equalTo: 'published' },
+				{ field: 'euiEmail', equalTo: email }
+			]
+		})
 
-		if (!contensisUser || !contensisUser.length) return null
+		if (!contensisUsers.items.length) return null
 
-		return contensisUser[0]
+		return contensisUsers.items[0]
 	} catch (e) {
 		console.error('Error while getting people entry:', e.data)
 		if (e.status === 404) return null

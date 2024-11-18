@@ -1,12 +1,21 @@
 import { redirect } from '@sveltejs/kit'
-import getPersonalWebsiteByUserSlug from '$lib/utils/contensis/getPersonalWebsiteByUserSlug'
+import { PwDeliveryClient } from '$lib/utils/contensis-clients.js'
 
 export async function load({ params }) {
 	if (!params.userSlug) throw redirect(302, '/')
 
-	const personalWebsite = await getPersonalWebsiteByUserSlug(params.userSlug)
+	const results = await PwDeliveryClient.entries.search(
+		{
+			where: [
+				{ field: 'sys.contentTypeId', equalTo: 'personalWebsite' },
+				{ field: 'sys.versionStatus', equalTo: 'published' },
+				{ field: 'websiteSlug', equalTo: params.userSlug }
+			]
+		},
+		1
+	)
 
 	return {
-		personalWebsite
+		personalWebsite: results.items.length ? results.items[0] : null
 	}
 }

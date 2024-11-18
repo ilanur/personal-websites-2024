@@ -1,5 +1,3 @@
-import { PUBLIC_DIRECTUS_API_URL } from '$env/static/public';
-
 export const peopleConfig = {
 	templateFunction: templateFunction,
 	root_classes: 'my-6',
@@ -8,12 +6,12 @@ export const peopleConfig = {
 		'col-span-1 flex flex-col divide-y divide-eui-gray-30 rounded-lg bg-white text-center shadow-md border border-eui-gray-10',
 	select_form_classes: '',
 	search_placeholder: 'Search by name, areas of expertise or language'
-};
+}
 
 function templateFunction(hit) {
 	let photo = hit.profile_image
-		? `${PUBLIC_DIRECTUS_API_URL}/assets/${hit.profile_image}`
-		: 'https://www.eui.eu/web-production/code/assets/img/default-user-dark.jpg';
+		? profile_image
+		: 'https://www.eui.eu/web-production/code/assets/img/default-user-dark.jpg'
 
 	return `
 		<div class="flex flex-1 flex-col p-8">
@@ -52,5 +50,5 @@ function templateFunction(hit) {
 				</div>
       </div>
     </div>
-  `;
+  `
 }

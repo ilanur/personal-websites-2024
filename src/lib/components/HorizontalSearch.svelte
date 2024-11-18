@@ -1,7 +1,7 @@
 <script>
-	import { browser } from '$app/environment';
-	import algoliasearch from 'algoliasearch/lite';
-	import instantsearch from 'instantsearch.js';
+	import { browser } from '$app/environment'
+	import algoliasearch from 'algoliasearch/lite'
+	import instantsearch from 'instantsearch.js'
 	import {
 		searchBox,
 		hits,
@@ -10,20 +10,20 @@
 		hitsPerPage,
 		stats,
 		currentRefinements
-	} from 'instantsearch.js/es/widgets';
-	import { setConfigs } from '$lib/utils/algolia/indexesConfig';
-	import { customPagination } from '$lib/utils/algolia/customPagination';
+	} from 'instantsearch.js/es/widgets'
+	import { setConfigs } from '$lib/utils/algolia/indexesConfig'
+	import { customPagination } from '$lib/utils/algolia/customPagination'
 	import {
 		eui_refinementList,
 		eui_menuSelect,
 		eui_toggleRefinement
-	} from '$lib/utils/algolia/widgets';
+	} from '$lib/utils/algolia/widgets'
 	import {
 		PUBLIC_ALGOLIA_PERSONAL_INFORMATION_INDEX,
 		PUBLIC_ALGOLIA_ID,
 		PUBLIC_ALGOLIA_KEY
-	} from '$env/static/public';
-	import { afterUpdate } from 'svelte';
+	} from '$env/static/public'
+	import { afterUpdate } from 'svelte'
 
 	//export let item;
 	const item = {
@@ -31,16 +31,16 @@
 		index: PUBLIC_ALGOLIA_PERSONAL_INFORMATION_INDEX,
 		placeholderText: 'Search personal websites',
 		filterForHorizontalSearch: []
-	};
+	}
 
-	let option_hitsPerPage = item.option_hitsPerPage;
+	let option_hitsPerPage = item.option_hitsPerPage
 
 	afterUpdate(() => {
 		if (browser) {
-			const searchClient = algoliasearch(PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY);
-			let indexName = item.index; // Dynamically set the index name
+			const searchClient = algoliasearch(PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY)
+			let indexName = item.index // Dynamically set the index name
 
-			const config = setConfigs(indexName);
+			const config = setConfigs(indexName)
 
 			const {
 				templateFunction,
@@ -49,14 +49,14 @@
 				root_classes,
 				list_classes,
 				item_classes
-			} = config;
+			} = config
 
-			let not_found_classes = 'my-14 text-center';
+			let not_found_classes = 'my-14 text-center'
 
 			const search = instantsearch({
 				indexName,
 				searchClient
-			});
+			})
 
 			// Configure widget for additional filters
 			search.addWidgets([
@@ -83,7 +83,7 @@
 						submit({ cssClasses }, { html }) {
 							return html`
 								<span class="fa-solid fa-fw fa-magnifying-glass"></span>
-							`;
+							`
 						}
 					}
 				}),
@@ -91,7 +91,7 @@
 					container: '#hits',
 					templates: {
 						item(hit, { html, components }) {
-							return templateFunction(hit, html, components);
+							return templateFunction(hit, html, components)
 						},
 						empty(results, { html }) {
 							return html`
@@ -111,11 +111,11 @@
 										to find what you're looking for.
 									</p>
 								</div>
-							`;
+							`
 						}
 					},
 					transformItems(items, { results }) {
-						return transformItems(items, { results });
+						return transformItems(items, { results })
 					},
 					cssClasses: {
 						root: root_classes,
@@ -139,7 +139,7 @@
 								<span
 									class="fa-regular fa-fw ${isListening ? 'fa-regular' : 'fa-solid'} fa-microphone"
 								></span>
-							`;
+							`
 						}
 					}
 				}),
@@ -188,11 +188,11 @@
 					transformItems(items) {
 						items.forEach(function (item) {
 							if (item.refinements[0].label == 'true') {
-								item.refinements[0].label = '';
+								item.refinements[0].label = ''
 							}
 
 							if (item.label.includes('.type')) {
-								item.label = 'Type';
+								item.label = 'Type'
 							}
 
 							if (
@@ -203,23 +203,23 @@
 								item.label == 'Departments.DeptName' ||
 								item.label == 'ict.Affiliations.Name'
 							) {
-								item.label = 'Department or Unit';
+								item.label = 'Department or Unit'
 								item.refinements.forEach(function (refinement, index, object) {
 									//console.log(refinement);
 									//refinement.label = "<a href='#'>TEST "+refinement.value+"</a>";
-								});
+								})
 							}
 
 							if (item.label.includes('.affiliatedResearchProgrammes.entryTitle')) {
-								item.label = 'Research programme';
+								item.label = 'Research programme'
 							}
 
 							if (item.label.includes('.ercProject')) {
-								item.label = 'ERC project';
+								item.label = 'ERC project'
 							}
 
 							if (item.label.includes('.isArchivedClosed')) {
-								item.label = 'Project archived or closed';
+								item.label = 'Project archived or closed'
 							}
 
 							if (
@@ -227,108 +227,108 @@
 								item.label.includes('.researchThemes') ||
 								item.label.includes('.areasOfExpertise')
 							) {
-								item.label = 'Research themes';
+								item.label = 'Research themes'
 							}
 
 							if (item.label == 'item.category') {
-								item.label = 'Category';
+								item.label = 'Category'
 							}
 
 							if (item.label == 'item.fullyFunded') {
-								item.label = 'Fully funded';
+								item.label = 'Fully funded'
 							}
 
 							if (item.label == 'item.feesAndCosts.hasGrant') {
-								item.label = 'Has grant';
+								item.label = 'Has grant'
 							}
 
 							if (item.label == 'item.feesAndCosts.minimumFee') {
-								item.label = 'Starting fee';
+								item.label = 'Starting fee'
 							}
 
 							if (item.label == 'tender_year') {
-								item.label = 'Year';
+								item.label = 'Year'
 							}
 
 							if (item.label == 'tender_status') {
-								item.label = 'Status';
+								item.label = 'Status'
 							}
 
 							if (item.label == 'item.feesAndCosts.minimumFee') {
-								item.label = 'Starting fee';
+								item.label = 'Starting fee'
 							}
 
 							if (item.label == 'item.entry.name') {
-								item.label = 'Location';
+								item.label = 'Location'
 							}
 
 							if (item.label == 'item.durationMinInMonths') {
-								item.label = 'Duration in months';
+								item.label = 'Duration in months'
 							}
 
 							if (item.label == 'cms.status') {
-								item.label = 'Role';
+								item.label = 'Role'
 							}
 
 							if (item.label == 'TypeName') {
-								item.label = 'Event category';
+								item.label = 'Event category'
 							}
 
 							if (item.label == 'Projects.PrjName') {
-								item.label = 'Project';
+								item.label = 'Project'
 							}
 
 							if (item.label == 'ict.WorkingLanguages.Description') {
-								item.label = 'Working language';
+								item.label = 'Working language'
 							}
 
 							if (item.label == 'ict.EuiYearJoined') {
-								item.label = 'Year joined';
+								item.label = 'Year joined'
 							}
 
 							if (item.label == 'cms.usage.researchProjects.title') {
-								item.label = 'Research project';
+								item.label = 'Research project'
 							}
 
 							if (item.label == 'ict.Affiliations.Role') {
-								item.label = 'Role';
+								item.label = 'Role'
 							}
 
 							if (item.label == 'item.sys.availableLanguages') {
-								item.label = 'language';
+								item.label = 'language'
 							}
 
 							if (item.label == 'timestamp') {
-								item.label = 'Date interval';
+								item.label = 'Date interval'
 								item.refinements.forEach(function (refinement) {
-									refinement.label = 'From ' + timestampConverter(refinement.value);
-								});
+									refinement.label = 'From ' + timestampConverter(refinement.value)
+								})
 							}
 
 							if (item.label == 'timestampEndDate') {
-								item.label = 'Expired programmes/trainings';
+								item.label = 'Expired programmes/trainings'
 								item.refinements.forEach(function (refinement) {
-									refinement.label = 'Deadline before ' + timestampConverter(refinement.value);
-								});
+									refinement.label = 'Deadline before ' + timestampConverter(refinement.value)
+								})
 							}
 
 							if (item.label == 'timestampStartDate') {
-								item.label = 'Deadline';
+								item.label = 'Deadline'
 								item.refinements.forEach(function (refinement) {
-									refinement.label = 'Past programmes';
-								});
+									refinement.label = 'Past programmes'
+								})
 							}
-						});
+						})
 
-						return items;
+						return items
 					},
 					excludedAttributes: ['ModifiedDateTimestamp' /*'timestamp'*/]
 				})
-			]);
+			])
 
 			// Dynamically add refinement widgets based on the JSON
 			item.filterForHorizontalSearch.forEach((filter) => {
-				const widgetType = mapFilterTypeToWidget(filter.type);
+				const widgetType = mapFilterTypeToWidget(filter.type)
 				if (widgetType) {
 					widgetType(
 						search,
@@ -341,12 +341,12 @@
 						filter.count_value,
 						filter.has_search,
 						filter.show_more
-					);
+					)
 				}
-			});
-			search.start();
+			})
+			search.start()
 		}
-	});
+	})
 
 	// Map the JSON type to the corresponding InstantSearch.js widget
 	function mapFilterTypeToWidget(type) {
@@ -355,9 +355,9 @@
 			'Checkbox select': eui_refinementList,
 			'Switch toggle': eui_toggleRefinement
 			// Add other mappings here if needed
-		};
+		}
 
-		return typeMap[type];
+		return typeMap[type]
 	}
 </script>
 
@@ -365,25 +365,25 @@
 	<div class="my-6 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-12">
 		<div class="flex items-center sm:col-span-12 2xl:col-span-6">
 			<label for="searchbox" class="sr-only text-sm font-medium leading-6">Search</label>
-			<div id="searchbox" class="w-full" />
-			<div id="voicesearch" class="h-full" />
+			<div id="searchbox" class="w-full"></div>
+			<div id="voicesearch" class="h-full"></div>
 		</div>
 
 		<!-- Dynamically created containers for refinement widgets will be here -->
 		{#each item.filterForHorizontalSearch as filter}
 			{#key filter.divIdValue}
-				<div id={filter.divIdValue} class="sm:col-span-6 xl:col-span-4 2xl:col-span-3" />
+				<div id={filter.divIdValue} class="sm:col-span-6 xl:col-span-4 2xl:col-span-3"></div>
 			{/key}
 		{/each}
 	</div>
 
-	<div id="current-refinements" />
+	<div id="current-refinements"></div>
 
 	<div class="my-6 flex items-center justify-between">
-		<div id="stats" />
-		<div id="hits-per-page" />
+		<div id="stats"></div>
+		<div id="hits-per-page"></div>
 	</div>
 
-	<div id="hits" />
-	<div id="pagination" />
+	<div id="hits"></div>
+	<div id="pagination"></div>
 </div>

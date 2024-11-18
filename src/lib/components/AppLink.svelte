@@ -1,19 +1,16 @@
 <script>
-	import clsx from 'clsx';
-	import IconArrowShort from '$lib/components/icons/IconArrowShort.svelte';
+	import clsx from 'clsx'
+	import IconArrowShort from '$lib/components/icons/IconArrowShort.svelte'
 
-	export let href = null;
-	export let target = null;
-	export let showArrow = false;
+	let { showArrow = false, children, ...rest } = $props()
 </script>
 
 <a
-	{href}
-	{target}
-	rel={target === '_blank' ? 'noopener' : null}
-	class={clsx($$props.class, 'group inline-flex items-center')}
+	{...rest}
+	rel={rest.target === '_blank' ? 'noopener' : null}
+	class={clsx(rest.class, 'group inline-flex items-center')}
 >
-	<slot />
+	{@render children?.()}
 
 	{#if showArrow}
 		<IconArrowShort class="ml-0.5 size-6 duration-300 group-hover:translate-x-1" />

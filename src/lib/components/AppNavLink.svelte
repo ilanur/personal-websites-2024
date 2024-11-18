@@ -1,16 +1,16 @@
 <script>
-	import clsx from 'clsx';
-	import { page } from '$app/stores';
+	import clsx from 'clsx'
+	import { page } from '$app/stores'
 
-	export let href;
+	let { children, ...rest } = $props()
 </script>
 
 <a
-	{href}
+	{...rest}
 	class={clsx('block py-3 text-base uppercase underline-offset-2 hover:underline lg:text-lg', {
-		underline: $page.url.pathname === href,
-		'no-underline': $page.url.pathname !== href
+		underline: $page.url.pathname === rest.href,
+		'no-underline': $page.url.pathname !== rest.href
 	})}
 >
-	<slot />
+	{@render children?.()}
 </a>

@@ -1,7 +1,7 @@
 <script>
-	import AppLink from '$lib/components/AppLink.svelte';
-	import IconLogoEuiFull from '$lib/components/icons/IconLogoEuiFull.svelte';
-	import quickLinks from '$lib/constants/quickLinks.json';
+	import AppLink from '$lib/components/AppLink.svelte'
+	import IconLogoEuiFull from '$lib/components/icons/IconLogoEuiFull.svelte'
+	import quickLinks from '$lib/constants/quickLinks.json'
 </script>
 
 <footer class="bg-eui-blue text-white">
@@ -15,7 +15,7 @@
 			University Institute by the ICT service Web unit.
 		</p>
 
-		<AppLink href="/" class="my-12 text-eui-yellow" showArrow>
+		<AppLink href="/" target="_blank" class="my-12 text-eui-yellow" showArrow>
 			Browse all the EUI personal Websites
 		</AppLink>
 

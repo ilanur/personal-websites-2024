@@ -1,16 +1,16 @@
 <script>
-	import AppDownloadLink from './AppDownloadLink.svelte';
+	import AppDownloadLink from './AppDownloadLink.svelte'
 
 	function downloadCV() {
-		console.log('Download CV');
+		console.log('Download CV')
 	}
 
 	function downloadJobMarketPaper() {
-		console.log('Download Job Marketing Paper');
+		console.log('Download Job Marketing Paper')
 	}
 
 	function downloadResearchPaper() {
-		console.log('Download Research Paper');
+		console.log('Download Research Paper')
 	}
 </script>
 
@@ -18,9 +18,9 @@
 	<div
 		class="flex flex-col justify-between space-y-7 pb-6 md:flex-row md:space-y-0 lg:flex-col lg:space-y-7 lg:pb-0"
 	>
-		<AppDownloadLink on:click={downloadCV}>CURRICULUM VITAE</AppDownloadLink>
-		<AppDownloadLink on:click={downloadJobMarketPaper}>Job marketing paper</AppDownloadLink>
-		<AppDownloadLink on:click={downloadResearchPaper}>Research paper</AppDownloadLink>
+		<AppDownloadLink onclick={downloadCV}>CURRICULUM VITAE</AppDownloadLink>
+		<AppDownloadLink onclick={downloadJobMarketPaper}>Job marketing paper</AppDownloadLink>
+		<AppDownloadLink onclick={downloadResearchPaper}>Research paper</AppDownloadLink>
 	</div>
 
 	<div class="flex flex-col pb-6 lg:pb-0">

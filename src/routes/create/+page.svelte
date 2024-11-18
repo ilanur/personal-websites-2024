@@ -6,12 +6,12 @@
 	import SelectField from '$lib/components/form-elements/SelectField.svelte'
 	import AppButton from '$lib/components/AppButton.svelte'
 
-	export let data
+	let { data } = $props()
 
-	let formLoading = false
+	let formLoading = $state(false)
 
-	$: user = data.contensisUser
-	$: nationalities = data.nationalities
+	const user = $derived(data.contensisUser)
+	const nationalities = $derived(data.nationalities)
 </script>
 
 <div class="container py-16">

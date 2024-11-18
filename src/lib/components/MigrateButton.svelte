@@ -1,15 +1,15 @@
 <script>
-	let promise;
+	let promise
 
 	async function onContentMigration() {
 		promise = fetch('/api/content-migration').then(async (res) => {
 			if (!res.ok) {
-				const text = await res.json();
-				throw new Error(text.message);
+				const text = await res.json()
+				throw new Error(text.message)
 			}
 
-			return res.json();
-		});
+			return res.json()
+		})
 	}
 </script>
 
@@ -49,5 +49,5 @@
 		<span class="mr-4 text-xs text-eui-red">{error.message}</span>
 	{/await}
 
-	<button on:click={onContentMigration}>Migrate data</button>
+	<button onclick={onContentMigration}>Migrate data</button>
 </div>

@@ -1,16 +1,15 @@
 <script>
 	import clsx from 'clsx'
 
-	export let label = ''
-	export let value = ''
+	let { label, value, ...rest } = $props()
 </script>
 
-<div class={clsx('flex flex-col', $$props.class)}>
-	<label for={$$restProps.name} class="mb-1 text-sm">{label}</label>
+<div class={clsx('flex flex-col', rest.class)}>
+	<label for={rest.name} class="mb-1 text-sm">{label}</label>
 	<input
+		{...rest}
+		id={rest.name}
 		bind:value
-		{...$$restProps}
 		class="rounded read-only:cursor-not-allowed read-only:border-eui-gray-30 read-only:bg-eui-gray read-only:text-eui-gray-70 disabled:cursor-not-allowed disabled:border-eui-gray-30 disabled:bg-eui-gray disabled:text-eui-gray-70"
-		id={$$restProps.name}
 	/>
 </div>

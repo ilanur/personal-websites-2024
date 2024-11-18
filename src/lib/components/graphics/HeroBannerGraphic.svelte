@@ -1,5 +1,9 @@
+<script>
+	let { ...rest } = $props()
+</script>
+
 <svg
-	class={$$props.class}
+	class={rest.class}
 	width="211"
 	height="476"
 	viewBox="0 0 211 476"

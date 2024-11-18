@@ -1,17 +1,13 @@
 <script>
-	import clsx from 'clsx';
-	import { createEventDispatcher } from 'svelte';
+	import clsx from 'clsx'
 
-	export let outlined = false;
-	export let loading = false;
-
-	const dispatch = createEventDispatcher();
+	let { outlined = false, loading = false, onclick, children, ...rest } = $props()
 </script>
 
 <button
-	{...$$restProps}
+	{...rest}
 	class={clsx(
-		$$props.class,
+		rest.class,
 		'relative rounded-md border-2 border-eui-blue px-3 py-2 text-sm font-bold transition duration-200 lg:px-4 lg:py-2.5 lg:text-base',
 		{
 			// Colors
@@ -19,7 +15,7 @@
 			'bg-white text-eui-blue hover:bg-eui-blue hover:text-white': outlined
 		}
 	)}
-	on:click={() => dispatch('click')}
+	{onclick}
 >
 	{#if loading}
 		<div role="status" class="absolute inset-0 flex items-center justify-center">
@@ -44,6 +40,6 @@
 	{/if}
 
 	<div class={loading ? 'opacity-0' : 'opacity-100'}>
-		<slot />
+		{@render children?.()}
 	</div>
 </button>

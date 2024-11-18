@@ -2,10 +2,10 @@
 	import { getContext } from 'svelte'
 	import UserContactInfo from '$lib/components/UserContactInfo.svelte'
 
-	export let data
+	let { data } = $props()
 
 	const smallHeroBanner = getContext('smallHeroBanner')
-	smallHeroBanner.set(false)
+	$smallHeroBanner = false
 </script>
 
 <div class="container grid grid-cols-3 gap-x-16 py-12 md:py-16 xl:gap-x-36">

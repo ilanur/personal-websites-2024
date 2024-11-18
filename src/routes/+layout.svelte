@@ -3,7 +3,8 @@
 	import AppFooter from '$lib/components/AppFooter.svelte'
 	import '../app.css'
 
-	export let data
+	let { data, children } = $props()
+
 	console.log('data', data)
 </script>
 
@@ -11,7 +12,7 @@
 	<AppHeader class="sticky top-0 z-30" />
 
 	<main class="flex-1">
-		<slot />
+		{@render children?.()}
 	</main>
 
 	<AppFooter />

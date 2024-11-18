@@ -1,26 +1,24 @@
 <script>
 	import UserHeroBanner from '$lib/components/UserHeroBanner.svelte'
 	import PersonalWebsiteNavigation from '$lib/components/PersonalWebsiteNavigation.svelte'
-	import { writable } from 'svelte/store'
 	import { setContext } from 'svelte'
+	import { writable } from 'svelte/store'
 
-	export let data
+	let { data, children } = $props()
 
 	let smallHeroBanner = writable(false)
 
-	$: personalWebsite = data.personalWebsite
+	const personalWebsite = $derived(data.personalWebsite)
 
 	setContext('smallHeroBanner', smallHeroBanner)
-
-	console.log('Data', data)
 </script>
 
 <div>
 	<UserHeroBanner {personalWebsite} isSmall={$smallHeroBanner} />
 
 	<div class="bg-eui-gray">
-		<PersonalWebsiteNavigation {personalWebsite} isMobile />
+		<PersonalWebsiteNavigation {personalWebsite} />
 	</div>
 
-	<slot />
+	{@render children?.()}
 </div>

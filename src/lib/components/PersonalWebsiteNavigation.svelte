@@ -2,15 +2,14 @@
 	import clsx from 'clsx'
 	import AppNavLink from '$lib/components/AppNavLink.svelte'
 
-	export let personalWebsite
-	export let isMobile = false
+	let { personalWebsite, ...rest } = $props()
 </script>
 
 <ul
-	class={clsx($$props.class, 'flex items-center gap-x-6 uppercase', {
-		'lg:gap-x-14': !isMobile,
-		'eui-gray container overflow-y-auto py-2 lg:gap-x-10': isMobile
-	})}
+	class={clsx(
+		rest.class,
+		'eui-gray container flex items-center gap-x-6 overflow-y-auto py-2 uppercase md:gap-x-10'
+	)}
 >
 	{#each personalWebsite.pages as page}
 		<li>

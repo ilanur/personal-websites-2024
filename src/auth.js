@@ -7,6 +7,7 @@ import {
 } from '$env/static/private'
 
 export const { handle, signIn, signOut } = SvelteKitAuth({
+	debug: true,
 	providers: [
 		Entra({
 			clientId: PRIVATE_AUTH_MICROSOFT_ENTRA_ID_ID,

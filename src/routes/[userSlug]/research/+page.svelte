@@ -1,10 +1,10 @@
 <script>
 	import { getContext } from 'svelte'
 
-	export let data
+	let { data } = $props()
 
 	const smallHeroBanner = getContext('smallHeroBanner')
-	smallHeroBanner.set(true)
+	$smallHeroBanner = true
 </script>
 
 <div class="container py-12">

@@ -5,8 +5,7 @@
 	import HeroBannerGraphicSmall from '$lib/components/graphics/HeroBannerGraphicSmall.svelte'
 	import IconUser from '$lib/components/icons/IconUser.svelte'
 
-	export let personalWebsite
-	export let isSmall
+	let { personalWebsite, isSmall } = $props()
 </script>
 
 <div>
@@ -30,7 +29,7 @@
 		{/if}
 
 		<div class="bottom-0 left-0 right-0 top-0 grid grid-cols-12 md:absolute">
-			<div class="col-span-12 hidden bg-eui-blue md:col-span-8 md:block" />
+			<div class="col-span-12 hidden bg-eui-blue md:col-span-8 md:block"></div>
 			<div
 				class="col-span-12 flex items-center justify-center bg-eui-gray pt-12 md:col-span-4 md:justify-start md:pt-0"
 			>

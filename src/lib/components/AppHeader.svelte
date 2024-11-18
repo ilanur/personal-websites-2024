@@ -5,10 +5,12 @@
 	import AppSignIn from './auth/AppSignIn.svelte'
 	import AppSignOut from './auth/AppSignOut.svelte'
 
-	$: authUser = $page.data.authUser
+	let { ...rest } = $props()
+
+	const authUser = $derived($page.data.authUser)
 </script>
 
-<header class={clsx($$props.class, 'bg-white shadow-sm')}>
+<header class={clsx(rest.class, 'bg-white shadow-sm')}>
 	<nav class="container flex justify-between py-2.5">
 		<a href="/" class="h-10 shrink-0" aria-label="EUI logo">
 			<IconLogoEui />

@@ -23,9 +23,7 @@
 		PUBLIC_ALGOLIA_ID,
 		PUBLIC_ALGOLIA_KEY
 	} from '$env/static/public'
-	import { afterUpdate } from 'svelte'
 
-	//export let item;
 	const item = {
 		option_hitsPerPage: 12,
 		index: PUBLIC_ALGOLIA_PERSONAL_INFORMATION_INDEX,
@@ -35,7 +33,7 @@
 
 	let option_hitsPerPage = item.option_hitsPerPage
 
-	afterUpdate(() => {
+	$effect(() => {
 		if (browser) {
 			const searchClient = algoliasearch(PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY)
 			let indexName = item.index // Dynamically set the index name

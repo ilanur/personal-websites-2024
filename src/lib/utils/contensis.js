@@ -1,29 +1,7 @@
 import { PUBLIC_CONTENSIS_MANAGEMENT_URL, PUBLIC_CONTENSIS_URL } from '$env/static/public'
 import { error } from '@sveltejs/kit'
 import { ofetch } from 'ofetch'
-
-export async function createContensisEntry(entryData) {
-	try {
-		const authData = await authenticateContensis()
-		const url = `${PUBLIC_CONTENSIS_MANAGEMENT_URL}/entries/`
-
-		const createdEntry = await ofetch(url, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${authData.access_token}`
-			},
-			body: JSON.stringify(entryData)
-		})
-
-		console.log('createdEntry', createdEntry)
-
-		return createdEntry
-	} catch (e) {
-		console.error('Error in creating the entry: ', e)
-		error(e)
-	}
-}
+import { ManagementClient } from './contensis-clients'
 
 export async function authenticateContensis() {
 	try {
@@ -79,6 +57,7 @@ export async function uploadAsset(fileBuffer, filename, options = {}) {
 				contentType: contentType
 			}
 		}
+
 		formData.append('metadata', JSON.stringify(metadata))
 		console.log('metadata', metadata)
 		const blob = new Blob([fileBuffer], { type: contentType })
@@ -110,7 +89,8 @@ export async function uploadAsset(fileBuffer, filename, options = {}) {
 			}
 		}
 
-		const createdEntry = await createContensisEntry(entryData)
+		const createdEntry = await ManagementClient.entries.create(entryData)
+
 		console.log('Entry asset created')
 
 		return createdEntry

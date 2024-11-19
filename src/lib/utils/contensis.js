@@ -4,7 +4,7 @@ import {
 	PUBLIC_CONTENSIS_URL
 } from '$env/static/public'
 import { PRIVATE_CONTENSIS_ACCESS_TOKEN } from '$env/static/private'
-import { PUBLIC_EUI_BASE_URL, PUBLIC_EUI_INTRANET_BASE_URL } from '$env/static/public'
+import { PUBLIC_EUI_WEB, PUBLIC_EUI_INTRANET_BASE_URL } from '$env/static/public'
 import { error } from '@sveltejs/kit'
 import { ofetch } from 'ofetch'
 

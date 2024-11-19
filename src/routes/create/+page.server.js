@@ -1,5 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit'
-import { PwManagementClient, PwDeliveryClient } from '$lib/utils/contensis-clients.js'
+import { ManagementNodeClient, DeliveryClient } from '$lib/utils/contensis-clients.js'
 import getPeopleEntryByEmail from '$lib/utils/contensis/getPeopleEntryByEmail.js'
 import slugify from 'slugify'
 
@@ -15,10 +15,10 @@ export async function load(event) {
 	if (!contensisUser) redirect(302, '/')
 
 	// Check if the user already has a personal website
-	const results = await PwDeliveryClient.entries.search(
+	const results = await DeliveryClient.entries.search(
 		{
 			where: [
-				{ field: 'sys.contentTypeId', equalTo: 'personalWebsite' },
+				{ field: 'sys.contentTypeId', equalTo: 'personalWebsites' },
 				{ field: 'sys.versionStatus', equalTo: 'published' },
 				{ field: 'websiteSlug', equalTo: contensisUser.sys.slug }
 			]
@@ -31,7 +31,7 @@ export async function load(event) {
 	if (personalWebsite) redirect(302, `/${personalWebsite.websiteSlug}`)
 
 	// Get nationalities for creation page
-	const nationalities = await PwManagementClient.components.get('nationalities')
+	const nationalities = await ManagementNodeClient.components.get('nationalities')
 
 	return {
 		contensisUser,
@@ -54,7 +54,7 @@ export const actions = {
 			const createdPages = []
 
 			for (let i = 0, ilen = pagesToCreate.length; i < ilen; i++) {
-				const createdPage = await PwManagementClient.entries.create({
+				const createdPage = await ManagementNodeClient.entries.create({
 					title: pagesToCreate[i],
 					pageTemplate: slugify(pagesToCreate[i], { lower: true }),
 					content: '',
@@ -65,13 +65,13 @@ export const actions = {
 					}
 				})
 
-				await PwManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
+				await ManagementNodeClient.entries.invokeWorkflow(createdPage, 'draft.publish')
 
 				createdPages.push(createdPage)
 			}
 
 			// Create personal website
-			const createdPersonalWebsite = await PwManagementClient.entries.create({
+			const createdPersonalWebsite = await ManagementNodeClient.entries.create({
 				title: contensisUser?.nameAndSurnameForTheWeb ?? formData.title,
 				description: contensisUser?.aboutMe ?? '',
 				email: contensisUser?.email ?? formData.email,
@@ -93,7 +93,7 @@ export const actions = {
 				}
 			})
 
-			await PwManagementClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
+			await ManagementNodeClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
 
 			return { createdPersonalWebsite }
 		} catch (e) {

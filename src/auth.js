@@ -1,21 +1,25 @@
 import { SvelteKitAuth } from '@auth/sveltekit'
 import Entra from '@auth/sveltekit/providers/microsoft-entra-id'
 import {
-	PRIVATE_AUTH_MICROSOFT_ENTRA_ID_ID,
-	PRIVATE_AUTH_MICROSOFT_ENTRA_ID_SECRET,
-	PRIVATE_AUTH_MICROSOFT_ENTRA_ID_TENANT_ID
+	PRIVATE_CLIENT_ID,
+	PRIVATE_CLIENT_SECRET,
+	PRIVATE_TENANT_ID,
+	PRIVATE_AUTH_SECRET
 } from '$env/static/private'
 
-export const { handle, signIn, signOut } = SvelteKitAuth({
-	debug: true,
-	providers: [
-		Entra({
-			clientId: PRIVATE_AUTH_MICROSOFT_ENTRA_ID_ID,
-			clientSecret: PRIVATE_AUTH_MICROSOFT_ENTRA_ID_SECRET,
-			tenantId: PRIVATE_AUTH_MICROSOFT_ENTRA_ID_TENANT_ID
-		})
-	],
-	pages: {
-		signIn: '/auth/login'
+export const { handle, signIn, signOut } = SvelteKitAuth(async () => {
+	const authOptions = {
+		providers: [
+			Entra({
+				clientId: PRIVATE_CLIENT_ID,
+				clientSecret: PRIVATE_CLIENT_SECRET,
+				tenantId: PRIVATE_TENANT_ID,
+				issuer: `https://login.microsoftonline.com/${PRIVATE_TENANT_ID}/v2.0`
+			})
+		],
+		secret: PRIVATE_AUTH_SECRET,
+		trustHost: true
 	}
+
+	return authOptions
 })

@@ -1,13 +1,13 @@
 import { redirect } from '@sveltejs/kit'
-import { PwDeliveryClient } from '$lib/utils/contensis-clients.js'
+import { DeliveryClient } from '$lib/utils/contensis-clients.js'
 
 export async function load({ params }) {
 	if (!params.userSlug) throw redirect(302, '/')
 
-	const results = await PwDeliveryClient.entries.search(
+	const results = await DeliveryClient.entries.search(
 		{
 			where: [
-				{ field: 'sys.contentTypeId', equalTo: 'personalWebsite' },
+				{ field: 'sys.contentTypeId', equalTo: 'personalWebsites' },
 				{ field: 'sys.versionStatus', equalTo: 'published' },
 				{ field: 'websiteSlug', equalTo: params.userSlug }
 			]

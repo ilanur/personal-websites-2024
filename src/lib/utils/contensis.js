@@ -1,7 +1,27 @@
 import { PUBLIC_CONTENSIS_MANAGEMENT_URL, PUBLIC_CONTENSIS_URL } from '$env/static/public'
 import { error } from '@sveltejs/kit'
 import { ofetch } from 'ofetch'
-import { ManagementClient } from './contensis-clients'
+import { DeliveryClient, ManagementClient } from './contensis-clients'
+
+export async function getPeopleEntryByEmail(email) {
+	try {
+		const contensisUsers = await DeliveryClient.entries.search({
+			where: [
+				{ field: 'sys.contentTypeId', equalTo: 'people' },
+				{ field: 'sys.versionStatus', equalTo: 'published' },
+				{ field: 'euiEmail', equalTo: email }
+			]
+		})
+
+		if (!contensisUsers.items.length) return null
+
+		return contensisUsers.items[0]
+	} catch (e) {
+		console.error('Error while getting people entry:', e.data)
+		if (e.status === 404) return null
+		error(e.status, e.data)
+	}
+}
 
 export async function authenticateContensis() {
 	try {
@@ -59,8 +79,9 @@ export async function uploadAsset(fileBuffer, filename, options = {}) {
 		}
 
 		formData.append('metadata', JSON.stringify(metadata))
-		console.log('metadata', metadata)
+
 		const blob = new Blob([fileBuffer], { type: contentType })
+
 		formData.append('file', blob, filename)
 
 		// Single request to create and upload asset
@@ -73,16 +94,13 @@ export async function uploadAsset(fileBuffer, filename, options = {}) {
 			body: formData
 		})
 
-		console.log('asset created')
-		//Create a new asset entry
+		// Create a new asset entry
 		const entryData = {
 			title: title,
-
 			sysAssetFile: {
 				fileId: asset[0].fileId,
 				parentNodePath: folderId
 			},
-
 			sys: {
 				projectId: 'euiWebsite',
 				dataFormat: 'asset'
@@ -90,8 +108,6 @@ export async function uploadAsset(fileBuffer, filename, options = {}) {
 		}
 
 		const createdEntry = await ManagementClient.entries.create(entryData)
-
-		console.log('Entry asset created')
 
 		return createdEntry
 	} catch (e) {

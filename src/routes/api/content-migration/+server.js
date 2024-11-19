@@ -1,18 +1,18 @@
 import { ofetch } from 'ofetch'
 import { json, error } from '@sveltejs/kit'
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis-clients'
-import getPeopleEntryByEmail from '$lib/utils/contensis/getPeopleEntryByEmail.js'
-import { uploadAsset } from '$lib/utils/contensis'
-import { Query, Op, OrderBy } from 'contensis-delivery-api'
+import { getPeopleEntryByEmail, uploadAsset } from '$lib/utils/contensis'
 
 // Utility function to import assets (images or CVs)
 async function importAsset(url, title, description, folder) {
 	try {
 		// Download the asset
 		const response = await fetch(url)
+
 		if (!response.ok) {
 			throw new Error(`Failed to download asset: ${response.statusText}`)
 		}
+
 		const arrayBuffer = await response.arrayBuffer()
 		const fileBuffer = Buffer.from(arrayBuffer)
 		const filename = url.split('/').pop()
@@ -24,6 +24,7 @@ async function importAsset(url, title, description, folder) {
 			contentType: response.headers.get('content-type'),
 			title: title
 		})
+
 		return asset
 	} catch (err) {
 		console.error('Error downloading or uploading asset:', err)
@@ -34,14 +35,6 @@ async function importAsset(url, title, description, folder) {
 // Function to delete all entries by content type
 async function deleteAllEntriesByContentType(contentType) {
 	try {
-		// const query = new Query(
-		// 	Op.equalTo('sys.contentTypeId', contentType),
-		// 	Op.equalTo('sys.versionStatus', 'published')
-		// )
-		// //query.orderBy = OrderBy.desc('publishingDate')
-		// query.pageSize = 999
-		// //query.pageIndex = 0
-
 		const entriesToBeDeletedSearch = await DeliveryClient.entries.search({
 			where: [
 				{ field: 'sys.contentTypeId', equalTo: contentType },
@@ -49,6 +42,7 @@ async function deleteAllEntriesByContentType(contentType) {
 			],
 			pageSize: 999
 		})
+
 		const entriesToBeDeleted = entriesToBeDeletedSearch.items
 		console.log('entriesToBeDeleted: ', entriesToBeDeleted)
 
@@ -95,7 +89,6 @@ export const POST = async ({ url }) => {
 			await deleteAllEntriesByContentType('personalWebsites')
 			await deleteAllEntriesByContentType('personalWebsitePage')
 			await deleteAllEntriesByContentType('personalWebsitesBlogPost')
-			console.log('entries deleted')
 		}
 
 		// Loop over data and create items in Contensis.
@@ -113,10 +106,12 @@ export const POST = async ({ url }) => {
 			if (personalDataEmail) {
 				contensisPeopleEntry = await getPeopleEntryByEmail(personalDataEmail)
 			}
+
 			if (!contensisPeopleEntry) {
 				console.log(`No people entry found for email: ${personalDataEmail}`)
 				continue
 			}
+
 			console.log('contensisPeopleEntry: ', contensisPeopleEntry.entryTitle)
 
 			// Import main image

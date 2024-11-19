@@ -3,9 +3,7 @@
 	import AppFooter from '$lib/components/AppFooter.svelte'
 	import '../app.css'
 
-	let { data, children } = $props()
-
-	console.log('data', data)
+	let { children } = $props()
 </script>
 
 <div class="flex min-h-screen flex-col">

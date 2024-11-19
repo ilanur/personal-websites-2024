@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit'
 import { ManagementClient, DeliveryClient } from '$lib/utils/contensis-clients.js'
-import getPeopleEntryByEmail from '$lib/utils/contensis/getPeopleEntryByEmail.js'
+import { getPeopleEntryByEmail } from '$lib/utils/contensis.js'
 import slugify from 'slugify'
 
 export async function load(event) {
@@ -31,13 +31,20 @@ export async function load(event) {
 	if (personalWebsite) redirect(302, `/${personalWebsite.websiteSlug}`)
 
 	// Get nationalities for creation page
-	const nationalities = await ManagementClient.components.get('nationalities')
+	let nationalities = []
+
+	try {
+		nationalities = await ManagementClient.components.get('nationalities')
+	} catch (e) {
+		console.error('Error while fetching nationalities: ', e)
+	}
 
 	return {
 		contensisUser,
-		nationalities: nationalities.fields.length
-			? nationalities.fields[0].validations.allowedValues.values
-			: []
+		nationalities:
+			nationalities.length !== 0 && nationalities.fields.length
+				? nationalities.fields[0].validations.allowedValues.values
+				: []
 	}
 }
 

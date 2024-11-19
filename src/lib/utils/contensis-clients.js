@@ -1,5 +1,5 @@
-import { Client as DC } from 'contensis-delivery-api'
-import { NodejsClient } from 'contensis-management-api/lib/client'
+import { Client } from 'contensis-delivery-api'
+import { UniversalClient } from 'contensis-management-api'
 import {
 	PRIVATE_CONTENSIS_ACCESS_TOKEN,
 	PRIVATE_CONTENSIS_CLIENT_ID,
@@ -15,16 +15,16 @@ const baseDeliveryConfig = {
 }
 
 // Create enhanced delivery client that handles preview mode
-export function createDeliveryClient({ cookies, url } = {}) {
+export function createDeliveryClient() {
 	const config = { ...baseDeliveryConfig }
-	return DC.create(config)
+	return Client.create(config)
 }
 
 // Default delivery client for client-side use
-export const DeliveryClient = DC.create(baseDeliveryConfig)
+export const DeliveryClient = Client.create(baseDeliveryConfig)
 
 // Management client remains unchanged
-export const ManagementNodeClient = NodejsClient.create({
+export const ManagementClient = UniversalClient.create({
 	rootUrl: PUBLIC_CONTENSIS_URL,
 	projectId: PUBLIC_CONTENSIS_PROJECT_ID,
 	clientType: 'client_credentials',

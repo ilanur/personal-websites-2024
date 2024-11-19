@@ -1,6 +1,6 @@
 import { ofetch } from 'ofetch'
 import { json, error } from '@sveltejs/kit'
-import { DeliveryClient, ManagementNodeClient } from '$lib/utils/contensis-clients'
+import { DeliveryClient, ManagementClient } from '$lib/utils/contensis-clients'
 import getPeopleEntryByEmail from '$lib/utils/contensis/getPeopleEntryByEmail.js'
 import { uploadAsset } from '$lib/utils/contensis'
 
@@ -45,7 +45,7 @@ async function deleteAllEntriesByContentType(contentType) {
 
 		for (let i = 0, ilen = entriesToBeDeleted.length; i < ilen; i++) {
 			const entry = entriesToBeDeleted[i]
-			await ManagementNodeClient.entries.delete(entry.sys.id, ['en'], true)
+			await ManagementClient.entries.delete(entry.sys.id, ['en'], true)
 			progress += 1
 			console.log(`${progress}/${ilen} "${contentType}" entries deleted.`)
 		}
@@ -183,9 +183,9 @@ export const POST = async ({ url }) => {
 
 			console.log('payload: ', payload)
 
-			const createdPersonalWebsite = await ManagementNodeClient.entries.create(payload)
+			const createdPersonalWebsite = await ManagementClient.entries.create(payload)
 
-			await ManagementNodeClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
+			await ManagementClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
 
 			progress += 1
 			console.log(`${progress}/${ilen} "personalWebsite" entries created.`)
@@ -208,7 +208,7 @@ export const POST = async ({ url }) => {
 					title = 'Publications'
 				}
 
-				const createdPage = await ManagementNodeClient.entries.create({
+				const createdPage = await ManagementClient.entries.create({
 					title,
 					content: page.content.rendered,
 					personalWebsite: {
@@ -224,7 +224,7 @@ export const POST = async ({ url }) => {
 					}
 				})
 
-				await ManagementNodeClient.entries.invokeWorkflow(createdPage, 'draft.publish')
+				await ManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
 
 				createdPages.push(createdPage)
 			}

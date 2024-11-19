@@ -1,5 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit'
-import { ManagementNodeClient, DeliveryClient } from '$lib/utils/contensis-clients.js'
+import { ManagementClient, DeliveryClient } from '$lib/utils/contensis-clients.js'
 import getPeopleEntryByEmail from '$lib/utils/contensis/getPeopleEntryByEmail.js'
 import slugify from 'slugify'
 
@@ -31,7 +31,7 @@ export async function load(event) {
 	if (personalWebsite) redirect(302, `/${personalWebsite.websiteSlug}`)
 
 	// Get nationalities for creation page
-	const nationalities = await ManagementNodeClient.components.get('nationalities')
+	const nationalities = await ManagementClient.components.get('nationalities')
 
 	return {
 		contensisUser,
@@ -54,7 +54,7 @@ export const actions = {
 			const createdPages = []
 
 			for (let i = 0, ilen = pagesToCreate.length; i < ilen; i++) {
-				const createdPage = await ManagementNodeClient.entries.create({
+				const createdPage = await ManagementClient.entries.create({
 					title: pagesToCreate[i],
 					pageTemplate: slugify(pagesToCreate[i], { lower: true }),
 					content: '',
@@ -65,13 +65,13 @@ export const actions = {
 					}
 				})
 
-				await ManagementNodeClient.entries.invokeWorkflow(createdPage, 'draft.publish')
+				await ManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
 
 				createdPages.push(createdPage)
 			}
 
 			// Create personal website
-			const createdPersonalWebsite = await ManagementNodeClient.entries.create({
+			const createdPersonalWebsite = await ManagementClient.entries.create({
 				title: contensisUser?.nameAndSurnameForTheWeb ?? formData.title,
 				description: contensisUser?.aboutMe ?? '',
 				email: contensisUser?.email ?? formData.email,
@@ -93,7 +93,7 @@ export const actions = {
 				}
 			})
 
-			await ManagementNodeClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
+			await ManagementClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
 
 			return { createdPersonalWebsite }
 		} catch (e) {

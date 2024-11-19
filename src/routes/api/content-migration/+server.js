@@ -39,11 +39,10 @@ async function deleteAllEntriesByContentType(contentType) {
 			Op.equalTo('sys.versionStatus', 'published')
 		)
 		//query.orderBy = OrderBy.desc('publishingDate')
-		query.pageSize = 99
+		query.pageSize = 999
 		//query.pageIndex = 0
 
 		const entriesToBeDeletedSearch = await DeliveryClient.entries.search(query)
-		console.log('entriesToBeDeletedSearch: ', entriesToBeDeletedSearch)
 		const entriesToBeDeleted = entriesToBeDeletedSearch.items
 		console.log('entriesToBeDeleted: ', entriesToBeDeleted)
 
@@ -81,7 +80,7 @@ export const POST = async ({ url }) => {
 	try {
 		// Get old CMS data from Wordpress.
 		const clearEntriesParam = url.searchParams.get('clearEntries')
-		const clearEntries = !clearEntriesParam ? true : clearEntriesParam === 'true'
+		const clearEntries = clearEntriesParam === 'true'
 		const oldCMSData = await ofetch('https://me.eui.eu/wp-json/eui/v1/sites?1')
 		let progress = 0
 
@@ -177,12 +176,10 @@ export const POST = async ({ url }) => {
 
 			if (cvAsset) {
 				payload['cv'] = {
-					asset: {
-						sys: {
-							id: cvAsset.sys.id,
-							language: 'en-GB',
-							dataFormat: 'asset'
-						}
+					sys: {
+						id: cvAsset.sys.id,
+						language: 'en-GB',
+						dataFormat: 'asset'
 					}
 				}
 			}

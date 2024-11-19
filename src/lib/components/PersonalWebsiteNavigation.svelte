@@ -2,7 +2,7 @@
 	import clsx from 'clsx'
 	import AppNavLink from '$lib/components/AppNavLink.svelte'
 
-	let { personalWebsite, ...rest } = $props()
+	let { personalWebsitePages, personalWebsite, ...rest } = $props()
 </script>
 
 <ul
@@ -11,9 +11,9 @@
 		'eui-gray container flex items-center gap-x-6 overflow-y-auto py-2 uppercase md:gap-x-10'
 	)}
 >
-	{#each personalWebsite.pages as page}
+	{#each personalWebsitePages as page}
 		<li>
-			<AppNavLink href={`/${personalWebsite.websiteSlug}/${page.pageTemplate}`}>
+			<AppNavLink href={`/${personalWebsite.websiteSlug}/${page.pageSlug}`}>
 				{page.title}
 			</AppNavLink>
 		</li>

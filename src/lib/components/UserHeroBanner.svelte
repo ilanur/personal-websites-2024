@@ -4,6 +4,7 @@
 	import HeroBannerGraphic from '$lib/components/graphics/HeroBannerGraphic.svelte'
 	import HeroBannerGraphicSmall from '$lib/components/graphics/HeroBannerGraphicSmall.svelte'
 	import IconUser from '$lib/components/icons/IconUser.svelte'
+	import { getThumbnail } from '$lib/utils/utils'
 
 	let { personalWebsite, isSmall } = $props()
 </script>
@@ -43,8 +44,12 @@
 						}
 					)}
 				>
-					{#if personalWebsite.profileImage}
-						<img src={personalWebsite.profileImage} alt="user" class="size-full object-cover" />
+					{#if personalWebsite.image}
+						<img
+							src={getThumbnail(personalWebsite.image)}
+							alt="user"
+							class="size-full object-cover"
+						/>
 					{:else}
 						<div
 							class={clsx({

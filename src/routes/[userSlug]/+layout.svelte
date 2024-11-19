@@ -9,6 +9,7 @@
 	let smallHeroBanner = writable(false)
 
 	const personalWebsite = $derived(data.personalWebsite)
+	const personalWebsitePages = $derived(data.personalWebsitePages)
 
 	setContext('smallHeroBanner', smallHeroBanner)
 </script>
@@ -17,7 +18,7 @@
 	<UserHeroBanner {personalWebsite} isSmall={$smallHeroBanner} />
 
 	<div class="bg-eui-gray">
-		<PersonalWebsiteNavigation {personalWebsite} />
+		<PersonalWebsiteNavigation {personalWebsitePages} {personalWebsite} />
 	</div>
 
 	{@render children?.()}

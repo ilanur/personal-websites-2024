@@ -3,6 +3,7 @@ import { json, error } from '@sveltejs/kit'
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis-clients'
 import getPeopleEntryByEmail from '$lib/utils/contensis/getPeopleEntryByEmail.js'
 import { uploadAsset } from '$lib/utils/contensis'
+import { Query, Op, OrderBy } from 'contensis-delivery-api'
 
 // Utility function to import assets (images or CVs)
 async function importAsset(url, title, description, folder) {
@@ -33,19 +34,24 @@ async function importAsset(url, title, description, folder) {
 // Function to delete all entries by content type
 async function deleteAllEntriesByContentType(contentType) {
 	try {
-		const entriesToBeDeleted = await DeliveryClient.entries.search({
-			where: [
-				{ field: 'sys.contentTypeId', equalTo: contentType },
-				{ field: 'sys.versionStatus', equalTo: 'published' }
-			],
-			pageSize: 999999
-		})
+		const query = new Query(
+			Op.equalTo('sys.contentTypeId', contentType),
+			Op.equalTo('sys.versionStatus', 'published')
+		)
+		//query.orderBy = OrderBy.desc('publishingDate')
+		query.pageSize = 99
+		//query.pageIndex = 0
+
+		const entriesToBeDeletedSearch = await DeliveryClient.entries.search(query)
+		console.log('entriesToBeDeletedSearch: ', entriesToBeDeletedSearch)
+		const entriesToBeDeleted = entriesToBeDeletedSearch.items
+		console.log('entriesToBeDeleted: ', entriesToBeDeleted)
 
 		let progress = 0
 
 		for (let i = 0, ilen = entriesToBeDeleted.length; i < ilen; i++) {
 			const entry = entriesToBeDeleted[i]
-			await ManagementClient.entries.delete(entry.sys.id, ['en'], true)
+			await ManagementClient.entries.delete(entry.sys.id, ['en-GB'], true)
 			progress += 1
 			console.log(`${progress}/${ilen} "${contentType}" entries deleted.`)
 		}
@@ -76,7 +82,7 @@ export const POST = async ({ url }) => {
 		// Get old CMS data from Wordpress.
 		const clearEntriesParam = url.searchParams.get('clearEntries')
 		const clearEntries = !clearEntriesParam ? true : clearEntriesParam === 'true'
-		const oldCMSData = await ofetch('https://me.eui.eu/wp-json/eui/v1/sites')
+		const oldCMSData = await ofetch('https://me.eui.eu/wp-json/eui/v1/sites?1')
 		let progress = 0
 
 		// Delete entries so we have a clean slate.
@@ -197,20 +203,36 @@ export const POST = async ({ url }) => {
 			for (let j = 0, jlen = personalData.pages.length; j < jlen; j++) {
 				const page = personalData.pages[j]
 				let title = page.title.rendered
+				let pageSlug = ''
 
 				if (pagesToExclude.includes(page.title.rendered)) continue
 
 				if (page.title.rendered === 'Biography') {
-					title = 'About'
+					title = 'Home'
+					pageSlug = 'home'
 				}
 
 				if (page.title.rendered === 'List of publications') {
 					title = 'Publications'
+					pageSlug = 'publications'
+				}
+				if (page.title.rendered === 'Research') {
+					title = 'Research'
+					pageSlug = 'research'
+				}
+				if (page.title.rendered === 'Publications in Cadmus') {
+					title = 'Publications in Cadmus'
+					pageSlug = 'publications-in-cadmus'
+				}
+				if (page.title.rendered === 'Work in progress') {
+					title = 'Work in progress'
+					pageSlug = 'work-in-progress'
 				}
 
 				const createdPage = await ManagementClient.entries.create({
 					title,
 					content: page.content.rendered,
+					pageSlug: pageSlug,
 					personalWebsite: {
 						sys: {
 							id: createdPersonalWebsite.sys.id,

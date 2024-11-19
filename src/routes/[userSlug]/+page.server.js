@@ -5,10 +5,11 @@ export async function load({ params, parent }) {
 
 	if (!parentData.personalWebsite) redirect(302, '/')
 
-	const pages = parentData.personalWebsite.pages
-	const aboutPage = pages.find((page) => page.pageTemplate === 'about')
+	const pages = parentData.personalWebsitePages
+	console.log('pages', pages)
+	const page = pages.find((page) => page.entryTitle === 'Home')
 
-	if (!aboutPage) redirect(302, '/')
-
-	redirect(302, `/${params.userSlug}/about`)
+	return {
+		page
+	}
 }

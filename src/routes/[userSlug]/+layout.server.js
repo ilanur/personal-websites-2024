@@ -14,8 +14,21 @@ export async function load({ params }) {
 		},
 		1
 	)
+	const personalWebsiteId = results.items.length ? results.items[0].sys.id : null
+
+	const personalWebsitePages = await DeliveryClient.entries.search(
+		{
+			where: [
+				{ field: 'sys.contentTypeId', equalTo: 'personalWebsitePage' },
+				{ field: 'sys.versionStatus', equalTo: 'published' },
+				{ field: 'personalWebsite.sys.id', equalTo: personalWebsiteId }
+			]
+		},
+		1
+	)
 
 	return {
-		personalWebsite: results.items.length ? results.items[0] : null
+		personalWebsite: results.items.length ? results.items[0] : null,
+		personalWebsitePages: personalWebsitePages.items
 	}
 }

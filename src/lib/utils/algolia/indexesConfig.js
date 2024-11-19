@@ -1,41 +1,32 @@
-import { peopleConfig } from '$lib/utils/algolia/indexes/people';
-import { PUBLIC_ALGOLIA_PERSONAL_INFORMATION_INDEX } from '$env/static/public';
-
 export function setConfigs(indexName) {
-	let config;
+	console.log('indexName', indexName)
+	let config
 
-	if (indexName === PUBLIC_ALGOLIA_PERSONAL_INFORMATION_INDEX) {
-		config = peopleConfig;
-	}
-
-	// For each of the attributes in the config, if it's not present, use the default one
 	return {
 		...getDefaultConfig(),
 		...config
-	};
+	}
 }
 
 function getDefaultConfig() {
-	// Here you can put the default values for each attribute
+	//X SIMO, qui puoi mettere i valori di default per ogni attributo
 	return {
 		templateFunction: baseTemplateFunction,
 		transformItems: baseTransformItems,
-		root_classes: '',
-		list_classes: '',
+		root_classes: 'p-8',
+		list_classes: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-6 mx-auto',
 		item_classes: '',
 		select_form_classes: '',
 		search_placeholder: 'Search'
-	};
+	}
 }
 
 function baseTemplateFunction(hit, html) {
-	return hit.item
-		? html`
-				<p>${hit.item.entryTitle}</p>
-			`
-		: '';
+	console.log('Hit', hit)
+	return html`
+		<p>${hit.item.entryTitle}</p>
+	`
 }
-
 function baseTransformItems(items) {
-	return items;
+	return items
 }

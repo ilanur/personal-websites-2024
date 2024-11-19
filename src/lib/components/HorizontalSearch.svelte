@@ -1,146 +1,173 @@
 <script>
-	import { browser } from '$app/environment'
-	import algoliasearch from 'algoliasearch/lite'
+	import { liteClient as algoliasearch } from 'algoliasearch/lite'
 	import instantsearch from 'instantsearch.js'
+	import { afterUpdate, onDestroy } from 'svelte'
 	import {
-		searchBox,
 		hits,
 		configure,
-		voiceSearch,
 		hitsPerPage,
 		stats,
 		currentRefinements
 	} from 'instantsearch.js/es/widgets'
 	import { setConfigs } from '$lib/utils/algolia/indexesConfig'
 	import { customPagination } from '$lib/utils/algolia/customPagination'
+	import { customSearch } from '$lib/utils/algolia/customSearch'
+	import { customVoiceSearch } from '$lib/utils/algolia/customVoiceSearch'
 	import {
 		eui_refinementList,
 		eui_menuSelect,
 		eui_toggleRefinement
 	} from '$lib/utils/algolia/widgets'
-	import {
-		PUBLIC_ALGOLIA_PERSONAL_INFORMATION_INDEX,
-		PUBLIC_ALGOLIA_ID,
-		PUBLIC_ALGOLIA_KEY
-	} from '$env/static/public'
+	import { PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY, PUBLIC_PREVIEW_PARAM } from '$env/static/public'
+	import { getThumbnail, formatDate, truncateString } from '$lib/utils/utils'
+	import { page } from '$app/stores'
 
-	const item = {
-		option_hitsPerPage: 12,
-		index: PUBLIC_ALGOLIA_PERSONAL_INFORMATION_INDEX,
-		placeholderText: 'Search personal websites',
-		filterForHorizontalSearch: []
+	export let item
+
+	// Get preview state from the page store
+	$: isPreview = $page.data.preview?.active || false
+
+	// Function to get the correct index name based on preview mode
+	function getIndexName(baseIndex) {
+		return isPreview ? `${baseIndex}_preview` : baseIndex
 	}
 
-	let option_hitsPerPage = item.option_hitsPerPage
+	// Function to get URL with preview state preserved
+	function getPreviewUrl(slug) {
+		// Create a proper URL object
+		const targetUrl = new URL(slug.startsWith('/') ? slug : `/${slug}`, $page.url.origin)
 
-	$effect(() => {
-		if (browser) {
-			const searchClient = algoliasearch(PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY)
-			let indexName = item.index // Dynamically set the index name
+		// If in preview mode, add the preview parameter
+		if (isPreview) {
+			targetUrl.searchParams.set(PUBLIC_PREVIEW_PARAM, 'true')
+		}
 
-			const config = setConfigs(indexName)
+		// Return the pathname and search params, keeping the URL clean
+		return `${targetUrl.pathname}${targetUrl.search}`
+	}
 
-			const {
-				templateFunction,
-				transformItems,
-				select_form_classes,
-				root_classes,
-				list_classes,
-				item_classes
-			} = config
+	$: activeFilter = null
+	$: option_hitsPerPage = item.customHitsPerPage || 12
+	$: quickFilters = item.quickFilter || []
+	$: hideSearchBar = item.hideSearchBar || false
+	$: hidePagination = item.hidePagination || false
+	$: filters = activeFilter
+		? `${item.additionalFilters ? `${item.additionalFilters} AND ` : ''}${activeFilter}`
+		: item.additionalFilters || ''
 
-			let not_found_classes = 'my-14 text-center'
+	let search
 
-			const search = instantsearch({
-				indexName,
-				searchClient
+	const initializeSearch = () => {
+		const searchClient = algoliasearch(PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY)
+		// Get the base index name
+		let indexName = item.index
+		if (item.indexName && item.indexName !== '') {
+			indexName = item.indexName
+		}
+
+		// Apply preview suffix if in preview mode
+		indexName = getIndexName(indexName)
+		console.log('Using index:', indexName)
+
+		const config = setConfigs(indexName)
+		const { transformItems, select_form_classes, root_classes, list_classes, item_classes } = config
+
+		let not_found_classes = 'my-14 text-center'
+
+		const search = instantsearch({
+			indexName,
+			searchClient,
+			routing: true
+		})
+
+		// Configure widget for additional filters
+		search.addWidgets([
+			configure({
+				filters: filters
 			})
+		])
 
-			// Configure widget for additional filters
-			search.addWidgets([
-				configure({
-					filters: item.additionalFilters || ''
-				}),
-				searchBox({
-					container: '#searchbox',
-					placeholder: item.placeholderText,
-					cssClasses: {
-						root: '',
-						form: 'flex',
-						input:
-							'block w-full border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6',
-						reset: '',
-						resetIcon: '',
-						loadingIndicator: '',
-						loadingIcon: '',
-						submit:
-							'relative -ml-px inline-flex items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-white bg-eui-blue',
-						submitIcon: ''
-					},
-					templates: {
-						submit({ cssClasses }, { html }) {
-							return html`
-								<span class="fa-solid fa-fw fa-magnifying-glass"></span>
-							`
-						}
-					}
-				}),
-				hits({
-					container: '#hits',
-					templates: {
-						item(hit, { html, components }) {
-							return templateFunction(hit, html, components)
-						},
-						empty(results, { html }) {
-							return html`
-								<div class="${not_found_classes}">
-									<p
-										class="bg-gray-300 mx-auto mb-3 flex h-28 w-28 items-center justify-center rounded-full p-4 text-6xl"
+		search.addWidgets([
+			hits({
+				container: '#hits',
+				templates: {
+					item: (hit, { html, components }) => html`
+						<article
+							class="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-lg"
+						>
+							<figure>
+								<img
+									class="aspect-16-9 w-full object-cover"
+									src="${getThumbnail(
+										hit.cleanEntryData.entryThumbnail,
+										'https://www.eui.eu/Images/Web2021/card-placeholder.svg'
+									)}"
+									alt="${hit.cleanEntryData.entryThumbnail
+										? hit.cleanEntryData.entryThumbnail.altText
+										: ''}"
+								/>
+							</figure>
+							<div class="bg-eui-dark-blue-800 flex h-full flex-col justify-between p-6">
+								<header>
+									<p class="leading-1 mb-3 text-sm"></p>
+									<h1 class="mb-3 text-lg font-bold">${hit.title}</h1>
+								</header>
+								<p class="text-sm">
+									${truncateString(hit.cleanEntryData.entryDescription, 200)}
+									<a
+										href="${getPreviewUrl(hit.cleanEntryData.websiteSlug)}"
+										title="${hit.title} website"
+										aria-label="${hit.title} website"
 									>
-										<span class="fa-sharp fa-solid fa-magnifying-glass"></span>
-									</p>
-									<h3>
-										No results found for "
-										<strong>${results.query}</strong>
-										"
-									</h3>
-									<p>
-										No results found for the criteria. Remove filters or try adjusting your search
-										to find what you're looking for.
-									</p>
-								</div>
-							`
-						}
-					},
-					transformItems(items, { results }) {
-						return transformItems(items, { results })
-					},
-					cssClasses: {
-						root: root_classes,
-						list: list_classes,
-						item: item_classes
+										<span class="sr-only">Read article: ${hit.cleanEntryData.entryTitle}.</span>
+										<span class="absolute inset-x-0 -top-px bottom-0"></span>
+									</a>
+								</p>
+							</div>
+						</article>
+					`,
+					empty(results, { html }) {
+						return html`
+							<div class="${not_found_classes}">
+								<p
+									class="bg-gray-300 mx-auto mb-3 flex h-28 w-28 items-center justify-center rounded-full p-4 text-6xl"
+								>
+									<span class="fa-sharp fa-solid fa-magnifying-glass"></span>
+								</p>
+								<h3>
+									No results found for "
+									<strong>${results.query}</strong>
+									"
+								</h3>
+								<p>
+									No results found for the criteria. Remove filters or try adjusting your search to
+									find what you're looking for.
+								</p>
+							</div>
+						`
 					}
-				}),
-				voiceSearch({
-					container: '#voicesearch',
-					language: 'en-GB',
-					cssClasses: {
-						root: ['flex h-full'],
-						status: ['hidden'],
-						button: [
-							'relative -ml-px h-full inline-flex items-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-white bg-slate-800'
-						]
+				},
+				transformItems(items, { results }) {
+					console.log('Hits retrieved:', items)
+					return transformItems(items, { results })
+				},
+				cssClasses: {
+					root: root_classes,
+					list: list_classes,
+					item: item_classes
+				}
+			})
+		])
+
+		// Instantiate the custom widget
+		if (hidePagination === false) {
+			search.addWidgets([
+				customPagination(
+					{
+						container: '#pagination'
 					},
-					templates: {
-						buttonText({ isListening }, { html }) {
-							return html`
-								<span
-									class="fa-regular fa-fw ${isListening ? 'fa-regular' : 'fa-solid'} fa-microphone"
-								></span>
-							`
-						}
-					}
-				}),
+					option_hitsPerPage
+				),
 				hitsPerPage({
 					container: '#hits-per-page',
 					items: [
@@ -154,195 +181,82 @@
 					],
 					cssClasses: {
 						select:
-							'block w-full border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6',
+							'block w-full bg-white border border-gray-300 text-sm rounded-lg focus:ring-intranet-blue-500',
 						option: 'bg-white'
 					}
-				}),
-				// Instantiate the custom widget
-				customPagination(
-					{
-						container: '#pagination'
-					},
-					option_hitsPerPage
-				),
-				stats({
-					container: '#stats',
-					cssClasses: {
-						text: ['text-sm']
-					}
-				}),
-				currentRefinements({
-					container: '#current-refinements',
-					cssClasses: {
-						root: '',
-						list: 'mx-6 mt-6 flex flex-wrap items-center',
-						item: 'text-sm me-5',
-						label: 'me-2 text-sm',
-						category:
-							'inline-flex items-center flex-wrap gap-x-3 bg-eui-blue px-2 py-1 mb-3 rounded-sm text-xs font-medium text-white',
-						categoryLabel: '',
-						delete: 'group relative -mr-1 h-3.5 w-3.5 rounded-sm hover:bg-sky-700'
-					},
-					transformItems(items) {
-						items.forEach(function (item) {
-							if (item.refinements[0].label == 'true') {
-								item.refinements[0].label = ''
-							}
-
-							if (item.label.includes('.type')) {
-								item.label = 'Type'
-							}
-
-							if (
-								item.label == 'item.affiliation.entryTitle' ||
-								item.label == 'item.researchProject.affiliation.entryTitle' ||
-								item.label == 'item.euiUnit.name' ||
-								item.label == 'cms.affiliation.entryTitle' ||
-								item.label == 'Departments.DeptName' ||
-								item.label == 'ict.Affiliations.Name'
-							) {
-								item.label = 'Department or Unit'
-								item.refinements.forEach(function (refinement, index, object) {
-									//console.log(refinement);
-									//refinement.label = "<a href='#'>TEST "+refinement.value+"</a>";
-								})
-							}
-
-							if (item.label.includes('.affiliatedResearchProgrammes.entryTitle')) {
-								item.label = 'Research programme'
-							}
-
-							if (item.label.includes('.ercProject')) {
-								item.label = 'ERC project'
-							}
-
-							if (item.label.includes('.isArchivedClosed')) {
-								item.label = 'Project archived or closed'
-							}
-
-							if (
-								item.label.includes('.affiliatedResearchThemes') ||
-								item.label.includes('.researchThemes') ||
-								item.label.includes('.areasOfExpertise')
-							) {
-								item.label = 'Research themes'
-							}
-
-							if (item.label == 'item.category') {
-								item.label = 'Category'
-							}
-
-							if (item.label == 'item.fullyFunded') {
-								item.label = 'Fully funded'
-							}
-
-							if (item.label == 'item.feesAndCosts.hasGrant') {
-								item.label = 'Has grant'
-							}
-
-							if (item.label == 'item.feesAndCosts.minimumFee') {
-								item.label = 'Starting fee'
-							}
-
-							if (item.label == 'tender_year') {
-								item.label = 'Year'
-							}
-
-							if (item.label == 'tender_status') {
-								item.label = 'Status'
-							}
-
-							if (item.label == 'item.feesAndCosts.minimumFee') {
-								item.label = 'Starting fee'
-							}
-
-							if (item.label == 'item.entry.name') {
-								item.label = 'Location'
-							}
-
-							if (item.label == 'item.durationMinInMonths') {
-								item.label = 'Duration in months'
-							}
-
-							if (item.label == 'cms.status') {
-								item.label = 'Role'
-							}
-
-							if (item.label == 'TypeName') {
-								item.label = 'Event category'
-							}
-
-							if (item.label == 'Projects.PrjName') {
-								item.label = 'Project'
-							}
-
-							if (item.label == 'ict.WorkingLanguages.Description') {
-								item.label = 'Working language'
-							}
-
-							if (item.label == 'ict.EuiYearJoined') {
-								item.label = 'Year joined'
-							}
-
-							if (item.label == 'cms.usage.researchProjects.title') {
-								item.label = 'Research project'
-							}
-
-							if (item.label == 'ict.Affiliations.Role') {
-								item.label = 'Role'
-							}
-
-							if (item.label == 'item.sys.availableLanguages') {
-								item.label = 'language'
-							}
-
-							if (item.label == 'timestamp') {
-								item.label = 'Date interval'
-								item.refinements.forEach(function (refinement) {
-									refinement.label = 'From ' + timestampConverter(refinement.value)
-								})
-							}
-
-							if (item.label == 'timestampEndDate') {
-								item.label = 'Expired programmes/trainings'
-								item.refinements.forEach(function (refinement) {
-									refinement.label = 'Deadline before ' + timestampConverter(refinement.value)
-								})
-							}
-
-							if (item.label == 'timestampStartDate') {
-								item.label = 'Deadline'
-								item.refinements.forEach(function (refinement) {
-									refinement.label = 'Past programmes'
-								})
-							}
-						})
-
-						return items
-					},
-					excludedAttributes: ['ModifiedDateTimestamp' /*'timestamp'*/]
 				})
 			])
-
-			// Dynamically add refinement widgets based on the JSON
-			item.filterForHorizontalSearch.forEach((filter) => {
-				const widgetType = mapFilterTypeToWidget(filter.type)
-				if (widgetType) {
-					widgetType(
-						search,
-						`#${filter.divIdValue}`,
-						filter.attribute,
-						filter.title,
-						select_form_classes,
-						filter.limit,
-						filter.sortBy,
-						filter.count_value,
-						filter.has_search,
-						filter.show_more
-					)
+		}
+		if (hideSearchBar === false) {
+			search.addWidgets([
+				customSearch({
+					container: '#searchbox',
+					placeholder: item.placeholderText || 'Search...'
+				}),
+				customVoiceSearch({
+					container: '#voicesearch'
+				})
+			])
+		}
+		search.addWidgets([
+			stats({
+				container: '#stats',
+				cssClasses: {
+					text: ['text-sm']
 				}
+			}),
+			currentRefinements({
+				container: '#current-refinements',
+				cssClasses: {
+					root: '',
+					list: 'mt-6 flex flex-wrap items-center',
+					item: 'text-sm me-5',
+					label: 'sr-only',
+					category:
+						'inline-flex items-center flex-wrap gap-x-3 bg-intranet-blue-700 px-2 py-1 mb-3 me-2 rounded-sm text-xs font-medium text-white',
+					categoryLabel: '',
+					delete: 'group relative -mr-1 h-3.5 w-3.5 rounded-sm hover:bg-intranet-blue-700'
+				},
+				transformItems(items) {
+					return items
+				},
+				excludedAttributes: ['ModifiedDateTimestamp' /*'timestamp'*/]
 			})
-			search.start()
+		])
+
+		// Dynamically add refinement widgets based on the JSON
+		item.filterForHorizontalSearch.forEach((filter) => {
+			const widgetType = mapFilterTypeToWidget(filter.type)
+			if (widgetType) {
+				widgetType(
+					search,
+					`#${filter.divIdValue}`,
+					filter.attribute,
+					filter.title,
+					select_form_classes,
+					filter.limit,
+					filter.sortBy,
+					filter.count_value,
+					filter.showSearchBar,
+					filter.show_more
+				)
+			}
+		})
+		search.start()
+	}
+
+	afterUpdate(() => {
+		if (search) {
+			search.dispose()
+			activeFilter = null
+		}
+		initializeSearch()
+	})
+
+	onDestroy(() => {
+		if (search) {
+			search.dispose()
+			activeFilter = null
 		}
 	})
 
@@ -357,31 +271,69 @@
 
 		return typeMap[type]
 	}
+	// Function to toggle filter
+	function toggleFilter(algoliaFilter) {
+		search.dispose()
+
+		//console.log('Clicked filter: ' + algoliaFilter);
+		if (activeFilter === algoliaFilter) {
+			//console.log('Filter is active, removing it');
+			activeFilter = null // Remove filter if it's already active
+		} else {
+			//console.log('Applying new filter');
+			activeFilter = algoliaFilter // Apply new filter
+		}
+		//console.log('Current activeFilter: ' + (activeFilter || 'none'));
+		initializeSearch() // Reinitialize search with new filter
+	}
 </script>
 
-<div class="container">
-	<div class="my-6 grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-12">
-		<div class="flex items-center sm:col-span-12 2xl:col-span-6">
-			<label for="searchbox" class="sr-only text-sm font-medium leading-6">Search</label>
-			<div id="searchbox" class="w-full"></div>
-			<div id="voicesearch" class="h-full"></div>
+<div class="bg-intranet-blue-50 pt-5">
+	<form class="mx-auto max-w-7xl px-6 lg:px-8">
+		<div class="mb-5 grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-12">
+			{#if hideSearchBar !== true}
+				<div class="flex items-center sm:col-span-12 2xl:col-span-8">
+					<div class="flex w-full items-center">
+						<label for="search" class="sr-only">Search</label>
+						<div class="relative w-full">
+							<div id="searchbox" class="w-full"></div>
+							<div id="voicesearch" class="h-full"></div>
+						</div>
+					</div>
+				</div>
+			{/if}
 		</div>
 
-		<!-- Dynamically created containers for refinement widgets will be here -->
-		{#each item.filterForHorizontalSearch as filter}
-			{#key filter.divIdValue}
-				<div id={filter.divIdValue} class="sm:col-span-6 xl:col-span-4 2xl:col-span-3"></div>
-			{/key}
-		{/each}
-	</div>
+		<!-- Quick search filters -->
+		{#if quickFilters.length > 0}
+			<div class="mx-auto">
+				<p class="sr-only text-sm">Quick search:</p>
+				<ul role="list" class="flex">
+					{#each quickFilters as filter}
+						<li class="mr-1">
+							<button
+								class="rounded px-2 py-1 text-xs font-semibold {activeFilter ===
+								`${filter.algoliaFilter}`
+									? 'bg-intranet-blue-700 text-white'
+									: 'bg-intranet-blue-100 text-intranet-blue-700'} hover:bg-intranet-blue-700 hover:text-white"
+								on:click={() => toggleFilter(filter.algoliaFilter)}
+							>
+								{@html filter.label}
+							</button>
+						</li>
+					{/each}
+				</ul>
+			</div>
+		{/if}
+	</form>
+	<div id="current-refinements" class="mx-auto max-w-7xl px-8 lg:px-8"></div>
+</div>
 
-	<div id="current-refinements"></div>
-
-	<div class="my-6 flex items-center justify-between">
+<div class="mx-auto max-w-7xl">
+	<div class="my-6 flex items-center justify-between px-8">
 		<div id="stats"></div>
 		<div id="hits-per-page"></div>
 	</div>
-
 	<div id="hits"></div>
-	<div id="pagination"></div>
+	<div id="pagination" class="px-8"></div>
 </div>

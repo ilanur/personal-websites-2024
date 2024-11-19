@@ -1,12 +1,39 @@
 import { ofetch } from 'ofetch'
 import { json, error } from '@sveltejs/kit'
-import { PwDeliveryClient, PwManagementClient } from '$lib/utils/contensis-clients.js'
-import slugify from 'slugify'
+import { DeliveryClient, ManagementNodeClient } from '$lib/utils/contensis-clients'
 import getPeopleEntryByEmail from '$lib/utils/contensis/getPeopleEntryByEmail.js'
+import { uploadAsset } from '$lib/utils/contensis'
 
+// Utility function to import assets (images or CVs)
+async function importAsset(url, title, description, folder) {
+	try {
+		// Download the asset
+		const response = await fetch(url)
+		if (!response.ok) {
+			throw new Error(`Failed to download asset: ${response.statusText}`)
+		}
+		const arrayBuffer = await response.arrayBuffer()
+		const fileBuffer = Buffer.from(arrayBuffer)
+		const filename = url.split('/').pop()
+
+		// Upload to Contensis
+		const asset = await uploadAsset(fileBuffer, filename, {
+			description: description,
+			folderId: folder,
+			contentType: response.headers.get('content-type'),
+			title: title
+		})
+		return asset
+	} catch (err) {
+		console.error('Error downloading or uploading asset:', err)
+		return null
+	}
+}
+
+// Function to delete all entries by content type
 async function deleteAllEntriesByContentType(contentType) {
 	try {
-		const entriesToBeDeleted = await PwDeliveryClient.entries.search({
+		const entriesToBeDeleted = await DeliveryClient.entries.search({
 			where: [
 				{ field: 'sys.contentTypeId', equalTo: contentType },
 				{ field: 'sys.versionStatus', equalTo: 'published' }
@@ -18,7 +45,7 @@ async function deleteAllEntriesByContentType(contentType) {
 
 		for (let i = 0, ilen = entriesToBeDeleted.length; i < ilen; i++) {
 			const entry = entriesToBeDeleted[i]
-			await PwManagementClient.entries.delete(entry.sys.id, ['en'], true)
+			await ManagementNodeClient.entries.delete(entry.sys.id, ['en'], true)
 			progress += 1
 			console.log(`${progress}/${ilen} "${contentType}" entries deleted.`)
 		}
@@ -54,17 +81,117 @@ export const POST = async ({ url }) => {
 
 		// Delete entries so we have a clean slate.
 		if (clearEntries) {
-			await deleteAllEntriesByContentType('personalWebsite')
-			await deleteAllEntriesByContentType('pages')
+			await deleteAllEntriesByContentType('personalWebsites')
+			await deleteAllEntriesByContentType('personalWebsitePage')
+			await deleteAllEntriesByContentType('personalWebsitesBlogPost')
+			console.log('entries deleted')
 		}
-
-		// Define pages to exclude from migration.
-		const pagesToExclude = ['Blog', 'Contact Me', 'Personal Website Settings']
 
 		// Loop over data and create items in Contensis.
 		for (let i = 0, ilen = oldCMSData.length; i < ilen; i++) {
 			const personalData = oldCMSData[i]
 			const createdPages = []
+
+			// Stop after 10 entries for testing purposes
+			if (i > 10) break
+
+			// Create personalWebsite in Contensis and link created pages.
+			const personalDataEmail = personalData.user.user_email?.toLowerCase()
+			let contensisPeopleEntry
+
+			if (personalDataEmail) {
+				contensisPeopleEntry = await getPeopleEntryByEmail(personalDataEmail)
+			}
+			if (!contensisPeopleEntry) {
+				console.log(`No people entry found for email: ${personalDataEmail}`)
+				continue
+			}
+			console.log('contensisPeopleEntry: ', contensisPeopleEntry.entryTitle)
+
+			// Import main image
+			let mainImage = null
+			if (personalData.user.user_picture && personalData.user.user_picture.length > 0) {
+				mainImage = await importAsset(
+					personalData.user.user_picture,
+					personalData.title.rendered,
+					`Image for ${personalData.title.rendered}`,
+					'/Content-Types-Assets/PersonalWebsites'
+				)
+			}
+
+			// Import CV if available on personaData.user.cv
+			let cvAsset = null
+			const cvUrl = personalData.user.cv
+			if (cvUrl) {
+				// We found a PDF link, let's download and upload the CV
+				cvAsset = await importAsset(
+					cvUrl,
+					`${personalData.title.rendered} CV`,
+					`CV for ${personalData.title.rendered}`,
+					'/Content-Types-Assets/PersonalWebsites/CVs'
+				)
+			}
+
+			// Prepare payload for personalWebsite entry
+			const payload = {
+				title: personalData.title.rendered,
+				description: personalData.description,
+				websiteSlug: personalData.user.personal_site?.split('/').pop() || '',
+				city: personalData.user.city || '',
+				lat: personalData.user.nationality_lat || '',
+				lng: personalData.user.nationality_lng || '',
+				nationality: {
+					nationality: [personalData.user.nationality_name]
+				},
+				people: {
+					sys: {
+						id: contensisPeopleEntry.sys.id,
+						contentTypeId: 'people'
+					}
+				},
+				sys: {
+					contentTypeId: 'personalWebsites',
+					language: 'en-GB',
+					dataFormat: 'entry'
+				}
+			}
+
+			if (mainImage) {
+				payload['image'] = {
+					altText: personalData.title.rendered,
+					asset: {
+						sys: {
+							id: mainImage.sys.id,
+							language: 'en-GB',
+							dataFormat: 'asset'
+						}
+					}
+				}
+			}
+
+			if (cvAsset) {
+				payload['cv'] = {
+					asset: {
+						sys: {
+							id: cvAsset.sys.id,
+							language: 'en-GB',
+							dataFormat: 'asset'
+						}
+					}
+				}
+			}
+
+			console.log('payload: ', payload)
+
+			const createdPersonalWebsite = await ManagementNodeClient.entries.create(payload)
+
+			await ManagementNodeClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
+
+			progress += 1
+			console.log(`${progress}/${ilen} "personalWebsite" entries created.`)
+
+			// Define pages to exclude from migration.
+			const pagesToExclude = ['Blog', 'Contact Me', 'Personal Website Settings']
 
 			// Loop over pages
 			for (let j = 0, jlen = personalData.pages.length; j < jlen; j++) {
@@ -81,67 +208,26 @@ export const POST = async ({ url }) => {
 					title = 'Publications'
 				}
 
-				const createdPage = await PwManagementClient.entries.create({
+				const createdPage = await ManagementNodeClient.entries.create({
 					title,
 					content: page.content.rendered,
-					pageTemplate: slugify(title, { lower: true }),
+					personalWebsite: {
+						sys: {
+							id: createdPersonalWebsite.sys.id,
+							contentTypeId: 'personalWebsites'
+						}
+					},
 					sys: {
-						contentTypeId: 'pages',
-						language: 'en',
+						contentTypeId: 'personalWebsitePage',
+						language: 'en-GB',
 						dataFormat: 'entry'
 					}
 				})
 
-				await PwManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
+				await ManagementNodeClient.entries.invokeWorkflow(createdPage, 'draft.publish')
 
 				createdPages.push(createdPage)
 			}
-
-			// Create personalWebsite in Contensis and link created pages.
-			const personalDataEmail = personalData.user.user_email?.toLowerCase()
-			let contensisPeopleEntry
-
-			if (personalDataEmail) {
-				contensisPeopleEntry = await getPeopleEntryByEmail(personalDataEmail)
-			}
-
-			const createdPersonalWebsite = await PwManagementClient.entries.create({
-				title: personalData.title.rendered,
-				description: personalData.description,
-				email: personalDataEmail ?? '',
-				websiteSlug: personalData.user.personal_site?.split('/').pop() || '',
-				peopleEntryId: contensisPeopleEntry?.sys?.id ?? '',
-				socials: [
-					{ type: 'facebook', value: personalData.facebook },
-					{ type: 'googleScholar', value: personalData.google_scholar },
-					{ type: 'researchGate', value: personalData.research_gate },
-					{ type: 'linkedIn', value: personalData.linked_in },
-					{ type: 'x', value: personalData.twitter },
-					{ type: 'instagram', value: personalData.instagram },
-					{ type: 'pinterest', value: personalData.pinterest },
-					{ type: 'skype', value: personalData.skype },
-					{ type: 'academia', value: personalData.academia },
-					{ type: 'orcidID', value: '' },
-					{ type: 'youtube', value: '' },
-					{ type: 'github', value: '' }
-				],
-				pages: createdPages.map((page) => ({
-					sys: {
-						id: page.sys.id,
-						contentTypeId: 'pages'
-					}
-				})),
-				sys: {
-					contentTypeId: 'personalWebsite',
-					language: 'en',
-					dataFormat: 'entry'
-				}
-			})
-
-			await PwManagementClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
-
-			progress += 1
-			console.log(`${progress}/${ilen} "personalWebsite" entries created.`)
 		}
 
 		return json({ success: true, data: oldCMSData }, { status: 200 })

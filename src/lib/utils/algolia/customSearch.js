@@ -1,0 +1,27 @@
+import { connectSearchBox } from 'instantsearch.js/es/connectors';
+
+const renderSearchBox = (renderOptions, isFirstRender) => {
+    const { query, refine, clear, isSearchStalled, widgetParams } = renderOptions;
+    const container = document.querySelector(widgetParams.container);
+    if (isFirstRender) {
+        container.innerHTML = `<input type="text" name="search" class="block w-full rounded-md border-0 px-4 py-3 text-base text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2 focus:ring-offset-gray-900" placeholder="${widgetParams.placeholder}" value="${query}" />`;
+        const input = container.querySelector('input');
+        input.addEventListener('input', event => {
+            refine(event.currentTarget.value);
+        });
+
+        // Clearing functionality could be tied to a button or other UI element
+        // Example clear button handling (if applicable)
+        // document.querySelector('#clear-button').addEventListener('click', () => {
+        //   input.value = '';
+        //   refine('');
+        // });
+    }
+
+    // Carefully update input to preserve user edits
+    const input = container.querySelector('input');
+    if (document.activeElement !== input) { // check if the input is not currently focused
+        input.value = query;
+    }
+};
+export const customSearch = connectSearchBox(renderSearchBox);

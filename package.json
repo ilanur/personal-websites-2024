@@ -26,13 +26,14 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@algolia/client-search": "^5.12.0",
 		"@auth/sveltekit": "^1.2.0",
 		"@sveltejs/adapter-node": "^5.2.9",
-		"algoliasearch": "^4.24.0",
+		"algoliasearch": "^5.12.0",
 		"clsx": "^2.1.1",
 		"contensis-delivery-api": "^1.5.0",
 		"contensis-management-api": "^2.2.0",
-		"instantsearch.js": "^4.66.0",
+		"instantsearch.js": "^4.75.3",
 		"ofetch": "^1.4.1",
 		"slugify": "^1.6.6",
 		"xml2js": "^0.6.2"

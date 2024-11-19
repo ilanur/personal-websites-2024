@@ -1,74 +1,100 @@
-import { refinementList,menuSelect,toggleRefinement } from 'instantsearch.js/es/widgets';
+import { refinementList, menuSelect, toggleRefinement } from 'instantsearch.js/es/widgets'
 
-export function eui_menuSelect(search, container, attribute, title, select_form_classes, limit = 25, sort = "name:asc"){
-  search.addWidgets([
-    menuSelect({
-      container: container,
-      attribute: attribute,
-      limit: limit,
-      sortBy: [sort],
-      cssClasses: {
-        root: '',
-        select: `block w-full border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${select_form_classes}`,
-        option: 'bg-white',
-      },
-      templates: {
-        defaultOption: title,
-      }
-    }),
-  ]);
+export function eui_menuSelect(
+	search,
+	container,
+	attribute,
+	title,
+	select_form_classes,
+	limit = 25,
+	sort = 'name:asc'
+) {
+	search.addWidgets([
+		menuSelect({
+			container: container,
+			attribute: attribute,
+			limit: limit,
+			sortBy: [sort],
+			cssClasses: {
+				root: '',
+				select: `block w-full bg-white border border-gray-300 text-sm rounded-lg focus:ring-intranet-blue-500 ${select_form_classes}`,
+				option: 'bg-white'
+			},
+			templates: {
+				defaultOption: title
+			}
+		})
+	])
 }
- 
-export function eui_toggleRefinement(search, container, attribute, title){
-  search.addWidgets([
-    toggleRefinement({
-      container: container,
-      attribute: attribute,
-      cssClasses:{
-        checkbox: 'form-check-input'
-      },
-      templates: {
-        labelText: function(item){
-          if(item.count == null){
-            return;
-          }
-          else{
-            return title;
-          }
-        }
-      },
-    })
-  ]);
+
+export function eui_toggleRefinement(search, container, attribute, title) {
+	search.addWidgets([
+		toggleRefinement({
+			container: container,
+			attribute: attribute,
+			cssClasses: {
+				checkbox:
+					'h-4 w-4 me-2 rounded border-gray-300 text-intranet-blue-700 focus:ring-intranet-blue-400',
+				label: 'flex items-center',
+				labelText: 'text-sm'
+			},
+			templates: {
+				labelText: function (item) {
+					if (item.count == null) {
+						return
+					} else {
+						return title
+					}
+				}
+			}
+		})
+	])
 }
- 
-export function eui_refinementList(search, container, attribute, limit, sort = 'name:asc', count_value = 'hidden', has_search = false, show_more = false){
-  let searchableInput = "hidden";
-  let showSearch = "false";
-  if(has_search === true){
-    searchableInput = "form-control form-control-lg mb-3 rounded-0";
-    showSearch = "true";
-  }
-  search.addWidgets([
-    refinementList({
-      container: container,
-      attribute: attribute,
-      searchable: showSearch,
-      limit: limit,
-      showMore: show_more,
-      sortBy: [sort],
-      cssClasses: { 
-        list: 'list-unstyled',
-        label : 'form-check-label',
-        labelText: '',
-        count: count_value,
-        item: 'mb-2 form-check',
-        checkbox: 'form-check-input rounded-0',
-        select: 'form-select form-select-lg rounded-0',
-        option: 'bg-white',
-        searchableSubmit: 'd-none',
-        searchableReset: 'd-none',
-        searchableInput: searchableInput
-      },
-    })
-  ]);
+
+export function eui_refinementList(
+	search,
+	container,
+	attribute,
+	title,
+	select_form_classes,
+	limit = 4,
+	sort = 'count:desc',
+	count_value = 'hidden',
+	has_search = false,
+	show_more = false
+) {
+	let searchableInput = 'hidden'
+	let showSearch = 'false'
+	if (has_search) {
+		searchableInput =
+			'block w-full mb-3 bg-white border border-gray-300 text-sm rounded-lg focus:ring-intranet-blue-500'
+		showSearch = 'true'
+	}
+	search.addWidgets([
+		refinementList({
+			container: container,
+			attribute: attribute,
+			searchable: showSearch,
+			limit: limit,
+			showMore: true,
+			showMoreLimit: 2000,
+			sortBy: [sort],
+			cssClasses: {
+				list: 'overflow-y-scroll max-h-40 2xl:max-h-56',
+				label: '',
+				labelText: '',
+				count: count_value,
+				item: 'mb-2 flex items-center',
+				checkbox:
+					'h-4 w-4 me-2 rounded border-gray-300 text-intranet-blue-700 focus:ring-intranet-blue-400',
+				select: '',
+				option: 'bg-white',
+				searchableSubmit: 'hidden',
+				searchableReset: 'hidden',
+				searchableInput: searchableInput,
+				showMore: 'block w-full mt-3 pt-3 border-t text-sm text-intranet-blue-700 underline xxxxxx',
+				disabledShowMore: 'hidden'
+			}
+		})
+	])
 }

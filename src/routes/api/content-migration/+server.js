@@ -34,15 +34,21 @@ async function importAsset(url, title, description, folder) {
 // Function to delete all entries by content type
 async function deleteAllEntriesByContentType(contentType) {
 	try {
-		const query = new Query(
-			Op.equalTo('sys.contentTypeId', contentType),
-			Op.equalTo('sys.versionStatus', 'published')
-		)
-		//query.orderBy = OrderBy.desc('publishingDate')
-		query.pageSize = 999
-		//query.pageIndex = 0
+		// const query = new Query(
+		// 	Op.equalTo('sys.contentTypeId', contentType),
+		// 	Op.equalTo('sys.versionStatus', 'published')
+		// )
+		// //query.orderBy = OrderBy.desc('publishingDate')
+		// query.pageSize = 999
+		// //query.pageIndex = 0
 
-		const entriesToBeDeletedSearch = await DeliveryClient.entries.search(query)
+		const entriesToBeDeletedSearch = await DeliveryClient.entries.search({
+			where: [
+				{ field: 'sys.contentTypeId', equalTo: contentType },
+				{ field: 'sys.versionStatus', equalTo: 'published' }
+			],
+			pageSize: 999
+		})
 		const entriesToBeDeleted = entriesToBeDeletedSearch.items
 		console.log('entriesToBeDeleted: ', entriesToBeDeleted)
 

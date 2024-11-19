@@ -60,7 +60,7 @@
 				{#if !isSmall}
 					<UserHeroBannerSocials
 						socials={personalWebsite.socials}
-						class="z-20 hidden flex-col space-y-4 border-l border-eui-gray-70 pl-4 text-eui-gray-70 md:flex"
+						class="z-20 hidden max-h-[70%] grid-cols-2 gap-4 border-l border-eui-gray-70 pl-4 text-eui-gray-70 md:grid"
 					/>
 				{/if}
 			</div>

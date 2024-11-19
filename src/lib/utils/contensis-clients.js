@@ -1,4 +1,3 @@
-// $lib/contensis-clients.js
 import { Client as DC } from 'contensis-delivery-api'
 import { NodejsClient } from 'contensis-management-api/lib/client'
 import {

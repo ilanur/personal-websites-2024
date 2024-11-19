@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit'
-import { DeliveryClient } from '../contensis-clients'
+import { DeliveryClient } from '$lib/utils/contensis-clients'
 
 async function getPeopleEntryByEmail(email) {
 	try {

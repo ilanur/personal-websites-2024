@@ -6,16 +6,30 @@
 	let { ...rest } = $props()
 
 	let value = $state('')
+	let loading = $state(false)
 
 	async function callFunction() {
-		const response = await ofetch('/api/function-calling', {
-			method: 'POST',
-			body: {
-				promptValue: value
-			}
-		})
+		loading = true
 
-		console.log('response', response)
+		try {
+			const response = await ofetch('/api/function-calling', {
+				method: 'POST',
+				body: {
+					userInput: value,
+					entryId: '610b1862-d956-4a1a-909e-404cb5fd8934'
+				}
+			})
+
+			console.log('response', response)
+
+			if (response.reload_page) {
+				window.location.reload()
+			}
+		} catch (error) {
+			console.error(error)
+		} finally {
+			loading = false
+		}
 	}
 </script>
 
@@ -32,5 +46,5 @@
 		class="mb-4 h-40 w-80 resize-none rounded-md border-2 border-eui-gray-30"
 	></textarea>
 
-	<Button onclick={callFunction}>Submit</Button>
+	<Button onclick={callFunction} {loading}>Submit</Button>
 </div>

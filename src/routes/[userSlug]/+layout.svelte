@@ -13,8 +13,6 @@
 	const personalWebsitePages = $derived(data.personalWebsitePages)
 
 	setContext('smallHeroBanner', smallHeroBanner)
-
-	console.log('data', data)
 </script>
 
 <div>
@@ -26,5 +24,7 @@
 
 	{@render children?.()}
 
-	<FunctionCallingPrompt class="fixed bottom-8 right-8" />
+	{#if data.authUser}
+		<FunctionCallingPrompt class="fixed bottom-8 right-8" />
+	{/if}
 </div>

@@ -14,8 +14,8 @@ export async function load({ params }) {
 		},
 		1
 	)
-	const personalWebsiteId = results.items.length ? results.items[0].sys.id : null
 
+	const personalWebsiteId = results.items.length ? results.items[0].sys.id : null
 	const personalWebsitePages = await DeliveryClient.entries.search(
 		{
 			where: [

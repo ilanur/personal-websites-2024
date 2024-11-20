@@ -1,10 +1,10 @@
 <script>
 	import { enhance } from '$app/forms'
 	import { goto } from '$app/navigation'
-	import { PUBLIC_EUI_WEB } from '$env/static/public'
+	import { PUBLIC_EUI_WEB, PUBLIC_EUI_PERSONAL_WEBSITE_URL } from '$env/static/public'
 	import InputField from '$lib/components/form-elements/InputField.svelte'
 	import SelectField from '$lib/components/form-elements/SelectField.svelte'
-	import Button from '$lib/components/Button.svelte'
+	import AppButton from '$lib/components/AppButton.svelte'
 
 	let { data } = $props()
 
@@ -41,7 +41,7 @@
 			<InputField
 				name="websiteURL"
 				label="Your personal website URL"
-				value={`${PUBLIC_EUI_WEB}/`}
+				value={`${PUBLIC_EUI_PERSONAL_WEBSITE_URL}/`}
 				readonly
 			/>
 
@@ -60,8 +60,8 @@
 			options={nationalities}
 			label="Nationality"
 			placeholder="Select your nationality"
-			valuePropertyName="en"
-			textPropertyName="en"
+			valuePropertyName="en-GB"
+			textPropertyName="en-GB"
 		/>
 
 		<div class="relative size-60 overflow-hidden rounded-md">
@@ -74,6 +74,6 @@
 			/>
 		</div>
 
-		<Button type="submit" loading={formLoading}>Submit</Button>
+		<AppButton type="submit" loading={formLoading}>Submit</AppButton>
 	</form>
 </div>

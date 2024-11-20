@@ -34,7 +34,7 @@ export async function load(event) {
 	let nationalities = []
 
 	try {
-		nationalities = await ManagementClient.components.get('nationalities')
+		nationalities = await ManagementClient.components.get('nationality')
 	} catch (e) {
 		console.error('Error while fetching nationalities: ', e)
 	}
@@ -67,7 +67,7 @@ export const actions = {
 					content: '',
 					sys: {
 						contentTypeId: 'pages',
-						language: 'en',
+						language: 'en-GB',
 						dataFormat: 'entry'
 					}
 				})
@@ -83,7 +83,7 @@ export const actions = {
 				description: contensisUser?.aboutMe ?? '',
 				email: contensisUser?.email ?? formData.email,
 				websiteSlug: formData.slug,
-				nationalities: {
+				nationality: {
 					nationality: [formData.nationality]
 				},
 				peopleEntryId: contensisUser?.sys?.id ?? '',

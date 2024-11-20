@@ -26,7 +26,7 @@ export async function getPeopleEntryByEmail(email) {
 export async function authenticateContensis() {
 	try {
 		const url = `${PUBLIC_CONTENSIS_URL}/authenticate/connect/token`
-		const response = await fetch(url, {
+		const authData = await ofetch(url, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
@@ -35,19 +35,9 @@ export async function authenticateContensis() {
 			body: 'grant_type=client_credentials&client_id=fb9b7d09-ef9a-4c25-b2fb-df70f433f7ce&client_secret=977f1df8de174d5fbccd058a1abd74c8-6d0be4cb4f924667aa8646f9961b6ba4-935b9336f5bf4e68ad02c8abbfaa1ae4&scope=Entry_Read Entry_Write Entry_Delete ContentType_Read Project_Read'
 		})
 
-		if (!response.ok) {
-			return {
-				status: response.status,
-				body: {
-					error: `Failed to authenticate: ${response.statusText}`
-				}
-			}
-		}
-
-		const data = await response.json()
-		return data
+		return authData
 	} catch (e) {
-		console.error('Error in authenticating contensis: ' + e)
+		console.error('Error in authenticating contensis:', e)
 		return { error: e }
 	}
 }
@@ -112,6 +102,6 @@ export async function uploadAsset(fileBuffer, filename, options = {}) {
 		return createdEntry
 	} catch (e) {
 		console.error('Error uploading asset to Contensis:', e)
-		throw error(400, `Failed to upload audio asset: ${e.message}`)
+		throw error(400, `Failed to upload asset: ${e.message}`)
 	}
 }

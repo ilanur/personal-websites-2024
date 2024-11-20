@@ -214,14 +214,17 @@ export const POST = async ({ url }) => {
 					title = 'Publications'
 					pageSlug = 'publications'
 				}
+
 				if (page.title.rendered === 'Research') {
 					title = 'Research'
 					pageSlug = 'research'
 				}
+
 				if (page.title.rendered === 'Publications in Cadmus') {
 					title = 'Publications in Cadmus'
 					pageSlug = 'publications-in-cadmus'
 				}
+
 				if (page.title.rendered === 'Work in progress') {
 					title = 'Work in progress'
 					pageSlug = 'work-in-progress'

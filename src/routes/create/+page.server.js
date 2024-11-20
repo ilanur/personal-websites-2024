@@ -1,4 +1,4 @@
-import { fail, redirect } from '@sveltejs/kit'
+import { error, fail, redirect } from '@sveltejs/kit'
 import { ManagementClient, DeliveryClient } from '$lib/utils/contensis-clients.js'
 import { getPeopleEntryByEmail } from '$lib/utils/contensis.js'
 import slugify from 'slugify'
@@ -9,8 +9,8 @@ export async function load(event) {
 	if (!session) redirect(302, '/')
 
 	// Check if user exists in the people collection in Contensis
-	const contensisUser = await getPeopleEntryByEmail('emanuele.strano@eui.eu')
-	// const contensisUser = await getPeopleEntryByEmail(session.user.email) // --> Enable this line to use real user
+	// const contensisUser = await getPeopleEntryByEmail('emanuele.strano@eui.eu')
+	const contensisUser = await getPeopleEntryByEmail(session.user.email) // --> Enable this line to use real user
 
 	if (!contensisUser) redirect(302, '/')
 
@@ -50,62 +50,87 @@ export async function load(event) {
 
 export const actions = {
 	default: async ({ request }) => {
+		console.log('ACTION')
 		try {
 			const formData = Object.fromEntries(await request.formData())
 
 			// Get contensis user from the People collection in the euiWebsite project.
 			const contensisUser = await getPeopleEntryByEmail(formData.email)
 
-			// Create necessary pages
-			const pagesToCreate = ['About', 'Research', 'Publications', 'Teaching']
-			const createdPages = []
+			let createdPersonalWebsite
 
-			for (let i = 0, ilen = pagesToCreate.length; i < ilen; i++) {
-				const createdPage = await ManagementClient.entries.create({
-					title: pagesToCreate[i],
-					pageTemplate: slugify(pagesToCreate[i], { lower: true }),
-					content: '',
+			// Create personal website
+			try {
+				createdPersonalWebsite = await ManagementClient.entries.create({
+					title: contensisUser?.nameAndSurnameForTheWeb ?? formData.title,
+					description: contensisUser?.aboutMe ?? '',
+					websiteSlug: formData.slug,
+					nationality: {
+						nationality: [formData.nationality]
+					},
+					people: {
+						sys: {
+							id: contensisUser.sys.id,
+							contentTypeId: 'people'
+						}
+					},
 					sys: {
-						contentTypeId: 'pages',
+						contentTypeId: 'personalWebsites',
 						language: 'en-GB',
 						dataFormat: 'entry'
 					}
 				})
 
-				await ManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
-
-				createdPages.push(createdPage)
+				await ManagementClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
+			} catch (e) {
+				console.error('Error while creating personal website: ', e)
+				error(e.status, 'Failed to create personal website')
 			}
 
-			// Create personal website
-			const createdPersonalWebsite = await ManagementClient.entries.create({
-				title: contensisUser?.nameAndSurnameForTheWeb ?? formData.title,
-				description: contensisUser?.aboutMe ?? '',
-				email: contensisUser?.email ?? formData.email,
-				websiteSlug: formData.slug,
-				nationality: {
-					nationality: [formData.nationality]
-				},
-				peopleEntryId: contensisUser?.sys?.id ?? '',
-				pages: createdPages.map((page) => ({
-					sys: {
-						id: page.sys.id,
-						contentTypeId: 'pages'
-					}
-				})),
-				sys: {
-					contentTypeId: 'personalWebsite',
-					language: 'en',
-					dataFormat: 'entry'
-				}
-			})
+			if (!createdPersonalWebsite) return error(500, 'Failed to create personal website')
 
-			await ManagementClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
+			// Create pages
+			try {
+				const pagesToCreate = [
+					'Home',
+					'List of publications',
+					'Research',
+					'Publications in Cadmus',
+					'Work in progress'
+				]
+				const createdPages = []
+
+				for (let i = 0, ilen = pagesToCreate.length; i < ilen; i++) {
+					const createdPage = await ManagementClient.entries.create({
+						title: pagesToCreate[i],
+						pageSlug: slugify(pagesToCreate[i], { lower: true }),
+						content: '',
+						personalWebsite: {
+							sys: {
+								id: createdPersonalWebsite.sys.id,
+								contentTypeId: 'personalWebsites'
+							}
+						},
+						sys: {
+							contentTypeId: 'personalWebsitePage',
+							language: 'en-GB',
+							dataFormat: 'entry'
+						}
+					})
+
+					await ManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
+
+					createdPages.push(createdPage)
+				}
+			} catch (e) {
+				console.error('Error while creating pages: ', e)
+				error(e.status, 'Error while creating pages')
+			}
 
 			return { createdPersonalWebsite }
 		} catch (e) {
 			console.error('Error while creating personal website:', e)
-			return fail(400, { error: 'Something went wrong while creating the personal website' })
+			return fail(e.status, { error: 'Something went wrong while creating the personal website' })
 		}
 	}
 }

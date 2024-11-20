@@ -8,7 +8,38 @@ const openai = new OpenAI({
 })
 
 export const POST = async ({ request }) => {
-	const { userInput, entryId } = await request.json()
+	const { userInput, user, entryPayload, urlContext, entryId } = await request.json()
+	const cleanEntryPayload = { ...entryPayload }
+
+	// Remove almost all fields from sub-objects in the entry payload
+	for (const key in cleanEntryPayload) {
+		if (
+			typeof cleanEntryPayload[key] === 'object' &&
+			cleanEntryPayload[key] !== null &&
+			!Array.isArray(cleanEntryPayload[key])
+		) {
+			const subObject = cleanEntryPayload[key]
+			cleanEntryPayload[key] = {
+				sys: subObject.sys,
+				entryTitle: subObject.entryTitle,
+				entryDescription: subObject.entryDescription
+			}
+		}
+	}
+
+	//remove entryTitle, entryDescription, and entryThumbnail from the root level to avoid confusion editing them
+	delete cleanEntryPayload.entryTitle
+	delete cleanEntryPayload.entryDescription
+	delete cleanEntryPayload.entryThumbnail
+	delete cleanEntryPayload.sys
+
+	console.log('cleanEntryPayload:', cleanEntryPayload)
+	const system_prompt = `You assist the user in the editing of his/her personal website. 
+	You understand the intent of the user which can be any update inside the page, or help in writing content, title, optimising any text, and you execute the function to update the entry, generating the correct payload containing the edits, and including only the fields edited, with their correct structure. You choose the fields based on the user input. You never edit any of the sub-objects of the entryPayload (the ones with a sys property not in the root level), you can only edit the current entry. 
+	The fields: entryTitle, entryDescription, and entryThumbnail are standard fields that cannot be edited, they are references to the entry's title, description, and thumbnail, which field name could be different depending on the content type.
+	The style should be academic and professional, and text should be clear and concise.`
+
+	const context = `{ userInput: "${userInput}", user: "${user}", entryId: "${entryId}", entryPayload: ${JSON.stringify(cleanEntryPayload)}, urlContext: ${JSON.stringify(urlContext)}}`
 
 	const functions = [
 		{
@@ -19,20 +50,11 @@ export const POST = async ({ request }) => {
 				parameters: {
 					type: 'object',
 					properties: {
-						title: {
+						editedPayload: {
 							type: 'string',
-							description: 'The updated title (or name) for the entry.'
-						},
-						description: {
-							type: 'string',
-							description: 'The updated description (or intro) for the entry.'
-						},
-						entryId: {
-							type: 'string',
-							description: `The ID of the Contensis entry is ${entryId}`
+							description: 'The JSON payload object containing the updated entry information.'
 						}
 					},
-					required: [entryId],
 					additionalProperties: false
 				}
 			}
@@ -44,8 +66,17 @@ export const POST = async ({ request }) => {
 		let reloadPage = false
 
 		completion = await openai.chat.completions.create({
-			model: 'gpt-4',
-			messages: [{ role: 'user', content: userInput }],
+			model: 'gpt-4o',
+			messages: [
+				{
+					role: 'system',
+					content: system_prompt
+				},
+				{
+					role: 'user',
+					content: context
+				}
+			],
 			tools: functions,
 			tool_choice: 'auto'
 		})
@@ -57,14 +88,26 @@ export const POST = async ({ request }) => {
 
 			if (functionName === 'update_contensis_entry') {
 				const args = JSON.parse(message.tool_calls[0].function.arguments)
-				const { title, description } = args
+				const { editedPayload } = args
 
-				const contensisEntry = await DeliveryClient.entries.get(entryId)
+				console.log('Updating entry ' + entryId + ' with editedPayload:', editedPayload)
 
-				contensisEntry.title = title
-				contensisEntry.description = description
+				//convert editedPayload to object and if fails return error
+				let updatedEntryPayload = {}
+				try {
+					updatedEntryPayload = JSON.parse(editedPayload)
+				} catch (error) {
+					console.error('Error parsing editedPayload:', error)
+					return json(
+						{ error: 'An error occurred while parsing the edited payload' },
+						{ status: 500 }
+					)
+				}
 
-				const updatedEntry = await ManagementClient.entries.update(contensisEntry)
+				// Update the entryPayload with the new payload
+				const newEntryPayload = { ...entryPayload, ...updatedEntryPayload }
+
+				const updatedEntry = await ManagementClient.entries.update(newEntryPayload)
 
 				if (updatedEntry.sys.workflow.state !== 'versionComplete') {
 					await ManagementClient.entries.invokeWorkflow(updatedEntry, 'draft.publish')

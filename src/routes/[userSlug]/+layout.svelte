@@ -3,7 +3,7 @@
 	import PersonalWebsiteNavigation from '$lib/components/PersonalWebsiteNavigation.svelte'
 	import { setContext } from 'svelte'
 	import { writable } from 'svelte/store'
-	import FunctionCallingPrompt from '$lib/components/FunctionCallingPrompt.svelte'
+	import AIEditorAssistant from '$lib/components/AIEditorAssistant.svelte'
 
 	let { data, children } = $props()
 
@@ -25,6 +25,6 @@
 	{@render children?.()}
 
 	{#if data.authUser}
-		<FunctionCallingPrompt class="fixed bottom-8 right-8" />
+		<AIEditorAssistant class="fixed bottom-8 right-8" />
 	{/if}
 </div>

@@ -3,6 +3,7 @@
 	import PersonalWebsiteNavigation from '$lib/components/PersonalWebsiteNavigation.svelte'
 	import { setContext } from 'svelte'
 	import { writable } from 'svelte/store'
+	import FunctionCallingPrompt from '$lib/components/FunctionCallingPrompt.svelte'
 
 	let { data, children } = $props()
 
@@ -12,6 +13,8 @@
 	const personalWebsitePages = $derived(data.personalWebsitePages)
 
 	setContext('smallHeroBanner', smallHeroBanner)
+
+	console.log('data', data)
 </script>
 
 <div>
@@ -22,4 +25,6 @@
 	</div>
 
 	{@render children?.()}
+
+	<FunctionCallingPrompt class="fixed bottom-8 right-8" />
 </div>

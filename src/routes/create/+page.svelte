@@ -4,7 +4,7 @@
 	import { PUBLIC_EUI_WEB } from '$env/static/public'
 	import InputField from '$lib/components/form-elements/InputField.svelte'
 	import SelectField from '$lib/components/form-elements/SelectField.svelte'
-	import AppButton from '$lib/components/AppButton.svelte'
+	import Button from '$lib/components/Button.svelte'
 
 	let { data } = $props()
 
@@ -74,6 +74,6 @@
 			/>
 		</div>
 
-		<AppButton type="submit" loading={formLoading}>Submit</AppButton>
+		<Button type="submit" loading={formLoading}>Submit</Button>
 	</form>
 </div>

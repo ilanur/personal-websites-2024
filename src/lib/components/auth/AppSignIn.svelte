@@ -1,9 +1,9 @@
 <script>
-	import AppButton from '$lib/components/AppButton.svelte'
+	import Button from '$lib/components/Button.svelte'
 
 	let { ...rest } = $props()
 </script>
 
 <form action="/auth/login" method="post" class={rest.class}>
-	<AppButton outlined>Login</AppButton>
+	<Button outlined>Login</Button>
 </form>

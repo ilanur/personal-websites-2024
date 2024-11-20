@@ -25,7 +25,7 @@ export const POST = async ({ request }) => {
 						},
 						description: {
 							type: 'string',
-							description: 'The updated description for the entry.'
+							description: 'The updated description (or intro) for the entry.'
 						},
 						entryId: {
 							type: 'string',

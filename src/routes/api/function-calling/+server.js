@@ -3,6 +3,9 @@ import { json } from '@sveltejs/kit'
 import { PRIVATE_OPENAI_API_KEY } from '$env/static/private'
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis-clients.js'
 
+//TODO: Add error handling for when the user does not have permission to update the entry
+//TODO: add function to retrieve userData and add it to the context if the AI needs to know any user-specific information
+
 const openai = new OpenAI({
 	apiKey: PRIVATE_OPENAI_API_KEY
 })
@@ -34,10 +37,21 @@ export const POST = async ({ request }) => {
 	delete cleanEntryPayload.sys
 
 	console.log('cleanEntryPayload:', cleanEntryPayload)
-	const system_prompt = `You assist the user in the editing of his/her personal website. 
-	You understand the intent of the user which can be any update inside the page, or help in writing content, title, optimising any text, and you execute the function to update the entry, generating the correct payload containing the edits, and including only the fields edited, with their correct structure. You choose the fields based on the user input. You never edit any of the sub-objects of the entryPayload (the ones with a sys property not in the root level), you can only edit the current entry. 
-	The fields: entryTitle, entryDescription, and entryThumbnail are standard fields that cannot be edited, they are references to the entry's title, description, and thumbnail, which field name could be different depending on the content type.
-	The style should be academic and professional, and text should be clear and concise.`
+	const system_prompt = `You are an AI assistant specialized in website content editing and optimization. Your task is to guide the user in updating or refining their current page with clarity and precision.
+
+Understand the User's Intent: The user's request could involve:
+
+Updating or rewriting any section of the page.
+Enhancing text for readability, clarity, or SEO.
+Providing suggestions for academic and professional tone improvements.
+Execute Updates: Based on the user’s input:
+
+You do not reply, you can just execute the update_contensis_entry.
+Include only the fields specified by the user with their correct structure.
+Maintain the integrity of sub-objects (sys properties) within the entryPayload; do not edit or modify these fields.
+Avoid editing the standard fields: entryTitle, entryDescription, and entryThumbnail. These are references to other fields and may have different names based on the content type.
+Style & Tone: Ensure the resulting text is clear, concise, professional, and aligned with an academic style.
+`
 
 	const context = `{ userInput: "${userInput}", user: "${user}", entryId: "${entryId}", entryPayload: ${JSON.stringify(cleanEntryPayload)}, urlContext: ${JSON.stringify(urlContext)}}`
 

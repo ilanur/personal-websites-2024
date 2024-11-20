@@ -1,13 +1,12 @@
 import { redirect } from '@sveltejs/kit'
 
-export async function load({ params, parent }) {
+export async function load({ parent }) {
 	const parentData = await parent()
 
 	if (!parentData.personalWebsite) redirect(302, '/')
 
 	const pages = parentData.personalWebsitePages
-	console.log('pages', pages)
-	const page = pages.find((page) => page.entryTitle === 'Home')
+	const page = pages.find((page) => page.pageSlug === 'home')
 
 	return {
 		page

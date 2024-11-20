@@ -19,7 +19,7 @@
 		eui_toggleRefinement
 	} from '$lib/utils/algolia/widgets'
 	import { PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY, PUBLIC_PREVIEW_PARAM } from '$env/static/public'
-	import { getThumbnail, formatDate, truncateString } from '$lib/utils/utils'
+	import { getThumbnail, truncateString } from '$lib/utils/utils'
 	import { page } from '$app/stores'
 
 	export let item

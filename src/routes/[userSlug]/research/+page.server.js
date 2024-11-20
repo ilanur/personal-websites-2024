@@ -5,8 +5,8 @@ export async function load({ parent }) {
 
 	if (!parentData.personalWebsite) redirect(302, '/')
 
-	const pages = parentData.personalWebsite.pages
-	const page = pages.find((page) => page.pageTemplate === 'research')
+	const pages = parentData.personalWebsitePages
+	const page = pages.find((page) => page.pageSlug === 'research')
 
 	if (!page) redirect((301, '/'))
 

@@ -29,7 +29,7 @@ export const POST = async ({ request }) => {
 						},
 						entryId: {
 							type: 'string',
-							description: `The ID of Contensis entry is ${entryId}`
+							description: `The ID of the Contensis entry is ${entryId}`
 						}
 					},
 					required: [entryId],

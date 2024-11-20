@@ -41,16 +41,12 @@ export async function load(event) {
 
 	return {
 		contensisUser,
-		nationalities:
-			nationalities.length !== 0 && nationalities.fields.length
-				? nationalities.fields[0].validations.allowedValues.values
-				: []
+		nationalities: nationalities.fields[0].validations.allowedValues.values
 	}
 }
 
 export const actions = {
 	default: async ({ request }) => {
-		console.log('ACTION')
 		try {
 			const formData = Object.fromEntries(await request.formData())
 

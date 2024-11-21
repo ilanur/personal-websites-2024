@@ -48,4 +48,22 @@
 		/* font-size: 16px; */
 		@apply text-h6;
 	}
+
+	main h1,
+	main h2,
+	main h3,
+	main h4,
+	main h5,
+	main h6 {
+		@apply mb-3 mt-6;
+		@apply leading-[1.2em];
+	}
+
+	main p {
+		@apply mb-3 leading-relaxed;
+	}
+
+	main strong {
+		@apply font-bold;
+	}
 }

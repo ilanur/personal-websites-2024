@@ -3,6 +3,78 @@ import { json, error } from '@sveltejs/kit'
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis-clients'
 import { getPeopleEntryByEmail, uploadAsset } from '$lib/utils/contensis'
 
+// Extract socials from personal data and create social media entries
+async function createSocialMediaEntries(personalData) {
+	const createdSocials = []
+	const possibleSocials = [
+		{
+			type: 'Facebook',
+			url: personalData.user.facebook
+		},
+		{
+			type: 'Twitter',
+			url: personalData.user.twitter
+		},
+		{
+			type: 'Instagram',
+			url: personalData.user.instagram
+		},
+		{
+			type: 'LinkedIn',
+			url: personalData.user.linkedin
+		},
+		{
+			type: 'ResearchGate',
+			url: personalData.user.research_gate
+		},
+		{
+			type: 'Academia.edu',
+			url: personalData.user.academia
+		}
+	]
+
+	try {
+		for (let i = 0, ilen = possibleSocials.length; i < ilen; i++) {
+			if (!possibleSocials[i].url) continue
+
+			// Check if social already exists
+			const contensisSocials = await DeliveryClient.entries.search({
+				where: [
+					{ field: 'sys.contentTypeId', equalTo: 'socialMedia' },
+					{ field: 'sys.versionStatus', equalTo: 'published' },
+					{ field: 'url', equalTo: possibleSocials[i].url }
+				]
+			})
+
+			// If social exists, skip it.
+			if (contensisSocials.items.length) {
+				console.log('skip social creation', possibleSocials[i].url)
+				createdSocials.push(contensisSocials.items[0])
+				continue
+			}
+
+			const createdSocial = await ManagementClient.entries.create({
+				type: possibleSocials[i].type,
+				url: possibleSocials[i].url,
+				sys: {
+					contentTypeId: 'socialMedia',
+					language: 'en-GB',
+					dataFormat: 'entry'
+				}
+			})
+
+			createdSocials.push(createdSocial)
+			await ManagementClient.entries.invokeWorkflow(createdSocial, 'draft.publish')
+		}
+
+		return createdSocials
+	} catch (e) {
+		console.error('Error creating social media entries:', e)
+	}
+
+	return []
+}
+
 // Utility function to import assets (images or CVs)
 async function importAsset(url, title, description, folder) {
 	try {
@@ -66,28 +138,6 @@ async function deleteAllEntriesByContentType(contentType) {
 	} catch (e) {
 		error(e.status, e.data)
 	}
-}
-
-export const GET = async ({ url }) => {
-	const email = url.searchParams.get('email')
-	const peopleEntry = await getPeopleEntryByEmail(email)
-
-	const personalWebsite = await DeliveryClient.entries.search({
-		where: [
-			{ field: 'sys.contentTypeId', equalTo: 'people' },
-			{ field: 'sys.versionStatus', equalTo: 'published' },
-			{ field: 'sys.id', equalTo: 'cb85bda2-1874-4a4f-a392-d0c54c4f0a81' }
-		]
-	})
-
-	const socials = await DeliveryClient.entries.search({
-		where: [
-			{ field: 'sys.contentTypeId', equalTo: 'socialMedia' },
-			{ field: 'sys.versionStatus', equalTo: 'published' }
-		]
-	})
-
-	return json({ success: true, data: personalWebsite, socials }, { status: 200 })
 }
 
 export const DELETE = async ({ url }) => {
@@ -188,71 +238,7 @@ export const POST = async ({ url }) => {
 				)
 			}
 
-			// Create socials
-			const createdSocials = []
-			const possibleSocials = [
-				{
-					type: 'Facebook',
-					url: personalData.user.facebook
-				},
-				{
-					type: 'Twitter',
-					url: personalData.user.twitter
-				},
-				{
-					type: 'Instagram',
-					url: personalData.user.instagram
-				},
-				{
-					type: 'LinkedIn',
-					url: personalData.user.linkedin
-				},
-				{
-					type: 'ResearchGate',
-					url: personalData.user.research_gate
-				},
-				{
-					type: 'Academia.edu',
-					url: personalData.user.academia
-				}
-			]
-
-			try {
-				for (let j = 0, jlen = possibleSocials.length; j < jlen; j++) {
-					if (!possibleSocials[j].url) continue
-
-					// Check if social already exists
-					const contensisSocials = await DeliveryClient.entries.search({
-						where: [
-							{ field: 'sys.contentTypeId', equalTo: 'socialMedia' },
-							{ field: 'sys.versionStatus', equalTo: 'published' },
-							{ field: 'url', equalTo: possibleSocials[j].url }
-						]
-					})
-
-					// If social exists, skip it.
-					if (contensisSocials.items.length) {
-						console.log('skip social creation', possibleSocials[j].url)
-						createdSocials.push(contensisSocials.items[0])
-						continue
-					}
-
-					const createdSocial = await ManagementClient.entries.create({
-						type: possibleSocials[j].type,
-						url: possibleSocials[j].url,
-						sys: {
-							contentTypeId: 'socialMedia',
-							language: 'en-GB',
-							dataFormat: 'entry'
-						}
-					})
-
-					createdSocials.push(createdSocial)
-					await ManagementClient.entries.invokeWorkflow(createdSocial, 'draft.publish')
-				}
-			} catch (e) {
-				console.error('Error creating social media entries:', e)
-			}
+			const socialMediaEntries = await createSocialMediaEntries(personalData)
 
 			// Prepare payload for personalWebsite entry
 			const payload = {
@@ -271,7 +257,7 @@ export const POST = async ({ url }) => {
 						contentTypeId: 'people'
 					}
 				},
-				socialMedia: createdSocials.map((social) => ({
+				socialMedia: socialMediaEntries.map((social) => ({
 					sys: {
 						id: social.sys.id,
 						contentTypeId: 'socialMedia'

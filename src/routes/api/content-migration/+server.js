@@ -5,6 +5,10 @@ import { getPeopleEntryByEmail, uploadAsset } from '$lib/utils/contensis'
 
 // Extract socials from personal data and create social media entries
 async function createSocialMediaEntries(personalData) {
+	function addHttpIfMissing(link) {
+		return !link.startsWith('http://') && !link.startsWith('https://') ? `https://${link}` : link
+	}
+
 	const createdSocials = []
 	const possibleSocials = [
 		{
@@ -37,25 +41,27 @@ async function createSocialMediaEntries(personalData) {
 		for (let i = 0, ilen = possibleSocials.length; i < ilen; i++) {
 			if (!possibleSocials[i].url) continue
 
+			const formattedLink = addHttpIfMissing(possibleSocials[i].url)
+
 			// Check if social already exists
 			const contensisSocials = await DeliveryClient.entries.search({
 				where: [
 					{ field: 'sys.contentTypeId', equalTo: 'socialMedia' },
 					{ field: 'sys.versionStatus', equalTo: 'published' },
-					{ field: 'url', equalTo: possibleSocials[i].url }
+					{ field: 'url', equalTo: formattedLink }
 				]
 			})
 
 			// If social exists, skip it.
 			if (contensisSocials.items.length) {
-				console.log('skip social creation', possibleSocials[i].url)
+				console.log('skip social creation', formattedLink)
 				createdSocials.push(contensisSocials.items[0])
 				continue
 			}
 
 			const createdSocial = await ManagementClient.entries.create({
 				type: possibleSocials[i].type,
-				url: possibleSocials[i].url,
+				url: formattedLink,
 				sys: {
 					contentTypeId: 'socialMedia',
 					language: 'en-GB',
@@ -69,7 +75,7 @@ async function createSocialMediaEntries(personalData) {
 
 		return createdSocials
 	} catch (e) {
-		console.error('Error creating social media entries:', e)
+		console.error('Error creating social media entries:', JSON.stringify(e.data))
 	}
 
 	return []
@@ -176,7 +182,7 @@ export const POST = async ({ url }) => {
 			const createdPages = []
 
 			// Stop after 1 entry for testing purposes
-			if (i === 1) break
+			if (i === 4) break
 
 			// Create personalWebsite in Contensis and link created pages.
 			const personalDataEmail = personalData.user.user_email?.toLowerCase()
@@ -211,7 +217,7 @@ export const POST = async ({ url }) => {
 					continue
 				}
 			} else {
-				console.log('Person already exists in people entries. Skip creation...')
+				console.log(`${personalDataEmail} already exists in people entries. Skip creation...`)
 			}
 
 			// Import main image
@@ -307,6 +313,7 @@ export const POST = async ({ url }) => {
 			progress += 1
 			console.log(`${progress}/${ilen} "personalWebsite" entries created.`)
 
+			// === CREATE PAGES ===
 			// Define pages to exclude from migration.
 			const pagesToExclude = ['Blog', 'Contact Me', 'Personal Website Settings']
 
@@ -364,6 +371,15 @@ export const POST = async ({ url }) => {
 
 				createdPages.push(createdPage)
 			}
+			// === END CREATE PAGES ===
+
+			// === CREATE BLOG POSTS ===
+			const wpBlogPosts = personalData.posts
+
+			for (let j = 0, jlen = wpBlogPosts.length; j < jlen; j++) {
+				const wpBlogPost = wpBlogPosts[j]
+			}
+			// === END CREATE BLOG POSTS ===
 		}
 
 		return json({ success: true, data: oldCMSData }, { status: 200 })

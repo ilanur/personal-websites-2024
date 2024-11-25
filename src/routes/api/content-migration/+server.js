@@ -44,13 +44,20 @@ async function deleteAllEntriesByContentType(contentType) {
 		})
 
 		const entriesToBeDeleted = entriesToBeDeletedSearch.items
-		console.log('entriesToBeDeleted: ', entriesToBeDeleted)
 
 		let progress = 0
 
 		for (let i = 0, ilen = entriesToBeDeleted.length; i < ilen; i++) {
 			const entry = entriesToBeDeleted[i]
-			await ManagementClient.entries.delete(entry.sys.id, ['en-GB'], true)
+
+			try {
+				await ManagementClient.entries.delete(entry.sys.id, ['en-GB'], true)
+			} catch (e) {
+				console.error(`Error deleting entry ${entry.sys.id}: ${e.data.message}`)
+				progress += 1
+				continue
+			}
+
 			progress += 1
 			console.log(`${progress}/${ilen} "${contentType}" entries deleted.`)
 		}
@@ -96,8 +103,8 @@ export const POST = async ({ url }) => {
 			const personalData = oldCMSData[i]
 			const createdPages = []
 
-			// Stop after 10 entries for testing purposes
-			if (i > 10) break
+			// Stop after 1 entry for testing purposes
+			if (i === 1) break
 
 			// Create personalWebsite in Contensis and link created pages.
 			const personalDataEmail = personalData.user.user_email?.toLowerCase()
@@ -107,12 +114,33 @@ export const POST = async ({ url }) => {
 				contensisPeopleEntry = await getPeopleEntryByEmail(personalDataEmail)
 			}
 
+			// Create a new people entry
 			if (!contensisPeopleEntry) {
-				console.log(`No people entry found for email: ${personalDataEmail}`)
-				continue
-			}
+				console.log(`${personalDataEmail} doesn't exist. Creating new people entry...`)
 
-			console.log('contensisPeopleEntry: ', contensisPeopleEntry.entryTitle)
+				try {
+					const displayName = personalData.user.display_name
+					contensisPeopleEntry = await ManagementClient.entries.create({
+						nameAndSurnameForTheWeb: displayName,
+						email: personalDataEmail,
+						euiEmail: personalDataEmail,
+						nameAndSurname: displayName,
+						sys: {
+							contentTypeId: 'people',
+							language: 'en-GB',
+							dataFormat: 'entry'
+						}
+					})
+
+					await ManagementClient.entries.invokeWorkflow(contensisPeopleEntry, 'draft.publish')
+					console.log(`${displayName} created in people entries. (${personalDataEmail})`)
+				} catch (e) {
+					console.error(`Error creating people entry: ${JSON.stringify(e.data)}`)
+					continue
+				}
+			} else {
+				console.log('Person already exists in people entries. Skip creation...')
+			}
 
 			// Import main image
 			let mainImage = null
@@ -185,11 +213,16 @@ export const POST = async ({ url }) => {
 				}
 			}
 
-			console.log('payload: ', payload)
+			let createdPersonalWebsite
 
-			const createdPersonalWebsite = await ManagementClient.entries.create(payload)
-
-			await ManagementClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
+			try {
+				createdPersonalWebsite = await ManagementClient.entries.create(payload)
+				await ManagementClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
+			} catch (e) {
+				console.error(`Error creating personalWebsite entry: ${e}`)
+				progress += 1
+				continue
+			}
 
 			progress += 1
 			console.log(`${progress}/${ilen} "personalWebsite" entries created.`)

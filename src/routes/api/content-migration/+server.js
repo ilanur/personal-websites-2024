@@ -68,6 +68,28 @@ async function deleteAllEntriesByContentType(contentType) {
 	}
 }
 
+export const GET = async ({ url }) => {
+	const email = url.searchParams.get('email')
+	const peopleEntry = await getPeopleEntryByEmail(email)
+
+	const personalWebsite = await DeliveryClient.entries.search({
+		where: [
+			{ field: 'sys.contentTypeId', equalTo: 'people' },
+			{ field: 'sys.versionStatus', equalTo: 'published' },
+			{ field: 'sys.id', equalTo: 'cb85bda2-1874-4a4f-a392-d0c54c4f0a81' }
+		]
+	})
+
+	const socials = await DeliveryClient.entries.search({
+		where: [
+			{ field: 'sys.contentTypeId', equalTo: 'socialMedia' },
+			{ field: 'sys.versionStatus', equalTo: 'published' }
+		]
+	})
+
+	return json({ success: true, data: personalWebsite, socials }, { status: 200 })
+}
+
 export const DELETE = async ({ url }) => {
 	try {
 		const collectionTypeToDelete = url.searchParams.get('deleteAllEntriesOfType')
@@ -135,7 +157,7 @@ export const POST = async ({ url }) => {
 					await ManagementClient.entries.invokeWorkflow(contensisPeopleEntry, 'draft.publish')
 					console.log(`${displayName} created in people entries. (${personalDataEmail})`)
 				} catch (e) {
-					console.error(`Error creating people entry: ${JSON.stringify(e.data)}`)
+					console.error(`Error creating people entry: ${e.data}`)
 					continue
 				}
 			} else {
@@ -166,6 +188,72 @@ export const POST = async ({ url }) => {
 				)
 			}
 
+			// Create socials
+			const createdSocials = []
+			const possibleSocials = [
+				{
+					type: 'Facebook',
+					url: personalData.user.facebook
+				},
+				{
+					type: 'Twitter',
+					url: personalData.user.twitter
+				},
+				{
+					type: 'Instagram',
+					url: personalData.user.instagram
+				},
+				{
+					type: 'LinkedIn',
+					url: personalData.user.linkedin
+				},
+				{
+					type: 'ResearchGate',
+					url: personalData.user.research_gate
+				},
+				{
+					type: 'Academia.edu',
+					url: personalData.user.academia
+				}
+			]
+
+			try {
+				for (let j = 0, jlen = possibleSocials.length; j < jlen; j++) {
+					if (!possibleSocials[j].url) continue
+
+					// Check if social already exists
+					const contensisSocials = await DeliveryClient.entries.search({
+						where: [
+							{ field: 'sys.contentTypeId', equalTo: 'socialMedia' },
+							{ field: 'sys.versionStatus', equalTo: 'published' },
+							{ field: 'url', equalTo: possibleSocials[j].url }
+						]
+					})
+
+					// If social exists, skip it.
+					if (contensisSocials.items.length) {
+						console.log('skip social creation', possibleSocials[j].url)
+						createdSocials.push(contensisSocials.items[0])
+						continue
+					}
+
+					const createdSocial = await ManagementClient.entries.create({
+						type: possibleSocials[j].type,
+						url: possibleSocials[j].url,
+						sys: {
+							contentTypeId: 'socialMedia',
+							language: 'en-GB',
+							dataFormat: 'entry'
+						}
+					})
+
+					createdSocials.push(createdSocial)
+					await ManagementClient.entries.invokeWorkflow(createdSocial, 'draft.publish')
+				}
+			} catch (e) {
+				console.error('Error creating social media entries:', e)
+			}
+
 			// Prepare payload for personalWebsite entry
 			const payload = {
 				title: personalData.title.rendered,
@@ -183,6 +271,12 @@ export const POST = async ({ url }) => {
 						contentTypeId: 'people'
 					}
 				},
+				socialMedia: createdSocials.map((social) => ({
+					sys: {
+						id: social.sys.id,
+						contentTypeId: 'socialMedia'
+					}
+				})),
 				sys: {
 					contentTypeId: 'personalWebsites',
 					language: 'en-GB',
@@ -219,7 +313,7 @@ export const POST = async ({ url }) => {
 				createdPersonalWebsite = await ManagementClient.entries.create(payload)
 				await ManagementClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
 			} catch (e) {
-				console.error(`Error creating personalWebsite entry: ${e}`)
+				console.error(`Error creating personalWebsite entry: ${JSON.stringify(e.data)}`)
 				progress += 1
 				continue
 			}

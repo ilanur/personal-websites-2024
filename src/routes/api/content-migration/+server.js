@@ -11,6 +11,35 @@ function truncateContent(content, wordLimit) {
 	return words.length > wordLimit ? `${truncated}...` : truncated
 }
 
+// Utility function to import assets (images or CVs)
+async function importAsset(url, title, description, folder) {
+	try {
+		// Download the asset
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(`Failed to download asset: ${response.statusText}`)
+		}
+
+		const arrayBuffer = await response.arrayBuffer()
+		const fileBuffer = Buffer.from(arrayBuffer)
+		const filename = url.split('/').pop()
+
+		// Upload to Contensis
+		const asset = await uploadAsset(fileBuffer, filename, {
+			description,
+			folderId: folder,
+			contentType: response.headers.get('content-type'),
+			title
+		})
+
+		return asset
+	} catch (err) {
+		console.error('Error downloading or uploading asset:', err)
+		return null
+	}
+}
+
 // Create personal website pages
 async function createPwPages(createdPersonalWebsite, personalData) {
 	// Define pages to exclude from migration.
@@ -70,41 +99,66 @@ async function createPwPages(createdPersonalWebsite, personalData) {
 	}
 }
 
+// Create personal website blog posts
 async function createPwBlogPosts(createdPersonalWebsite, contensisPeopleEntry, personalData) {
 	const wpBlogPosts = personalData.posts
 
 	for (let i = 0, ilen = wpBlogPosts.length; i < ilen; i++) {
 		const wpBlogPost = wpBlogPosts[i]
 		const canvas = await parseHtml(wpBlogPost.post_content)
+		let blogpostImg
+
+		if (wpBlogPost.thumbnail_url) {
+			blogpostImg = await importAsset(
+				wpBlogPost.thumbnail_url,
+				wpBlogPost.post_title,
+				`Image for ${wpBlogPost.post_title}`,
+				'/Content-Types-Assets/PersonalWebsites/Blogs'
+			)
+		}
+
+		const payload = {
+			wpId: wpBlogPost.ID,
+			title: wpBlogPost.post_title,
+			description: truncateContent(wpBlogPost.post_content, 30),
+			canvas,
+			publishingDate: wpBlogPost.post_date,
+			personalWebsite: {
+				sys: {
+					id: createdPersonalWebsite.sys.id,
+					contentTypeId: 'personalWebsites'
+				}
+			},
+			authors: [
+				{
+					sys: {
+						id: contensisPeopleEntry.sys.id,
+						contentTypeId: 'people'
+					}
+				}
+			],
+			sys: {
+				contentTypeId: 'personalWebsitesBlogPost',
+				language: 'en-GB',
+				dataFormat: 'entry'
+			}
+		}
+
+		if (blogpostImg) {
+			payload['mainImage'] = {
+				altText: wpBlogPost.post_title,
+				asset: {
+					sys: {
+						id: blogpostImg.sys.id,
+						language: 'en-GB',
+						dataFormat: 'asset'
+					}
+				}
+			}
+		}
 
 		try {
-			const createdPwBlogPost = await ManagementClient.entries.create({
-				wpId: wpBlogPost.id,
-				title: wpBlogPost.post_title,
-				description: truncateContent(wpBlogPost.post_content, 30),
-				canvas,
-				publishingDate: wpBlogPost.post_date,
-				personalWebsite: {
-					sys: {
-						id: createdPersonalWebsite.sys.id,
-						contentTypeId: 'personalWebsites'
-					}
-				},
-				authors: [
-					{
-						sys: {
-							id: contensisPeopleEntry.sys.id,
-							contentTypeId: 'people'
-						}
-					}
-				],
-				sys: {
-					contentTypeId: 'personalWebsitesBlogPost',
-					language: 'en-GB',
-					dataFormat: 'entry'
-				}
-			})
-
+			const createdPwBlogPost = await ManagementClient.entries.create(payload)
 			await ManagementClient.entries.invokeWorkflow(createdPwBlogPost, 'draft.publish')
 		} catch (e) {
 			console.error(`Error creating personalWebsiteBlogPost entry: ${JSON.stringify(e.data)}`)
@@ -191,35 +245,6 @@ async function createSocialMediaEntries(personalData) {
 	return []
 }
 
-// Utility function to import assets (images or CVs)
-async function importAsset(url, title, description, folder) {
-	try {
-		// Download the asset
-		const response = await fetch(url)
-
-		if (!response.ok) {
-			throw new Error(`Failed to download asset: ${response.statusText}`)
-		}
-
-		const arrayBuffer = await response.arrayBuffer()
-		const fileBuffer = Buffer.from(arrayBuffer)
-		const filename = url.split('/').pop()
-
-		// Upload to Contensis
-		const asset = await uploadAsset(fileBuffer, filename, {
-			description: description,
-			folderId: folder,
-			contentType: response.headers.get('content-type'),
-			title: title
-		})
-
-		return asset
-	} catch (err) {
-		console.error('Error downloading or uploading asset:', err)
-		return null
-	}
-}
-
 // Function to delete all entries by content type
 async function deleteAllEntriesByContentType(contentType) {
 	try {
@@ -275,7 +300,7 @@ export const POST = async ({ url }) => {
 		// Get old CMS data from Wordpress.
 		const clearEntriesParam = url.searchParams.get('clearEntries')
 		const clearEntries = clearEntriesParam === 'true'
-		const oldCMSData = await ofetch('https://me.eui.eu/wp-json/eui/v1/sites?1')
+		const oldCMSData = await ofetch('https://me.eui.eu/wp-json/eui/v1/sites')
 		let progress = 0
 
 		// Delete entries so we have a clean slate.

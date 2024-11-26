@@ -78,9 +78,11 @@ async function createPwPages(createdPersonalWebsite, personalData) {
 			pageSlug = 'work-in-progress'
 		}
 
+		const canvas = await parseHtml(page.content.rendered)
+
 		const createdPage = await ManagementClient.entries.create({
 			title,
-			content: page.content.rendered,
+			canvas,
 			pageSlug: pageSlug,
 			personalWebsite: {
 				sys: {

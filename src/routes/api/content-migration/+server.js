@@ -2,6 +2,116 @@ import { ofetch } from 'ofetch'
 import { json, error } from '@sveltejs/kit'
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis-clients'
 import { getPeopleEntryByEmail, uploadAsset } from '$lib/utils/contensis'
+import { parseHtml } from '@contensis/html-canvas'
+
+function truncateContent(content, wordLimit) {
+	const plainText = content.replace(/<\/?[^>]+(>|$)/g, '')
+	const words = plainText.split(/\s+/)
+	const truncated = words.slice(0, wordLimit).join(' ')
+	return words.length > wordLimit ? `${truncated}...` : truncated
+}
+
+// Create personal website pages
+async function createPwPages(createdPersonalWebsite, personalData) {
+	// Define pages to exclude from migration.
+	const pagesToExclude = ['Blog', 'Contact Me', 'Personal Website Settings']
+
+	// Loop over pages
+	for (let i = 0, ilen = personalData.pages.length; i < ilen; i++) {
+		const page = personalData.pages[i]
+		let title = page.title.rendered
+		let pageSlug = ''
+
+		if (pagesToExclude.includes(page.title.rendered)) continue
+
+		if (page.title.rendered === 'Biography') {
+			title = 'Home'
+			pageSlug = 'home'
+		}
+
+		if (page.title.rendered === 'List of publications') {
+			title = 'Publications'
+			pageSlug = 'publications'
+		}
+
+		if (page.title.rendered === 'Research') {
+			title = 'Research'
+			pageSlug = 'research'
+		}
+
+		if (page.title.rendered === 'Publications in Cadmus') {
+			title = 'Publications in Cadmus'
+			pageSlug = 'publications-in-cadmus'
+		}
+
+		if (page.title.rendered === 'Work in progress') {
+			title = 'Work in progress'
+			pageSlug = 'work-in-progress'
+		}
+
+		const createdPage = await ManagementClient.entries.create({
+			title,
+			content: page.content.rendered,
+			pageSlug: pageSlug,
+			personalWebsite: {
+				sys: {
+					id: createdPersonalWebsite.sys.id,
+					contentTypeId: 'personalWebsites'
+				}
+			},
+			sys: {
+				contentTypeId: 'personalWebsitePage',
+				language: 'en-GB',
+				dataFormat: 'entry'
+			}
+		})
+
+		await ManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
+	}
+}
+
+async function createPwBlogPosts(createdPersonalWebsite, contensisPeopleEntry, personalData) {
+	const wpBlogPosts = personalData.posts
+
+	for (let i = 0, ilen = wpBlogPosts.length; i < ilen; i++) {
+		const wpBlogPost = wpBlogPosts[i]
+		const canvas = await parseHtml(wpBlogPost.post_content)
+
+		try {
+			const createdPwBlogPost = await ManagementClient.entries.create({
+				wpId: wpBlogPost.id,
+				title: wpBlogPost.post_title,
+				description: truncateContent(wpBlogPost.post_content, 30),
+				canvas,
+				publishingDate: wpBlogPost.post_date,
+				personalWebsite: {
+					sys: {
+						id: createdPersonalWebsite.sys.id,
+						contentTypeId: 'personalWebsites'
+					}
+				},
+				authors: [
+					{
+						sys: {
+							id: contensisPeopleEntry.sys.id,
+							contentTypeId: 'people'
+						}
+					}
+				],
+				sys: {
+					contentTypeId: 'personalWebsitesBlogPost',
+					language: 'en-GB',
+					dataFormat: 'entry'
+				}
+			})
+
+			await ManagementClient.entries.invokeWorkflow(createdPwBlogPost, 'draft.publish')
+		} catch (e) {
+			console.error(`Error creating personalWebsiteBlogPost entry: ${JSON.stringify(e.data)}`)
+			continue
+		}
+	}
+}
 
 // Extract socials from personal data and create social media entries
 async function createSocialMediaEntries(personalData) {
@@ -122,7 +232,6 @@ async function deleteAllEntriesByContentType(contentType) {
 		})
 
 		const entriesToBeDeleted = entriesToBeDeletedSearch.items
-
 		let progress = 0
 
 		for (let i = 0, ilen = entriesToBeDeleted.length; i < ilen; i++) {
@@ -179,10 +288,9 @@ export const POST = async ({ url }) => {
 		// Loop over data and create items in Contensis.
 		for (let i = 0, ilen = oldCMSData.length; i < ilen; i++) {
 			const personalData = oldCMSData[i]
-			const createdPages = []
 
 			// Stop after 1 entry for testing purposes
-			if (i === 4) break
+			if (i === 2) break
 
 			// Create personalWebsite in Contensis and link created pages.
 			const personalDataEmail = personalData.user.user_email?.toLowerCase()
@@ -234,6 +342,7 @@ export const POST = async ({ url }) => {
 			// Import CV if available on personaData.user.cv
 			let cvAsset = null
 			const cvUrl = personalData.user.cv
+
 			if (cvUrl) {
 				// We found a PDF link, let's download and upload the CV
 				cvAsset = await importAsset(
@@ -310,77 +419,18 @@ export const POST = async ({ url }) => {
 				continue
 			}
 
+			// Create pages
+			await createPwPages(createdPersonalWebsite, personalData)
+
+			// Create blog posts
+			await createPwBlogPosts(createdPersonalWebsite, contensisPeopleEntry, personalData)
+
+			// Log progress
 			progress += 1
 			console.log(`${progress}/${ilen} "personalWebsite" entries created.`)
-
-			// === CREATE PAGES ===
-			// Define pages to exclude from migration.
-			const pagesToExclude = ['Blog', 'Contact Me', 'Personal Website Settings']
-
-			// Loop over pages
-			for (let j = 0, jlen = personalData.pages.length; j < jlen; j++) {
-				const page = personalData.pages[j]
-				let title = page.title.rendered
-				let pageSlug = ''
-
-				if (pagesToExclude.includes(page.title.rendered)) continue
-
-				if (page.title.rendered === 'Biography') {
-					title = 'Home'
-					pageSlug = 'home'
-				}
-
-				if (page.title.rendered === 'List of publications') {
-					title = 'Publications'
-					pageSlug = 'publications'
-				}
-
-				if (page.title.rendered === 'Research') {
-					title = 'Research'
-					pageSlug = 'research'
-				}
-
-				if (page.title.rendered === 'Publications in Cadmus') {
-					title = 'Publications in Cadmus'
-					pageSlug = 'publications-in-cadmus'
-				}
-
-				if (page.title.rendered === 'Work in progress') {
-					title = 'Work in progress'
-					pageSlug = 'work-in-progress'
-				}
-
-				const createdPage = await ManagementClient.entries.create({
-					title,
-					content: page.content.rendered,
-					pageSlug: pageSlug,
-					personalWebsite: {
-						sys: {
-							id: createdPersonalWebsite.sys.id,
-							contentTypeId: 'personalWebsites'
-						}
-					},
-					sys: {
-						contentTypeId: 'personalWebsitePage',
-						language: 'en-GB',
-						dataFormat: 'entry'
-					}
-				})
-
-				await ManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
-
-				createdPages.push(createdPage)
-			}
-			// === END CREATE PAGES ===
-
-			// === CREATE BLOG POSTS ===
-			const wpBlogPosts = personalData.posts
-
-			for (let j = 0, jlen = wpBlogPosts.length; j < jlen; j++) {
-				const wpBlogPost = wpBlogPosts[j]
-			}
-			// === END CREATE BLOG POSTS ===
 		}
+
+		console.log('Migration complete!')
 
 		return json({ success: true, data: oldCMSData }, { status: 200 })
 	} catch (e) {

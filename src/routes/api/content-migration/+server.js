@@ -79,7 +79,6 @@ async function createPwPages(createdPersonalWebsite, personalData) {
 		}
 
 		const canvas = await parseHtml(page.content.rendered)
-
 		const createdPage = await ManagementClient.entries.create({
 			title,
 			canvas,
@@ -141,6 +140,7 @@ async function createPwBlogPosts(createdPersonalWebsite, contensisPeopleEntry, p
 			],
 			sys: {
 				contentTypeId: 'personalWebsitesBlogPost',
+				slug: wpBlogPost.post_name,
 				language: 'en-GB',
 				dataFormat: 'entry'
 			}
@@ -295,6 +295,24 @@ export const DELETE = async ({ url }) => {
 	} catch (e) {
 		error(e.status, e.data)
 	}
+}
+
+export const GET = async () => {
+	const assets = await DeliveryClient.entries.search({
+		where: [{ field: 'sys.contentTypeId', equalTo: 'assets' }],
+		pageSize: 999
+	})
+
+	const blogPosts = await DeliveryClient.entries.search({
+		where: [
+			{ field: 'sys.contentTypeId', equalTo: 'personalWebsitesBlogPost' },
+			{ field: 'sys.versionStatus', equalTo: 'published' }
+		]
+	})
+
+	console.log('assets', assets)
+
+	return json({ success: true, blogPosts }, { status: 200 })
 }
 
 export const POST = async ({ url }) => {

@@ -43,7 +43,12 @@ async function importAsset(url, title, description, folder) {
 // Create personal website pages
 async function createPwPages(createdPersonalWebsite, personalData) {
 	// Define pages to exclude from migration.
-	const pagesToExclude = ['Blog', 'Contact Me', 'Personal Website Settings']
+	const pagesToExclude = [
+		'Blog',
+		'Contact Me',
+		'Personal Website Settings',
+		'Publications in Cadmus'
+	]
 
 	// Loop over pages
 	for (let i = 0, ilen = personalData.pages.length; i < ilen; i++) {
@@ -334,7 +339,7 @@ export const POST = async ({ url }) => {
 			const personalData = oldCMSData[i]
 
 			// Stop after 1 entry for testing purposes
-			if (i === 1) break
+			if (i === 5) break
 
 			// Create personalWebsite in Contensis and link created pages.
 			const personalDataEmail = personalData.user.user_email?.toLowerCase()

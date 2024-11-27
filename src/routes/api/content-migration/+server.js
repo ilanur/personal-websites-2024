@@ -248,17 +248,24 @@ async function createSocialMediaEntries(personalData) {
 }
 
 // Function to delete all entries by content type
-async function deleteAllEntriesByContentType(contentType) {
+async function deleteAllEntriesByContentType(contentType, filePath) {
 	try {
-		const entriesToBeDeletedSearch = await DeliveryClient.entries.search({
-			where: [
-				{ field: 'sys.contentTypeId', equalTo: contentType },
-				{ field: 'sys.versionStatus', equalTo: 'published' }
-			],
-			pageSize: 999
-		})
+		const query = {
+			where: [{ field: filePath ? 'sys.dataFormat' : 'sys.contentTypeId', equalTo: contentType }],
+			pageSize: 99999
+		}
 
+		if (filePath) {
+			query['where'].push({ field: 'sys.properties.filePath', equalTo: filePath })
+		}
+
+		if (!filePath) {
+			query['where'].push({ field: 'sys.versionStatus', equalTo: 'published' })
+		}
+
+		const entriesToBeDeletedSearch = await DeliveryClient.entries.search(query)
 		const entriesToBeDeleted = entriesToBeDeletedSearch.items
+
 		let progress = 0
 
 		for (let i = 0, ilen = entriesToBeDeleted.length; i < ilen; i++) {
@@ -285,10 +292,11 @@ async function deleteAllEntriesByContentType(contentType) {
 export const DELETE = async ({ url }) => {
 	try {
 		const collectionTypeToDelete = url.searchParams.get('deleteAllEntriesOfType')
+		const filePath = url.searchParams.get('filePath')
 
 		// Delete entries with specific content type.
 		if (collectionTypeToDelete) {
-			await deleteAllEntriesByContentType(collectionTypeToDelete)
+			await deleteAllEntriesByContentType(collectionTypeToDelete, filePath)
 		}
 
 		return json({ success: true }, { status: 200 })
@@ -297,22 +305,9 @@ export const DELETE = async ({ url }) => {
 	}
 }
 
+// Endpoint for testing purposes.
 export const GET = async () => {
-	const assets = await DeliveryClient.entries.search({
-		where: [{ field: 'sys.contentTypeId', equalTo: 'assets' }],
-		pageSize: 999
-	})
-
-	const blogPosts = await DeliveryClient.entries.search({
-		where: [
-			{ field: 'sys.contentTypeId', equalTo: 'personalWebsitesBlogPost' },
-			{ field: 'sys.versionStatus', equalTo: 'published' }
-		]
-	})
-
-	console.log('assets', assets)
-
-	return json({ success: true, blogPosts }, { status: 200 })
+	return json({ success: true }, { status: 200 })
 }
 
 export const POST = async ({ url }) => {
@@ -328,6 +323,10 @@ export const POST = async ({ url }) => {
 			await deleteAllEntriesByContentType('personalWebsites')
 			await deleteAllEntriesByContentType('personalWebsitePage')
 			await deleteAllEntriesByContentType('personalWebsitesBlogPost')
+			await deleteAllEntriesByContentType('asset', '/Content-Types-Assets/PersonalWebsites/')
+			await deleteAllEntriesByContentType('asset', '/Content-Types-Assets/PersonalWebsites/Blogs/')
+			await deleteAllEntriesByContentType('asset', '/Content-Types-Assets/PersonalWebsites/CVs/')
+			await deleteAllEntriesByContentType('asset', '/Content-Types-Assets/PersonalWebsites/Pages/')
 		}
 
 		// Loop over data and create items in Contensis.

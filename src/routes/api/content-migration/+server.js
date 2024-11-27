@@ -190,7 +190,7 @@ async function createSocialMediaEntries(personalData) {
 			url: personalData.user.instagram
 		},
 		{
-			type: 'LinkedIn',
+			type: 'Linkedin',
 			url: personalData.user.linkedin
 		},
 		{
@@ -334,7 +334,7 @@ export const POST = async ({ url }) => {
 			const personalData = oldCMSData[i]
 
 			// Stop after 1 entry for testing purposes
-			if (i === 2) break
+			if (i === 1) break
 
 			// Create personalWebsite in Contensis and link created pages.
 			const personalDataEmail = personalData.user.user_email?.toLowerCase()

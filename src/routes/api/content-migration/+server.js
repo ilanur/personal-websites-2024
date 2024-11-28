@@ -125,7 +125,7 @@ async function createPwBlogPosts(createdPersonalWebsite, contensisPeopleEntry, p
 
 		const payload = {
 			wpId: wpBlogPost.ID,
-			title: wpBlogPost.post_title,
+			title: wpBlogPost.post_title.replace(/&amp;/g, '&'),
 			description: truncateContent(wpBlogPost.post_content, 30),
 			canvas,
 			publishingDate: wpBlogPost.post_date,
@@ -168,7 +168,7 @@ async function createPwBlogPosts(createdPersonalWebsite, contensisPeopleEntry, p
 			const createdPwBlogPost = await ManagementClient.entries.create(payload)
 			await ManagementClient.entries.invokeWorkflow(createdPwBlogPost, 'draft.publish')
 		} catch (e) {
-			console.error(`Error creating personalWebsiteBlogPost entry: ${JSON.stringify(e.data)}`)
+			console.error(`Error creating blog post (${wpBlogPost.post_name}): ${JSON.stringify(e.data)}`)
 			continue
 		}
 	}
@@ -339,7 +339,7 @@ export const POST = async ({ url }) => {
 			const personalData = oldCMSData[i]
 
 			// Stop after 1 entry for testing purposes
-			if (i === 5) break
+			if (i === 10) break
 
 			// Create personalWebsite in Contensis and link created pages.
 			const personalDataEmail = personalData.user.user_email?.toLowerCase()

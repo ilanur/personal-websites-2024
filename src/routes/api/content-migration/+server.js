@@ -338,11 +338,24 @@ export const POST = async ({ url }) => {
 		for (let i = 0, ilen = oldCMSData.length; i < ilen; i++) {
 			const personalData = oldCMSData[i]
 
-			// Stop after 1 entry for testing purposes
-			if (i === 10) break
-
 			// Create personalWebsite in Contensis and link created pages.
 			const personalDataEmail = personalData.user.user_email?.toLowerCase()
+
+			//check if personal website already exists for this email by delivery search
+			const contensisPersonalWebsites = await DeliveryClient.entries.search({
+				where: [
+					{ field: 'sys.contentTypeId', equalTo: 'personalWebsites' },
+					{ field: 'sys.versionStatus', equalTo: 'published' },
+					{ field: 'people.euiEmail', equalTo: personalDataEmail }
+				]
+			})
+
+			if (contensisPersonalWebsites.items.length) {
+				console.log(`${personalDataEmail} already exists in personalWebsites. Skip creation...`)
+				progress += 1
+				continue
+			}
+
 			let contensisPeopleEntry
 
 			if (personalDataEmail) {

@@ -6,7 +6,7 @@ import { PUBLIC_EUI_WEB } from '$env/static/public'
 ##################################################################################################    
 */
 export function getThumbnail(thumbnail, placeholder = '') {
-	return thumbnail ? `${PUBLIC_EUI_WEB}/${thumbnail.asset.sys.uri}` : placeholder
+	return thumbnail ? `${PUBLIC_EUI_WEB}${thumbnail.asset.sys.uri}` : placeholder
 }
 
 /*

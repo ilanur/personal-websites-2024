@@ -86,62 +86,68 @@
 				filters: filters
 			})
 		])
-
 		search.addWidgets([
 			hits({
 				container: '#hits',
 				templates: {
-					item: (hit, { html, components }) => html`
+					item: (hit, { html }) => html`
 						<article
-							class="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-lg"
+							class="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-lg shadow-md transition-shadow duration-300 hover:shadow-lg"
 						>
-							<figure>
-								<img
-									class="aspect-16-9 w-full object-cover"
-									src="${getThumbnail(
-										hit.cleanEntryData.entryThumbnail,
-										'https://www.eui.eu/Images/Web2021/card-placeholder.svg'
-									)}"
-									alt="${hit.cleanEntryData.entryThumbnail
-										? hit.cleanEntryData.entryThumbnail.altText
-										: ''}"
-								/>
+							<figure class="bg-gray-200 relative flex h-56 w-full items-center justify-center">
+								${hit.cleanEntryData.entryThumbnail
+									? html`
+											<img
+												class="h-full w-full object-contain"
+												src="${getThumbnail(
+													hit.cleanEntryData.entryThumbnail,
+													'https://www.eui.eu/Images/Web2021/card-placeholder.svg'
+												)}"
+												alt="${hit.cleanEntryData.entryThumbnail.altText || 'Thumbnail'}"
+											/>
+										`
+									: html`
+											<span class="text-gray-500 text-sm">No Image</span>
+										`}
 							</figure>
-							<div class="bg-eui-dark-blue-800 flex h-full flex-col justify-between p-6">
+							<div class="flex h-full flex-col justify-between bg-white p-4">
 								<header>
-									<p class="leading-1 mb-3 text-sm"></p>
-									<h1 class="mb-3 text-lg font-bold">${hit.title}</h1>
+									<h2 class="text-gray-900 mb-2 line-clamp-2 text-base font-semibold">
+										${hit.title}
+									</h2>
 								</header>
-								<p class="text-sm">
+								<p class="text-gray-700 line-clamp-3 text-sm">
 									${truncateString(hit.cleanEntryData.entryDescription, 200)}
+								</p>
+								<footer class="mt-4">
 									<a
 										href="${getPreviewUrl(hit.cleanEntryData.websiteSlug)}"
 										title="${hit.title} website"
 										aria-label="${hit.title} website"
+										class="text-eui-dark-blue-500 inline-block text-sm hover:underline"
 									>
-										<span class="sr-only">Read article: ${hit.cleanEntryData.entryTitle}.</span>
-										<span class="absolute inset-x-0 -top-px bottom-0"></span>
+										Visit the Personal Website
 									</a>
-								</p>
+								</footer>
 							</div>
 						</article>
 					`,
 					empty(results, { html }) {
 						return html`
-							<div class="${not_found_classes}">
+							<div class="text-gray-700 flex flex-col items-center justify-center p-6 text-center">
 								<p
-									class="bg-gray-300 mx-auto mb-3 flex h-28 w-28 items-center justify-center rounded-full p-4 text-6xl"
+									class="bg-gray-200 text-gray-400 mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full p-4 text-3xl"
 								>
 									<span class="fa-sharp fa-solid fa-magnifying-glass"></span>
 								</p>
-								<h3>
+								<h3 class="text-lg font-semibold">
 									No results found for "
 									<strong>${results.query}</strong>
 									"
 								</h3>
-								<p>
-									No results found for the criteria. Remove filters or try adjusting your search to
-									find what you're looking for.
+								<p class="mt-2 text-sm">
+									No results match your criteria. Try removing filters or adjusting your search
+									terms.
 								</p>
 							</div>
 						`

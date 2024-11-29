@@ -11,6 +11,7 @@
 
 	const personalWebsite = $derived(data.personalWebsite)
 	const personalWebsitePages = $derived(data.personalWebsitePages)
+	const hasBlog = $derived(data.hasBlog)
 
 	setContext('smallHeroBanner', smallHeroBanner)
 </script>
@@ -19,7 +20,7 @@
 	<UserHeroBanner {personalWebsite} isSmall={$smallHeroBanner} />
 
 	<div class="bg-eui-gray">
-		<PersonalWebsiteNavigation {personalWebsitePages} {personalWebsite} />
+		<PersonalWebsiteNavigation {personalWebsitePages} {personalWebsite} {hasBlog} />
 	</div>
 
 	{@render children?.()}

@@ -23,6 +23,32 @@ export async function getPeopleEntryByEmail(email) {
 	}
 }
 
+export async function getPersonalWebsiteByEmail(email) {
+	// Pieter-Jan to check why this is not working
+	try {
+		const query = {
+			where: [
+				{ field: 'sys.contentTypeId', equalTo: 'personalWebsites' },
+				{ field: 'sys.versionStatus', equalTo: 'published' },
+				{ field: 'people.email', equalTo: email }
+			]
+		}
+		query.fieldLinkDepths = { people: 2 }
+
+		const personalWebsites = await DeliveryClient.entries.search(query, 2)
+		console.log('email', email)
+		console.log('personalWebsites', personalWebsites)
+
+		if (!personalWebsites.items.length) return null
+
+		return personalWebsites.items[0]
+	} catch (e) {
+		console.error('Error while getting personal Website entry:', e.data)
+		if (e.status === 404) return null
+		error(e.status, e.data)
+	}
+}
+
 export async function authenticateContensis() {
 	try {
 		const url = `${PUBLIC_CONTENSIS_URL}/authenticate/connect/token`

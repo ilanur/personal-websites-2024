@@ -27,8 +27,21 @@ export async function load({ params }) {
 		1
 	)
 
+	//get blog posts from the user
+	const query = {
+		where: [
+			{ field: 'sys.contentTypeId', equalTo: 'personalWebsitesBlogPost' },
+			{ field: 'sys.versionStatus', equalTo: 'published' },
+			{ field: 'personalWebsite.sys.id', equalTo: personalWebsiteId }
+		]
+	}
+	const blogPosts = await DeliveryClient.entries.search(query)
+	const hasBlog = blogPosts.items.length > 0 ? true : false
+	console.log('hasBlog!!!', hasBlog)
+
 	return {
 		personalWebsite: results.items.length ? results.items[0] : null,
-		personalWebsitePages: personalWebsitePages.items
+		personalWebsitePages: personalWebsitePages.items,
+		hasBlog: hasBlog
 	}
 }

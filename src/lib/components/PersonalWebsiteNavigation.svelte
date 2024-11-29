@@ -2,7 +2,9 @@
 	import clsx from 'clsx'
 	import AppNavLink from '$lib/components/AppNavLink.svelte'
 
-	let { personalWebsitePages, personalWebsite, ...rest } = $props()
+	let { personalWebsitePages, personalWebsite, hasBlog, ...rest } = $props()
+
+	console.log('hasBlog', hasBlog)
 </script>
 
 <ul
@@ -18,6 +20,11 @@
 			</AppNavLink>
 		</li>
 	{/each}
+	{#if hasBlog}
+		<li>
+			<AppNavLink href={`/${personalWebsite.websiteSlug}/blog`}>Blog</AppNavLink>
+		</li>
+	{/if}
 </ul>
 
 <style>

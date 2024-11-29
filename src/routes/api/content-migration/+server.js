@@ -1,7 +1,7 @@
 import { ofetch } from 'ofetch'
 import { json, error } from '@sveltejs/kit'
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis-clients'
-import { getPeopleEntryByEmail, uploadAsset } from '$lib/utils/contensis'
+import { getPeopleEntryByEmail, getPersonalWebsiteByEmail, uploadAsset } from '$lib/utils/contensis'
 import { parseHtml } from '@contensis/html-canvas'
 
 function truncateContent(content, wordLimit) {
@@ -340,21 +340,6 @@ export const POST = async ({ url }) => {
 
 			// Create personalWebsite in Contensis and link created pages.
 			const personalDataEmail = personalData.user.user_email?.toLowerCase()
-
-			//check if personal website already exists for this email by delivery search
-			const contensisPersonalWebsites = await DeliveryClient.entries.search({
-				where: [
-					{ field: 'sys.contentTypeId', equalTo: 'personalWebsites' },
-					{ field: 'sys.versionStatus', equalTo: 'published' },
-					{ field: 'people.euiEmail', equalTo: personalDataEmail }
-				]
-			})
-
-			if (contensisPersonalWebsites.items.length) {
-				console.log(`${personalDataEmail} already exists in personalWebsites. Skip creation...`)
-				progress += 1
-				continue
-			}
 
 			let contensisPeopleEntry
 

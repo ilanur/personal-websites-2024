@@ -3,8 +3,6 @@
 	import AppNavLink from '$lib/components/AppNavLink.svelte'
 
 	let { personalWebsitePages, personalWebsite, hasBlog, ...rest } = $props()
-
-	console.log('hasBlog', hasBlog)
 </script>
 
 <ul

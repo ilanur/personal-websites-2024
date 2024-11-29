@@ -4,6 +4,8 @@
 
 	let { data } = $props()
 
+	console.log('data', data)
+
 	const smallHeroBanner = getContext('smallHeroBanner')
 	$smallHeroBanner = false
 </script>
@@ -18,7 +20,7 @@
 		<div
 			class="col-span-3 mt-14 border-t border-eui-gray-70 pt-14 lg:col-span-1 lg:m-0 lg:border-t-0 lg:p-0"
 		>
-			<UserContactInfo />
+			<UserContactInfo personalWebsite={data.page.personalWebsite} />
 		</div>
 	</div>
 {/if}

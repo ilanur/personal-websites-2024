@@ -1,6 +1,6 @@
 // src/routes/[slug]/+page.server.js
 import { error } from '@sveltejs/kit'
-import { DeliveryClient } from '$lib/utils/contensis-clients'
+import { DeliveryClient } from '$lib/utils/contensis/_clients'
 import { createRenderer } from '@contensis/canvas-html'
 
 import { PUBLIC_PREVIEW_COOKIE_NAME, PUBLIC_PREVIEW_PARAM } from '$env/static/public'

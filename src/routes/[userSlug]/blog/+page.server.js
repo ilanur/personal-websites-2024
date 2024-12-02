@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit'
-import { DeliveryClient } from '$lib/utils/contensis-clients'
+import { DeliveryClient } from '$lib/utils/contensis/_clients'
 
 export async function load({ parent }) {
 	const parentData = await parent()

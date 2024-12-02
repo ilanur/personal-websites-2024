@@ -14,12 +14,6 @@ const baseDeliveryConfig = {
 	projectId: PUBLIC_CONTENSIS_PROJECT_ID
 }
 
-// Create enhanced delivery client that handles preview mode
-export function createDeliveryClient() {
-	const config = { ...baseDeliveryConfig }
-	return Client.create(config)
-}
-
 // Default delivery client for client-side use
 export const DeliveryClient = Client.create(baseDeliveryConfig)
 

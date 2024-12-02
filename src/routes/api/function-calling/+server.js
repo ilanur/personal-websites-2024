@@ -1,7 +1,7 @@
 import OpenAI from 'openai'
 import { json } from '@sveltejs/kit'
 import { PRIVATE_OPENAI_API_KEY } from '$env/static/private'
-import { DeliveryClient, ManagementClient } from '$lib/utils/contensis-clients.js'
+import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
 
 // Initialize the OpenAI client
 const openai = new OpenAI({

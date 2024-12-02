@@ -1,7 +1,7 @@
 import { PUBLIC_CONTENSIS_MANAGEMENT_URL, PUBLIC_CONTENSIS_URL } from '$env/static/public'
 import { error } from '@sveltejs/kit'
 import { ofetch } from 'ofetch'
-import { DeliveryClient, ManagementClient } from './contensis-clients'
+import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
 
 export async function getPeopleEntryByEmail(email) {
 	try {

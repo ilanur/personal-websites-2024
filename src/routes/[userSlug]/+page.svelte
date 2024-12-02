@@ -1,5 +1,6 @@
 <script>
 	import { getContext } from 'svelte'
+	import { getCanvasHTML } from '$lib/utils/contensis/client'
 	import UserContactInfo from '$lib/components/UserContactInfo.svelte'
 
 	let { data } = $props()
@@ -14,7 +15,8 @@
 	<div class="container grid grid-cols-3 gap-x-16 py-12 md:py-16 xl:gap-x-36">
 		<div class="col-span-3 lg:col-span-2">
 			<h2 class="mb-5 font-normal">{data.page.title}</h2>
-			{@html data.page.content ?? 'This page is empty'}
+			{@html data.page.canvas ?? 'This page is empty'}
+			{getCanvasHTML(data.page.canvas)}
 		</div>
 
 		<div

@@ -1,7 +1,7 @@
 import { ofetch } from 'ofetch'
 import { json, error } from '@sveltejs/kit'
-import { DeliveryClient, ManagementClient } from '$lib/utils/contensis-clients'
-import { getPeopleEntryByEmail, uploadAsset } from '$lib/utils/contensis'
+import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
+import { getPeopleEntryByEmail, uploadAsset } from '$lib/utils/contensis/server'
 import { parseHtml } from '@contensis/html-canvas'
 
 function truncateContent(content, wordLimit) {

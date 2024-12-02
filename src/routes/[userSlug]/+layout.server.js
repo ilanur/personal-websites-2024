@@ -1,5 +1,5 @@
 import { redirect } from '@sveltejs/kit'
-import { DeliveryClient } from '$lib/utils/contensis-clients.js'
+import { DeliveryClient } from '$lib/utils/contensis/_clients'
 
 export async function load({ params }) {
 	if (!params.userSlug) throw redirect(302, '/')

@@ -1,6 +1,6 @@
 import { error, fail, redirect } from '@sveltejs/kit'
-import { ManagementClient, DeliveryClient } from '$lib/utils/contensis-clients.js'
-import { getPeopleEntryByEmail } from '$lib/utils/contensis.js'
+import { ManagementClient, DeliveryClient } from '$lib/utils/contensis/_clients'
+import { getPeopleEntryByEmail } from '$lib/utils/contensis/server'
 import slugify from 'slugify'
 
 export async function load(event) {

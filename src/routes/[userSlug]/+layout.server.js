@@ -27,7 +27,7 @@ export async function load({ params }) {
 		1
 	)
 
-	//get blog posts from the user
+	// Get blog posts from the user
 	const query = {
 		where: [
 			{ field: 'sys.contentTypeId', equalTo: 'personalWebsitesBlogPost' },

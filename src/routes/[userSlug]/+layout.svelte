@@ -19,7 +19,7 @@
 <div>
 	<UserHeroBanner {personalWebsite} isSmall={$smallHeroBanner} />
 
-	<div class="bg-eui-gray">
+	<div class="bg-intranet-gray-100">
 		<PersonalWebsiteNavigation {personalWebsitePages} {personalWebsite} {hasBlog} />
 	</div>
 

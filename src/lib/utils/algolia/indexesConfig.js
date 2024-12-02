@@ -13,8 +13,8 @@ function getDefaultConfig() {
 	return {
 		templateFunction: baseTemplateFunction,
 		transformItems: baseTransformItems,
-		root_classes: 'p-8',
-		list_classes: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-3 gap-6 mx-auto',
+		root_classes: '',
+		list_classes: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 mx-auto',
 		item_classes: '',
 		select_form_classes: '',
 		search_placeholder: 'Search'
@@ -23,9 +23,7 @@ function getDefaultConfig() {
 
 function baseTemplateFunction(hit, html) {
 	console.log('Hit', hit)
-	return html`
-		<p>${hit.item.entryTitle}</p>
-	`
+	return html` <p>${hit.item.entryTitle}</p> `
 }
 function baseTransformItems(items) {
 	return items

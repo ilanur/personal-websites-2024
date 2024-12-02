@@ -5,27 +5,17 @@
 	let { personalWebsitePages, personalWebsite, hasBlog, ...rest } = $props()
 </script>
 
-<ul
-	class={clsx(
-		rest.class,
-		'eui-gray container flex items-center gap-x-6 overflow-y-auto py-2 uppercase md:gap-x-10'
-	)}
->
+<ul class={clsx(rest.class, 'eui-gray container flex items-center gap-x-6 overflow-y-auto py-2 uppercase md:gap-x-10')}>
 	{#each personalWebsitePages as page}
 		<li>
-			<AppNavLink
-				class="whitespace-nowrap"
-				href={`/${personalWebsite.websiteSlug}/${page.pageSlug}`}
-			>
+			<AppNavLink class="whitespace-nowrap" href={`/${personalWebsite.websiteSlug}/${page.pageSlug}`}>
 				{page.title}
 			</AppNavLink>
 		</li>
 	{/each}
 	{#if hasBlog}
 		<li>
-			<AppNavLink class="whitespace-nowrap" href={`/${personalWebsite.websiteSlug}/blog`}>
-				Blog
-			</AppNavLink>
+			<AppNavLink class="whitespace-nowrap" href={`/${personalWebsite.websiteSlug}/blog`}>Blog</AppNavLink>
 		</li>
 	{/if}
 </ul>
@@ -38,16 +28,16 @@
 
 	/* Track */
 	::-webkit-scrollbar-track {
-		@apply bg-eui-gray-10;
+		@apply bg-intranet-gray-100;
 	}
 
 	/* Handle */
 	::-webkit-scrollbar-thumb {
-		@apply cursor-pointer bg-eui-gray-30;
+		@apply bg-intranet-gray-100 cursor-pointer;
 	}
 
 	/* Handle on hover */
 	::-webkit-scrollbar-thumb:hover {
-		@apply bg-eui-gray-70;
+		@apply bg-intranet-gray-100;
 	}
 </style>

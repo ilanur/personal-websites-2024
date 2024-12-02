@@ -4,7 +4,7 @@
 	import quickLinks from '$lib/constants/quickLinks.json'
 </script>
 
-<footer class="bg-eui-blue text-white">
+<footer class="bg-eui-dark-blue-500 text-white">
 	<div class="container py-10">
 		<IconLogoEuiFull class="mb-8 h-14 w-fit [&_path]:fill-white" />
 
@@ -15,9 +15,7 @@
 			University Institute by the ICT service Web unit.
 		</p>
 
-		<AppLink href="/" target="_blank" class="my-12 text-eui-yellow" showArrow>
-			Browse all the EUI personal Websites
-		</AppLink>
+		<AppLink href="/" target="_blank" class="my-12 text-eui-yellow" showArrow>Browse all the EUI personal Websites</AppLink>
 
 		<ul class="flex flex-wrap space-x-1.5">
 			{#each quickLinks as { href, label }, i}
@@ -26,9 +24,6 @@
 			{/each}
 		</ul>
 
-		<p class="mt-5">
-			© European University Institute 2024, Badia Fiesolana - Via dei Roccettini 9, I-50014 San
-			Domenico di Fiesole (FI) - Italy
-		</p>
+		<p class="mt-5">© European University Institute 2024, Badia Fiesolana - Via dei Roccettini 9, I-50014 San Domenico di Fiesole (FI) - Italy</p>
 	</div>
 </footer>

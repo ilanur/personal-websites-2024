@@ -3,16 +3,9 @@
 @tailwind utilities;
 
 @layer base {
-	html {
-		@apply overflow-y-scroll font-nunito;
-	}
-
-	body {
-		@apply h-full text-lg text-eui-gray-90;
-	}
-
-	a {
-		@apply underline underline-offset-2 hover:no-underline;
+	html,
+	.font-text {
+		font-family: 'Nunito Sans', system-ui, sans-serif;
 	}
 
 	h1,
@@ -20,50 +13,66 @@
 	h3,
 	h4,
 	h5,
-	h6 {
-		@apply font-montserrat font-bold;
+	h6,
+	.font-title {
+		font-family: 'Inter', sans-serif;
 	}
 
-	h1 {
-		/* font-size: 40px; line-height: 61px; */
-		@apply text-h1 leading-[3.85rem];
-	}
-	h2 {
-		/* font-size: 32px; */
-		@apply text-h2;
-	}
-	h3 {
-		/* font-size: 28px; */
-		@apply text-h3;
-	}
-	h4 {
-		/* font-size: 24px; */
-		@apply text-h4;
-	}
-	h5 {
-		/* font-size: 20px; */
-		@apply text-h5;
-	}
-	h6 {
-		/* font-size: 16px; */
-		@apply text-h6;
+	.markdown ul,
+	.markdown ol {
+		margin: 1rem 0;
 	}
 
-	main h1,
-	main h2,
-	main h3,
-	main h4,
-	main h5,
-	main h6 {
-		@apply mb-3 mt-6;
-		@apply leading-[1.2em];
+	.markdown li,
+	.markdown p + p {
+		margin-bottom: 1rem;
 	}
 
-	main p {
-		@apply mb-3 leading-relaxed;
+	#chat a {
+		color: #0369a1;
+		text-decoration: underline;
 	}
 
-	main strong {
-		@apply font-bold;
+	.swiper-wrapper {
+		width: 100%;
+		height: max-content !important;
+		padding-bottom: 64px !important;
+		-webkit-transition-timing-function: linear !important;
+		transition-timing-function: linear !important;
+		position: relative;
+	}
+
+	.swiper-pagination-bullet {
+		background: #4f46e5;
+	}
+}
+
+@screen md {
+	html {
+		font-size: 1.125rem;
+	}
+}
+
+@screen lg {
+	html {
+		font-size: 1.25rem;
+	}
+}
+
+@screen xl {
+}
+
+@screen 2xl {
+}
+
+@layer utilities {
+	.animation-delay-2000 {
+		animation-delay: 2s;
+	}
+	.animation-delay-3000 {
+		animation-delay: 3s;
+	}
+	.animation-delay-4000 {
+		animation-delay: 4s;
 	}
 }

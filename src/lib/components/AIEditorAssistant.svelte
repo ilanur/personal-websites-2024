@@ -82,9 +82,7 @@
 									<li>You will see a preview of the highlighted changes</li>
 									<li>Confirm to publish</li>
 								</ul>
-								<button on:click={hideTutorial} class="text-blue-600 hover:text-blue-800 text-sm">
-									Got it, don't show again
-								</button>
+								<button on:click={hideTutorial} class="text-blue-600 hover:text-blue-800 text-sm"> Got it, don't show again </button>
 							</div>
 						</div>
 					</div>
@@ -118,9 +116,7 @@
 									<div class="bg-gray-600 h-4 w-4 rounded-full"></div>
 									<span>History</span>
 								</button>
-								<button
-									class="bg-green-600 hover:bg-green-700 flex items-center space-x-1 rounded-md px-3 py-1 text-white"
-								>
+								<button class="bg-green-600 hover:bg-green-700 flex items-center space-x-1 rounded-md px-3 py-1 text-white">
 									<div class="h-4 w-4 rounded-full bg-white"></div>
 									<span>Confirm</span>
 								</button>
@@ -136,9 +132,7 @@
 
 				<div class="grid grid-cols-3 gap-4">
 					{#each quickActions as action}
-						<button
-							class="hover:bg-gray-30 flex items-center justify-center space-x-1 rounded-lg border p-1"
-						>
+						<button class="hover:bg-gray-30 flex items-center justify-center space-x-1 rounded-lg border p-1">
 							<span>{action}</span>
 							<div class="bg-gray-500 h-3 w-3"></div>
 						</button>
@@ -146,10 +140,7 @@
 				</div>
 			</div>
 		{/if}
-		<button
-			on:click={toggleExpansion}
-			class="hover:bg-blue-700 fixed bottom-6 right-6 rounded-full bg-eui-blue px-4 py-2 font-bold text-white shadow-lg"
-		>
+		<button on:click={toggleExpansion} class="hover:bg-blue-700 bg-eui-dark-blue-500 fixed bottom-6 right-6 rounded-full px-4 py-2 font-bold text-white shadow-lg">
 			{#if isExpanded}
 				X
 			{:else}

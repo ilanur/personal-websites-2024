@@ -1,7 +1,7 @@
 import { ofetch } from 'ofetch'
 import { json, error } from '@sveltejs/kit'
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis-clients'
-import { getPeopleEntryByEmail, getPersonalWebsiteByEmail, uploadAsset } from '$lib/utils/contensis'
+import { getPeopleEntryByEmail, uploadAsset } from '$lib/utils/contensis'
 import { parseHtml } from '@contensis/html-canvas'
 
 function truncateContent(content, wordLimit) {
@@ -312,7 +312,23 @@ export const DELETE = async ({ url }) => {
 
 // Endpoint for testing purposes.
 export const GET = async () => {
-	return json({ success: true }, { status: 200 })
+	const personalWebsites = await DeliveryClient.entries.search(
+		{
+			where: [
+				{ field: 'sys.contentTypeId', equalTo: 'personalWebsites' },
+				{ field: 'sys.versionStatus', equalTo: 'published' }
+			]
+		},
+		2
+	)
+
+	const email = 'anatole.cheysson@eui.eu'
+	const personalWebsite = personalWebsites.items.find((pw) => pw.people.email === email)
+
+	return json(
+		{ success: true, personalWebsites: personalWebsites.items, personalWebsite },
+		{ status: 200 }
+	)
 }
 
 export const POST = async ({ url }) => {

@@ -64,8 +64,8 @@
 
 				{#if !isSmall}
 					<UserHeroBannerSocials
-						socials={personalWebsite.socials}
-						class="z-20 hidden max-h-[70%] grid-cols-2 gap-4 border-l border-eui-gray-70 pl-4 text-eui-gray-70 md:grid"
+						socials={personalWebsite.socialMedia}
+						class="z-20 hidden max-h-[300px] flex-col flex-wrap gap-4 md:flex"
 					/>
 				{/if}
 			</div>
@@ -91,9 +91,9 @@
 				</div>
 
 				<UserHeroBannerSocials
-					socials={personalWebsite.socials}
+					socials={personalWebsite.socialMedia}
 					class={clsx(
-						'mt-10 grid grid-cols-4 justify-between gap-12 border-t pt-10 md:w-fit md:gap-x-6 md:gap-y-0 md:pt-6',
+						'mt-10 grid grid-cols-4 justify-between gap-12 border-t pt-10 sm:grid-cols-6 md:w-fit md:gap-x-6 md:gap-y-0 md:pt-6',
 						{
 							'md:flex': isSmall,
 							'md:hidden': !isSmall

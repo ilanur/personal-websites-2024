@@ -13,14 +13,19 @@
 >
 	{#each personalWebsitePages as page}
 		<li>
-			<AppNavLink href={`/${personalWebsite.websiteSlug}/${page.pageSlug}`}>
+			<AppNavLink
+				class="whitespace-nowrap"
+				href={`/${personalWebsite.websiteSlug}/${page.pageSlug}`}
+			>
 				{page.title}
 			</AppNavLink>
 		</li>
 	{/each}
 	{#if hasBlog}
 		<li>
-			<AppNavLink href={`/${personalWebsite.websiteSlug}/blog`}>Blog</AppNavLink>
+			<AppNavLink class="whitespace-nowrap" href={`/${personalWebsite.websiteSlug}/blog`}>
+				Blog
+			</AppNavLink>
 		</li>
 	{/if}
 </ul>

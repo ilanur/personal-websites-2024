@@ -1,9 +1,10 @@
 <script>
 	import AppDownloadLink from './AppDownloadLink.svelte'
 
-	let { personalWebsite, ...rest } = $props()
+	let { personalWebsite } = $props()
 
 	console.log('personalWebsite', personalWebsite)
+
 	function downloadCV() {
 		console.log('Download CV')
 	}

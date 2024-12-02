@@ -1,8 +1,9 @@
 <script>
-	import DownloadLink from '$lib/components/DownloadLink.svelte'
 	import { PUBLIC_EUI_WEB } from '$env/static/public'
 
 	let { personalWebsite, people } = $props()
+
+	const ictData = JSON.parse(people.ictPeopleApiData)
 </script>
 
 <div class="space-y-6 lg:space-y-7 lg:border-l lg:pl-7">
@@ -28,31 +29,31 @@
 		</div>
 	{/if}
 
-	{#if people.euiEmail || people.mobilePhone}
+	{#if ictData.EuiEmail || ictData.Phones.length}
 		<div class="flex flex-col items-start pb-6 lg:pb-0">
 			<p class="font-bold">Contact info</p>
 
-			{#if people.euiEmail}
-				<a href={`mailto:${people.euiEmail}`}>{people.euiEmail}</a>
+			{#if ictData.EuiEmail}
+				<a class="mb-2" href={`mailto:${ictData.EuiEmail}`}>{ictData.EuiEmail}</a>
 			{/if}
 
-			{#if people.mobilePhone}
-				<a href={`tel:${people.mobilePhone}`}>{people.mobilePhone}</a>
+			{#if ictData.Phones[0]}
+				<a href={`tel:${ictData.Phones[0].External}`}>{ictData.Phones[0].External}</a>
 			{/if}
 		</div>
 	{/if}
 
-	{#if personalWebsite.city}
+	{#if ictData.Offices.length}
 		<div class="flex flex-col pb-6 lg:pb-0">
-			<p class="font-bold">City</p>
-			<p>{personalWebsite.city}</p>
+			<p class="font-bold">Office</p>
+			<p>{ictData.Offices[0].Description}</p>
 		</div>
 	{/if}
 
 	{#if personalWebsite.nationality.nationality[0]}
 		<div class="flex flex-col pb-6 lg:pb-0">
 			<p class="font-bold">Country</p>
-			<p>{personalWebsite.nationality.nationality[0]}</p>
+			<p>{personalWebsite.nationality.nationality[0]} - {personalWebsite.city}</p>
 		</div>
 	{/if}
 </div>

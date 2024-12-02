@@ -6,15 +6,25 @@
 </script>
 
 <div class="space-y-6 lg:space-y-7 lg:border-l lg:pl-7">
-	{#if personalWebsite.cv}
-		<div class="pb-6 lg:pb-0">
-			<DownloadLink
-				href={`${PUBLIC_EUI_WEB}${personalWebsite.cv.sys.uri}`}
-				target="_blank"
-				rel="noopener"
-			>
-				CURRICULUM VITAE
-			</DownloadLink>
+	{#if personalWebsite.cv || people.existsInICTPeopleAPI}
+		<div class="flex flex-col gap-4 pb-6 lg:pb-0">
+			{#if personalWebsite.cv}
+				<div>
+					<i class="fa-solid fa-arrow-up-right-from-square fa-sm mr-1"></i>
+					<a href={`${PUBLIC_EUI_WEB}${personalWebsite.cv.sys.uri}`} target="_blank" rel="noopener">
+						Curriculum vitae
+					</a>
+				</div>
+			{/if}
+
+			{#if people.existsInICTPeopleAPI}
+				<div>
+					<i class="fa-solid fa-arrow-up-right-from-square fa-sm mr-1"></i>
+					<a href={`${PUBLIC_EUI_WEB}/people?id=${people.sys.slug}`} target="_blank" rel="noopener">
+						EUI profile
+					</a>
+				</div>
+			{/if}
 		</div>
 	{/if}
 
@@ -32,13 +42,17 @@
 		</div>
 	{/if}
 
-	<div class="flex flex-col pb-6 lg:pb-0">
-		<p class="font-bold">Office</p>
-		<p>{personalWebsite.city}</p>
-	</div>
+	{#if personalWebsite.city}
+		<div class="flex flex-col pb-6 lg:pb-0">
+			<p class="font-bold">City</p>
+			<p>{personalWebsite.city}</p>
+		</div>
+	{/if}
 
-	<div class="flex flex-col pb-6 lg:pb-0">
-		<p class="font-bold">Country</p>
-		<p>{personalWebsite.nationality.nationality[0]}</p>
-	</div>
+	{#if personalWebsite.nationality.nationality[0]}
+		<div class="flex flex-col pb-6 lg:pb-0">
+			<p class="font-bold">Country</p>
+			<p>{personalWebsite.nationality.nationality[0]}</p>
+		</div>
+	{/if}
 </div>

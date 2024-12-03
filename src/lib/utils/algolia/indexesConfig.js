@@ -14,7 +14,7 @@ function getDefaultConfig() {
 		templateFunction: baseTemplateFunction,
 		transformItems: baseTransformItems,
 		root_classes: '',
-		list_classes: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 mx-auto',
+		list_classes: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8 mx-auto',
 		item_classes: '',
 		select_form_classes: '',
 		search_placeholder: 'Search'

@@ -43,7 +43,7 @@
 		<span class="ml-2 mr-4 text-xs">Content migrating...</span>
 	{:then value}
 		{#if value}
-			<span class="mr-4 text-xs text-eui-blue">Content migrated</span>
+			<span class="text-eui-dark-blue-600 mr-4 text-xs">Content migrated</span>
 		{/if}
 	{:catch error}
 		<span class="mr-4 text-xs text-eui-red">{error.message}</span>

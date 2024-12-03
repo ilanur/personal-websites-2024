@@ -1,6 +1,6 @@
 import { error, fail, redirect } from '@sveltejs/kit'
 import { ManagementClient, DeliveryClient } from '$lib/utils/contensis/_clients'
-import { getPeopleEntryByEmail } from '$lib/utils/contensis/server'
+import { getPeopleEntryByEmail, uploadAsset } from '$lib/utils/contensis/server'
 import slugify from 'slugify'
 
 export async function load(event) {
@@ -53,30 +53,65 @@ export const actions = {
 			// Get contensis user from the People collection in the euiWebsite project.
 			const contensisUser = await getPeopleEntryByEmail(formData.email)
 
-			let createdPersonalWebsite
+			let uploadedPhoto = null
+			let createdPersonalWebsite = null
+
+			if (formData.photoUpload.size !== 0) {
+				const arrayBuffer = await formData.photoUpload.arrayBuffer()
+				const fileBuffer = Buffer.from(arrayBuffer)
+				const filename = formData.photoUpload.name
+
+				try {
+					uploadedPhoto = await uploadAsset(fileBuffer, filename, {
+						description: 'Photo uploaded from Personal website creation page',
+						folderId: '/Content-Types-Assets/PersonalWebsites',
+						contentType: formData.photoUpload.type,
+						title: formData.title
+					})
+				} catch (e) {
+					console.error('Error uploading photo: ', e)
+					return fail(500, {
+						error: 'Error uploading photo'
+					})
+				}
+			}
+
+			const personalWebsitePayload = {
+				title: contensisUser?.nameAndSurnameForTheWeb ?? formData.title,
+				description: contensisUser?.aboutMe ?? '',
+				websiteSlug: formData.slug,
+				nationality: {
+					nationality: [formData.nationality]
+				},
+				people: {
+					sys: {
+						id: contensisUser.sys.id,
+						contentTypeId: 'people'
+					}
+				},
+				sys: {
+					contentTypeId: 'personalWebsites',
+					language: 'en-GB',
+					dataFormat: 'entry'
+				}
+			}
+
+			if (uploadedPhoto) {
+				personalWebsitePayload['image'] = {
+					altText: `Profile picture of ${contensisUser?.nameAndSurnameForTheWeb}`,
+					asset: {
+						sys: {
+							id: uploadedPhoto.sys.id,
+							language: 'en-GB',
+							dataFormat: 'asset'
+						}
+					}
+				}
+			}
 
 			// Create personal website
 			try {
-				createdPersonalWebsite = await ManagementClient.entries.create({
-					title: contensisUser?.nameAndSurnameForTheWeb ?? formData.title,
-					description: contensisUser?.aboutMe ?? '',
-					websiteSlug: formData.slug,
-					nationality: {
-						nationality: [formData.nationality]
-					},
-					people: {
-						sys: {
-							id: contensisUser.sys.id,
-							contentTypeId: 'people'
-						}
-					},
-					sys: {
-						contentTypeId: 'personalWebsites',
-						language: 'en-GB',
-						dataFormat: 'entry'
-					}
-				})
-
+				createdPersonalWebsite = await ManagementClient.entries.create(personalWebsitePayload)
 				await ManagementClient.entries.invokeWorkflow(createdPersonalWebsite, 'draft.publish')
 			} catch (e) {
 				console.error('Error while creating personal website: ', e)
@@ -87,13 +122,7 @@ export const actions = {
 
 			// Create pages
 			try {
-				const pagesToCreate = [
-					'Home',
-					'List of publications',
-					'Research',
-					'Publications in Cadmus',
-					'Work in progress'
-				]
+				const pagesToCreate = ['Home', 'List of publications', 'Research', 'Publications in Cadmus', 'Work in progress']
 				const createdPages = []
 
 				for (let i = 0, ilen = pagesToCreate.length; i < ilen; i++) {
@@ -119,8 +148,8 @@ export const actions = {
 					createdPages.push(createdPage)
 				}
 			} catch (e) {
-				console.error('Error while creating pages: ', e)
-				error(e.status, 'Error while creating pages')
+				console.error('Error while creating pages: ', JSON.stringify(e))
+				return error(e.status, 'Error while creating pages')
 			}
 
 			return { createdPersonalWebsite }

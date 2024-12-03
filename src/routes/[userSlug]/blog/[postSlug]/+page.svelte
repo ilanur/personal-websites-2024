@@ -17,15 +17,11 @@
 
 	const editUrl = `${PUBLIC_CONTENSIS_URL}/app/projects/euiWebsite/entries/${data.post.sys.id}`
 
-	const generateSpeechMailBody =
-		'Please generate the speech for the following page:' + data.post.entryTitle
-	const generateSpeechMailToWebunit =
-		'mailto:webunit@eui.eu?subject=EUIdeas%20-%20Generate%20Speech&body=' + generateSpeechMailBody
+	const generateSpeechMailBody = 'Please generate the speech for the following page:' + data.post.entryTitle
+	const generateSpeechMailToWebunit = 'mailto:webunit@eui.eu?subject=EUIdeas%20-%20Generate%20Speech&body=' + generateSpeechMailBody
 
-	const generateTopicsMailBody =
-		'Please generate topics for the following page:' + data.post.entryTitle
-	const generateTopicsMailToWebunit =
-		'mailto:webunit@eui.eu?subject=EUIdeas%20-%20Generate%20Topics&body=' + generateTopicsMailBody
+	const generateTopicsMailBody = 'Please generate topics for the following page:' + data.post.entryTitle
+	const generateTopicsMailToWebunit = 'mailto:webunit@eui.eu?subject=EUIdeas%20-%20Generate%20Topics&body=' + generateTopicsMailBody
 
 	if (data.post.audioTranscription && data.post.audioTranscription.file?.sys.uri) {
 		audioUrl = `${PUBLIC_EUI_BASE_URL}/${data.post.audioTranscription.file.sys.uri}`
@@ -44,7 +40,7 @@
 				<p class="mb-6 text-sm">
 					{#if data.post.categories.length > 0}
 						<span class="item-center inline-flex leading-none">
-							<span class="fa-sharp fa-solid fa-folders text-eui-light-blue-500 me-2"></span>
+							<span class="fa-sharp fa-solid fa-folders me-2 text-eui-light-blue-500"></span>
 							{#each data.post.categories as category, i}
 								<span>
 									{category.entryTitle}
@@ -58,7 +54,7 @@
 					{/if}
 					{#if data.post.tags.length > 0}
 						<span class="item-center inline-flex leading-none">
-							<span class="fa-sharp fa-solid fa-tag text-eui-light-blue-500 me-2"></span>
+							<span class="fa-sharp fa-solid fa-tag me-2 text-eui-light-blue-500"></span>
 							{#each data.post.tags as tag, i}
 								<span>
 									{tag.entryTitle}{#if i < data.post.tags.length - 1},{/if}
@@ -67,47 +63,31 @@
 						</span>
 					{/if}
 				</p>
-				<h1 class="bold mb-4 text-3xl font-bold">{data.post.entryTitle}</h1>
+				<h1 class="mb-4 text-3xl">{data.post.entryTitle}</h1>
 				{#if audioUrl}
 					<audio controls class="mb-4">
 						<source src={audioUrl} type="audio/mpeg" />
 						Your browser does not support the audio element.
 					</audio>
 				{/if}
-
 				<p>{@html data.post.entryDescription}</p>
-				<div class="border-slate-200 relative border-b text-right">
+				<div class="relative border-b border-slate-200 text-right">
 					<div class="flex justify-end">
 						<div class="flex translate-y-1/2 items-center gap-x-4 ps-4">
 							<p>
-								<a
-									href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}`}
-									title="Share on X"
-									target="_blank"
-									rel="noopener"
-								>
+								<a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}`} title="Share on X" target="_blank" rel="noopener">
 									<span class="sr-only">Share on X</span>
 									<span class="fa-brands fa-x-twitter" aria-hidden="true"></span>
 								</a>
 							</p>
 							<p>
-								<a
-									href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`}
-									title="Share on Facebook"
-									target="_blank"
-									rel="noopener"
-								>
+								<a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`} title="Share on Facebook" target="_blank" rel="noopener">
 									<span class="sr-only">Share on Facebook</span>
 									<span class="fa-brands fa-facebook" aria-hidden="true"></span>
 								</a>
 							</p>
 							<p>
-								<a
-									href={`http://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(currentUrl)}`}
-									title="Share on LinkedIn"
-									target="_blank"
-									rel="noopener"
-								>
+								<a href={`http://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(currentUrl)}`} title="Share on LinkedIn" target="_blank" rel="noopener">
 									<span class="sr-only">Share on LinkedIn</span>
 									<span class="fa-brands fa-linkedin" aria-hidden="true"></span>
 								</a>
@@ -117,21 +97,9 @@
 				</div>
 				{#if user}
 					<div class="mt-4">
-						<a href={editUrl} target="_blank" class="text-eui-light-blue-500 px-4 hover:underline">
-							Edit this page
-						</a>
-						<a
-							href={generateSpeechMailToWebunit}
-							class="text-eui-light-blue-500 px-4 hover:underline"
-						>
-							Generate speech
-						</a>
-						<a
-							href={generateTopicsMailToWebunit}
-							class="text-eui-light-blue-500 px-4 hover:underline"
-						>
-							Generate topics
-						</a>
+						<a href={editUrl} target="_blank" class="px-4 text-eui-light-blue-500 hover:underline"> Edit this page </a>
+						<a href={generateSpeechMailToWebunit} class="px-4 text-eui-light-blue-500 hover:underline"> Generate speech </a>
+						<a href={generateTopicsMailToWebunit} class="px-4 text-eui-light-blue-500 hover:underline"> Generate topics </a>
 					</div>
 				{/if}
 			</div>
@@ -141,11 +109,7 @@
 	<div class="max-w-2xl 2xl:mx-auto">
 		{#if data.post.entryThumbnail}
 			<figure>
-				<img
-					class="h-auto w-full"
-					src={getThumbnail(data.post.entryThumbnail)}
-					alt={data.post.entryThumbnail.altText}
-				/>
+				<img class="h-auto w-full" src={getThumbnail(data.post.entryThumbnail)} alt={data.post.entryThumbnail.altText} />
 				<figcaption></figcaption>
 			</figure>
 		{/if}
@@ -158,10 +122,7 @@
 				<p class="me-2 text-sm">Topics:</p>
 				<div class="flex flex-wrap gap-2">
 					{#each data.post.themesTopicGenerator.added as topic}
-						<a
-							href={topic.url}
-							class="bg-eui-light-blue-500 group inline-block rounded-full px-2 py-1 text-xs text-white"
-						>
+						<a href={topic.url} class="group inline-block rounded-full bg-eui-light-blue-500 px-2 py-1 text-xs text-white">
 							{topic.entryTitle}
 						</a>
 					{/each}

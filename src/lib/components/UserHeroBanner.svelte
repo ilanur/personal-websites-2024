@@ -9,7 +9,7 @@
 	let { personalWebsite, isSmall } = $props()
 </script>
 
-<div class={clsx('relative bg-eui-dark-blue-500 pt-0 md:bg-[transparent]', { 'md:py-8': isSmall, 'md:py-20': !isSmall })}>
+<div class={clsx('relative overflow-hidden bg-eui-dark-blue-500 pt-0 md:bg-[transparent]', { 'md:py-8': isSmall, 'md:py-12': !isSmall })}>
 	{#if !isSmall}
 		<HeroBannerGraphic class="absolute bottom-0 left-0 top-0 z-10 m-auto ml-5 hidden w-fit text-white opacity-10 xl:block" />
 	{/if}

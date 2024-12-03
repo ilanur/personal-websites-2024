@@ -12,38 +12,34 @@
 			{#if personalWebsite.cv}
 				<div>
 					<i class="fa-solid fa-arrow-up-right-from-square fa-sm mr-1"></i>
-					<a href={`${PUBLIC_EUI_WEB}${personalWebsite.cv.sys.uri}`} target="_blank" rel="noopener">
-						Curriculum vitae
-					</a>
+					<a href={`${PUBLIC_EUI_WEB}${personalWebsite.cv.sys.uri}`} target="_blank" rel="noopener"> Curriculum vitae </a>
 				</div>
 			{/if}
 
 			{#if people.existsInICTPeopleAPI}
 				<div>
 					<i class="fa-solid fa-arrow-up-right-from-square fa-sm mr-1"></i>
-					<a href={`${PUBLIC_EUI_WEB}/people?id=${people.sys.slug}`} target="_blank" rel="noopener">
-						EUI profile
-					</a>
+					<a href={`${PUBLIC_EUI_WEB}/people?id=${people.sys.slug}`} target="_blank" rel="noopener"> EUI profile </a>
 				</div>
 			{/if}
 		</div>
 	{/if}
 
-	{#if ictData.EuiEmail || ictData.Phones.length}
+	{#if people.euiEmail || ictData.Phones.length}
 		<div class="flex flex-col items-start pb-6 lg:pb-0">
 			<p class="font-bold">Contact info</p>
 
-			{#if ictData.EuiEmail}
-				<a class="mb-2" href={`mailto:${ictData.EuiEmail}`}>{ictData.EuiEmail}</a>
+			{#if people.euiEmail}
+				<a class="mb-2" href={`mailto:${people.euiEmail}`}>{people.euiEmail}</a>
 			{/if}
 
-			{#if ictData.Phones[0]}
+			{#if ictData?.Phones[0]}
 				<a href={`tel:${ictData.Phones[0].External}`}>{ictData.Phones[0].External}</a>
 			{/if}
 		</div>
 	{/if}
 
-	{#if ictData.Offices.length}
+	{#if ictData?.Offices.length}
 		<div class="flex flex-col pb-6 lg:pb-0">
 			<p class="font-bold">Office</p>
 			<p>{ictData.Offices[0].Description}</p>

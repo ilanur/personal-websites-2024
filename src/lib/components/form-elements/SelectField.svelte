@@ -18,7 +18,12 @@
 		bind:value
 		{...rest}
 		id={rest.name}
-		class="disabled:bg-intranet-gray-100 w-full cursor-pointer rounded disabled:cursor-not-allowed disabled:border-eui-gray-30 disabled:text-eui-gray-70"
+		class={clsx(
+			'disabled:bg-intranet-gray-100 w-full cursor-pointer rounded disabled:cursor-not-allowed disabled:border-eui-gray-30 disabled:text-eui-gray-70',
+			{
+				'border-red-600': error
+			}
+		)}
 	>
 		<option value="">{rest.placeholder}</option>
 		{#each options as option}

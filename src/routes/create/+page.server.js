@@ -1,6 +1,7 @@
 import { error, fail, redirect } from '@sveltejs/kit'
 import { ManagementClient, DeliveryClient } from '$lib/utils/contensis/_clients'
 import { getPeopleEntryByEmail, uploadAsset } from '$lib/utils/contensis/server'
+import { parseHtml } from '@contensis/html-canvas'
 import slugify from 'slugify'
 
 export async function load(event) {
@@ -145,7 +146,7 @@ export const actions = {
 					const createdPage = await ManagementClient.entries.create({
 						title: pagesToCreate[i],
 						pageSlug: slugify(pagesToCreate[i], { lower: true }),
-						canvas: '',
+						canvas: await parseHtml(''),
 						personalWebsite: {
 							sys: {
 								id: createdPersonalWebsite.sys.id,

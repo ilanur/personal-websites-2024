@@ -12,14 +12,18 @@
 			{#if personalWebsite.cv}
 				<div>
 					<i class="fa-solid fa-arrow-up-right-from-square fa-sm mr-1"></i>
-					<a href={`${PUBLIC_EUI_WEB}${personalWebsite.cv.sys.uri}`} target="_blank" rel="noopener"> Curriculum vitae </a>
+					<a href={`${PUBLIC_EUI_WEB}${personalWebsite.cv.sys.uri}`} target="_blank" rel="noopener">
+						Curriculum vitae
+					</a>
 				</div>
 			{/if}
 
 			{#if people.existsInICTPeopleAPI}
 				<div>
 					<i class="fa-solid fa-arrow-up-right-from-square fa-sm mr-1"></i>
-					<a href={`${PUBLIC_EUI_WEB}/people?id=${people.sys.slug}`} target="_blank" rel="noopener"> EUI profile </a>
+					<a href={`${PUBLIC_EUI_WEB}/people?id=${people.sys.slug}`} target="_blank" rel="noopener">
+						EUI profile
+					</a>
 				</div>
 			{/if}
 		</div>
@@ -49,7 +53,10 @@
 	{#if personalWebsite.nationality.nationality[0]}
 		<div class="flex flex-col pb-6 lg:pb-0">
 			<p class="font-bold">Country</p>
-			<p>{personalWebsite.nationality.nationality[0]} - {personalWebsite.city}</p>
+			<p>
+				{personalWebsite.nationality.nationality[0]}
+				{#if personalWebsite.city}- {personalWebsite.city}{/if}
+			</p>
 		</div>
 	{/if}
 </div>

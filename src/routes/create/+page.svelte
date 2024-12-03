@@ -9,11 +9,10 @@
 
 	let { data } = $props()
 
-	console.log('data', data)
-
-	let formLoading = $state(false)
 	let fileUploadRef = null
+	let formLoading = $state(false)
 	let previewPhoto = $state()
+	let formErrors = $state()
 
 	const user = $derived(data.contensisUser)
 	const nationalities = $derived(data.nationalities)
@@ -45,11 +44,20 @@
 		enctype="multipart/form-data"
 		use:enhance={() => {
 			formLoading = true
+			formErrors = null
 
 			return async ({ update, result }) => {
+				console.log('result', result)
 				await update({ reset: false })
 				formLoading = false
-				goto(`/${result.data.createdPersonalWebsite.websiteSlug}`)
+
+				if (result.type === 'failure' && result.data.formErrors) {
+					formErrors = result.data.formErrors
+				}
+
+				if (result.status === 200 && result.data.createdPersonalWebsite) {
+					goto(`/${result.data.createdPersonalWebsite.websiteSlug}`)
+				}
 			}
 		}}
 	>
@@ -69,7 +77,12 @@
 				readonly
 			/>
 
-			<InputField name="slug" value={user.sys.slug} />
+			<InputField
+				name="slug"
+				value={user.sys.slug}
+				placeholder="website slug"
+				error={formErrors?.slug}
+			/>
 		</div>
 
 		<InputField name="email" type="email" label="E-mail" value={user.euiEmail} readonly />
@@ -81,9 +94,10 @@
 			placeholder="Select your nationality"
 			valuePropertyName="en-GB"
 			textPropertyName="en-GB"
+			error={formErrors?.nationality}
 		/>
 
-		<div class="flex">
+		<div class="!mt-10 flex">
 			<div class="size-60 overflow-hidden rounded-md">
 				<input
 					bind:this={fileUploadRef}

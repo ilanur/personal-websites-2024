@@ -49,6 +49,23 @@ export const actions = {
 	default: async ({ request }) => {
 		try {
 			const formData = Object.fromEntries(await request.formData())
+			const formErrors = {}
+
+			// Form validations
+			if (!formData.slug.trim()) {
+				formErrors.slug = 'Slug is required'
+			}
+
+			if (!formData.nationality) {
+				formErrors.nationality = 'Nationality is required'
+			}
+
+			if (Object.keys(formErrors).length > 0) {
+				return fail(400, {
+					success: false,
+					formErrors
+				})
+			}
 
 			// Get contensis user from the People collection in the euiWebsite project.
 			const contensisUser = await getPeopleEntryByEmail(formData.email)
@@ -122,14 +139,13 @@ export const actions = {
 
 			// Create pages
 			try {
-				const pagesToCreate = ['Home', 'List of publications', 'Research', 'Publications in Cadmus', 'Work in progress']
-				const createdPages = []
+				const pagesToCreate = ['Home']
 
 				for (let i = 0, ilen = pagesToCreate.length; i < ilen; i++) {
 					const createdPage = await ManagementClient.entries.create({
 						title: pagesToCreate[i],
 						pageSlug: slugify(pagesToCreate[i], { lower: true }),
-						content: '',
+						canvas: '',
 						personalWebsite: {
 							sys: {
 								id: createdPersonalWebsite.sys.id,
@@ -144,8 +160,6 @@ export const actions = {
 					})
 
 					await ManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
-
-					createdPages.push(createdPage)
 				}
 			} catch (e) {
 				console.error('Error while creating pages: ', JSON.stringify(e))

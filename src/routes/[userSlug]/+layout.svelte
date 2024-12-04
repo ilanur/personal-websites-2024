@@ -1,8 +1,13 @@
 <script>
-	import SharedLayoutWithSidebar from '$lib/components/SharedLayoutWithSidebar.svelte'
+	import PagesLayout from '$lib/components/PagesLayout.svelte'
+	import { page } from '$app/stores'
+
 	let { data, children } = $props()
+
+	let route = $derived.by(() => $page.route.id)
+	let hasSidebar = $derived(route.includes('/[userSlug]/blog') ? false : true)
 </script>
 
-<SharedLayoutWithSidebar {data}>
+<PagesLayout {data} {hasSidebar}>
 	{@render children?.()}
-</SharedLayoutWithSidebar>
+</PagesLayout>

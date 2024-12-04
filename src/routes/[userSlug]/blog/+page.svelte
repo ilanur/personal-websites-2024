@@ -15,7 +15,10 @@
 
 	<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 		{#each data.blogPosts as post}
-			<a href={`${post.url}`} class="flex flex-col overflow-hidden rounded-lg bg-white no-underline shadow-md transition duration-200 ease-in-out hover:-translate-y-1.5 hover:shadow-xl">
+			<a
+				href={`${post.url}`}
+				class="flex flex-col overflow-hidden rounded-lg bg-white no-underline shadow-md transition duration-200 ease-in-out hover:-translate-y-1.5 hover:shadow-xl"
+			>
 				<figure>
 					<img class="aspect-16-9 w-full object-cover object-center" src={getThumbnail(post.entryThumbnail)} alt={post.entryTitle} />
 				</figure>

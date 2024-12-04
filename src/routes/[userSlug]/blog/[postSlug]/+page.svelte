@@ -1,11 +1,12 @@
 <script>
-	import { formatDate } from '$lib/utils/utils.js'
-	import { PUBLIC_EUI_WEB, PUBLIC_CONTENSIS_URL } from '$env/static/public'
+	import { PUBLIC_CONTENSIS_URL } from '$env/static/public'
 	import { page } from '$app/stores'
-	import { getThumbnail, truncateString } from '$lib/utils/utils'
+	import { getThumbnail } from '$lib/utils/utils'
+	import dayjs from 'dayjs'
 
 	let { data } = $props()
 	let audioUrl = $state(null)
+
 	const user = $derived.by(() => $page.data.session?.user)
 	const currentUrl = $derived.by(() => $page.url.href)
 
@@ -75,19 +76,34 @@
 					<div class="flex justify-end">
 						<div class="flex translate-y-1/2 items-center gap-x-4 ps-4">
 							<p>
-								<a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}`} title="Share on X" target="_blank" rel="noopener">
+								<a
+									href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}`}
+									title="Share on X"
+									target="_blank"
+									rel="noopener"
+								>
 									<span class="sr-only">Share on X</span>
 									<span class="fa-brands fa-x-twitter" aria-hidden="true"></span>
 								</a>
 							</p>
 							<p>
-								<a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`} title="Share on Facebook" target="_blank" rel="noopener">
+								<a
+									href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`}
+									title="Share on Facebook"
+									target="_blank"
+									rel="noopener"
+								>
 									<span class="sr-only">Share on Facebook</span>
 									<span class="fa-brands fa-facebook" aria-hidden="true"></span>
 								</a>
 							</p>
 							<p>
-								<a href={`http://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(currentUrl)}`} title="Share on LinkedIn" target="_blank" rel="noopener">
+								<a
+									href={`http://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(currentUrl)}`}
+									title="Share on LinkedIn"
+									target="_blank"
+									rel="noopener"
+								>
 									<span class="sr-only">Share on LinkedIn</span>
 									<span class="fa-brands fa-linkedin" aria-hidden="true"></span>
 								</a>
@@ -115,7 +131,7 @@
 		{/if}
 
 		<p class="my-6 text-sm">
-			Published on: {formatDate(data.post.publishingDate)}
+			Published on: {dayjs(data.post.publishingDate).format('DD/MM/YYYY')}
 		</p>
 		{#if data.post.themesTopicGenerator?.added?.length > 0}
 			<div class="mb-4 flex items-center">

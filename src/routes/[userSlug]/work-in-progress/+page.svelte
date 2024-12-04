@@ -10,6 +10,7 @@
 </script>
 
 <div class="container py-12">
-	<h1 class="mb-4 text-3xl">{data.page.title}</h1>
-	{@html data.page.canvas ? getCanvasHTML(data.page.canvas) : 'This page is empty'}
+	<h1>{data.page.title}</h1>
+
+	<div class="canvas-content">{@html data.page.canvas ? getCanvasHTML(data.page.canvas) : 'This page is empty'}</div>
 </div>

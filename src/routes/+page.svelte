@@ -17,4 +17,6 @@
 	}
 </script>
 
-<HorizontalSearch {item} />
+<div class="bg-intranet-gray-100">
+	<HorizontalSearch {item} />
+</div>

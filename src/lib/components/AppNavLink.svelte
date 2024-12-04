@@ -7,14 +7,10 @@
 
 <a
 	{...rest}
-	class={clsx(
-		rest.class,
-		'block py-3 text-base uppercase underline-offset-2 hover:underline lg:text-lg',
-		{
-			underline: $page.url.pathname === rest.href,
-			'no-underline': $page.url.pathname !== rest.href
-		}
-	)}
+	class={clsx(rest.class, 'block text-base text-white underline-offset-2 hover:underline', {
+		underline: $page.url.pathname === rest.href,
+		'no-underline': $page.url.pathname !== rest.href
+	})}
 >
 	{@render children?.()}
 </a>

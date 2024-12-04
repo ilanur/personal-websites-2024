@@ -45,6 +45,14 @@
 	.swiper-pagination-bullet {
 		background: #4f46e5;
 	}
+
+	.canvas-content p {
+		@apply mb-4;
+	}
+
+	.canvas-content a {
+		@apply break-words font-medium text-eui-light-blue-600/85 underline;
+	}
 }
 
 @screen md {

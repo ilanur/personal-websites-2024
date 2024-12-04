@@ -14,18 +14,12 @@
 
 {#if data.page}
 	<div class="container grid grid-cols-3 gap-x-16 py-12 md:py-16 xl:gap-x-36">
-		<div class="col-span-3 lg:col-span-2">
-			<h2 class="mb-5 font-normal">{data.page.title}</h2>
-			{@html data.page.canvas ? getCanvasHTML(data.page.canvas) : 'This page is empty'}
+		<div class="col-span-3 max-w-prose leading-relaxed lg:col-span-2">
+			<h1 class="mb-4 text-3xl">{data.page.title}</h1>
+			<div class="canvas-content">{@html data.page.canvas ? getCanvasHTML(data.page.canvas) : 'This page is empty'}</div>
 		</div>
-
-		<div
-			class="col-span-3 mt-14 border-t border-eui-gray-70 pt-14 lg:col-span-1 lg:m-0 lg:border-t-0 lg:p-0"
-		>
-			<UserContactInfo
-				personalWebsite={data.page.personalWebsite}
-				people={data.personalWebsite.people}
-			/>
+		<div class="border-eui-gray-70 col-span-3 mt-14 border-t pt-14 lg:col-span-1 lg:m-0 lg:border-t-0 lg:p-0">
+			<UserContactInfo personalWebsite={data.page.personalWebsite} people={data.personalWebsite.people} />
 		</div>
 	</div>
 {/if}

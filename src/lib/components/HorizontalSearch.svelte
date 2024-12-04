@@ -79,21 +79,26 @@
 				container: '#hits',
 				templates: {
 					item: (hit, { html }) => html`
-						<article class="flex gap-4 overflow-hidden rounded-lg border transition-all hover:scale-[1.02] hover:shadow-lg max-lg:flex-col lg:items-center">
-							<figure class="aspect-square overflow-hidden">${hit.cleanEntryData.entryThumbnail ? html` <img class="h-full w-full object-cover" src="${getThumbnail(hit.cleanEntryData.entryThumbnail, 'https://www.eui.eu/Images/Web2021/card-placeholder.svg')}" alt="${hit.cleanEntryData.entryThumbnail.altText || 'Thumbnail'}" /> ` : html` <span class="text-gray-500 text-sm">No Image</span> `}</figure>
-							<div class="p-4">
-								<h4 class="text-gray-800 text-base font-bold">${hit.title}</h4>
-								<p class="text-gray-600 mt-1 text-xs">${truncateString(hit.cleanEntryData.entryDescription, 200)}</p>
-								<div class="mt-4">
-									<a href="${getPreviewUrl(hit.cleanEntryData.websiteSlug)}" title="${hit.title} website" aria-label="${hit.title} website" class="text-eui-dark-blue-500 inline-block text-sm hover:underline"> Visit the Personal Website </a>
+						<article class="group relative flex h-full items-center overflow-hidden rounded-lg border bg-white transition-all hover:scale-[1.02] hover:shadow-lg sm:flex-col sm:items-start">
+							<figure class="aspect-square w-full max-w-32 shrink-0 overflow-hidden sm:max-w-none">${hit.cleanEntryData.entryThumbnail ? html` <img class="h-full w-full object-cover" src="${getThumbnail(hit.cleanEntryData.entryThumbnail, 'https://www.eui.eu/Images/Web2021/card-placeholder.svg')}" alt="${hit.cleanEntryData.entryThumbnail.altText || 'Thumbnail'}" /> ` : html` <span class="text-sm text-gray-500">No Image</span> `}</figure>
+							<div class="h-full p-4 sm:flex sm:flex-col sm:justify-between">
+								<div>
+									<h4 class="text-base font-bold text-gray-800">${hit.title}</h4>
+									<p class="mt-1 text-xs text-gray-600">${truncateString(hit.cleanEntryData.entryDescription, 200)}</p>
+								</div>
+								<div>
+									<a class="mt-4 inline-block text-sm text-eui-dark-blue-500 hover:underline" href="${getPreviewUrl(hit.cleanEntryData.websiteSlug)}" title="${hit.title} website" aria-label="${hit.title} website">
+										Visit the Personal Website
+										<span class="absolute inset-x-0 -top-px bottom-0"></span>
+									</a>
 								</div>
 							</div>
 						</article>
 					`,
 					empty(results, { html }) {
 						return html`
-							<div class="text-gray-700 flex flex-col items-center justify-center p-6 text-center">
-								<p class="bg-gray-200 text-gray-400 mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full p-4 text-3xl">
+							<div class="flex flex-col items-center justify-center p-6 text-center text-gray-700">
+								<p class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gray-200 p-4 text-3xl text-gray-400">
 									<span class="fa-sharp fa-solid fa-magnifying-glass"></span>
 								</p>
 								<h3 class="text-lg font-semibold">
@@ -235,7 +240,7 @@
 </script>
 
 <div class="bg-eui-dark-blue-500 py-4">
-	<form class="mx-auto max-w-7xl px-6 lg:px-8">
+	<form class="container">
 		<div class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-12">
 			{#if hideSearchBar !== true}
 				<div class="flex items-center sm:col-span-12 2xl:col-span-8">
@@ -266,9 +271,9 @@
 		{/if}
 	</form>
 </div>
-<div id="current-refinements" class="mx-auto max-w-7xl px-6 lg:px-8"></div>
-<div class="mx-auto max-w-7xl px-6 lg:px-8">
-	<div class="my-3 flex items-center justify-between border-b pb-3">
+<div id="current-refinements" class="container"></div>
+<div class="container">
+	<div class="mb-6 flex items-center justify-between">
 		<div id="stats"></div>
 		<div id="hits-per-page"></div>
 	</div>

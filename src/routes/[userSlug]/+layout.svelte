@@ -16,16 +16,14 @@
 	setContext('smallHeroBanner', smallHeroBanner)
 </script>
 
-<div>
-	<UserHeroBanner {personalWebsite} isSmall={$smallHeroBanner} />
+<UserHeroBanner {personalWebsite} isSmall={$smallHeroBanner} />
 
-	<div class="bg-intranet-gray-100">
-		<PersonalWebsiteNavigation {personalWebsitePages} {personalWebsite} {hasBlog} />
-	</div>
-
-	{@render children?.()}
-
-	{#if data.authUser}
-		<AIEditorAssistant class="fixed bottom-8 right-8" />
-	{/if}
+<div class="border-b bg-slate-800">
+	<PersonalWebsiteNavigation {personalWebsitePages} {personalWebsite} {hasBlog} />
 </div>
+
+{@render children?.()}
+
+{#if data.authUser}
+	<AIEditorAssistant class="fixed bottom-8 right-8" />
+{/if}

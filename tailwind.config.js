@@ -3,6 +3,16 @@ export default {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
 		extend: {
+			container: {
+				padding: {
+					DEFAULT: '1.5rem',
+					sm: '2rem',
+					lg: '4rem',
+					xl: '5rem',
+					'2xl': '6rem'
+				},
+				center: true
+			},
 			fontFamily: {
 				nunito: ['Nunito Sans', 'sans-serif'],
 				inter: ['Inter', 'sans-serif']

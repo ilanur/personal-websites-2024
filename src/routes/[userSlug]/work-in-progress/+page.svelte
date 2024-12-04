@@ -10,6 +10,6 @@
 </script>
 
 <div class="container py-12">
-	<h2 class="mb-5 font-normal">{data.page.title}</h2>
+	<h1 class="mb-4 text-3xl">{data.page.title}</h1>
 	{@html data.page.canvas ? getCanvasHTML(data.page.canvas) : 'This page is empty'}
 </div>

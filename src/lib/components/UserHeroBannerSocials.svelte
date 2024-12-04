@@ -10,21 +10,23 @@
 		{#if social.url}
 			<a href={social.url} target="_blank" rel="noopener" aria-label={social.type}>
 				{#if social.type === 'Linkedin'}
-					<i class="fa-brands fa-linkedin-in fa-xl"></i>
+					<span class="fa-brands fa-linkedin-in fa-xl"></span>
 				{:else if social.type === 'ResearchGate'}
-					<i class="fa-brands fa-researchgate fa-xl"></i>
+					<span class="fa-brands fa-researchgate fa-xl"></span>
 				{:else if social.type === 'GoogleScholar'}
-					<i class="fa-brands fa-google-scholar fa-xl"></i>
+					<span class="fa-brands fa-google-scholar fa-xl"></span>
 				{:else if social.type === 'Twitter'}
-					<i class="fa-brands fa-x-twitter fa-xl"></i>
+					<span class="fa-brands fa-x-twitter fa-xl"></span>
 				{:else if social.type === 'Youtube'}
-					<i class="fa-brands fa-youtube fa-xl"></i>
+					<span class="fa-brands fa-youtube fa-xl"></span>
 				{:else if social.type === 'Facebook'}
-					<i class="fa-brands fa-facebook-f fa-xl"></i>
+					<span class="fa-brands fa-facebook-f fa-xl"></span>
 				{:else if social.type === 'Flickr'}
-					<i class="fa-brands fa-flickr fa-xl"></i>
+					<span class="fa-brands fa-flickr fa-xl"></span>
+				{:else if social.type === 'Instagram'}
+					<span class="fa-brands fa-instagram fa-xl"></span>
 				{:else if social.type === 'Bluesky'}
-					<i class="fa-brands fa-bluesky fa-xl"></i>
+					<span class="fa-brands fa-bluesky fa-xl"></span>
 				{:else if social.type === 'Academia.edu'}
 					<IconAcademia class="size-6" />
 				{/if}
@@ -35,10 +37,10 @@
 
 <style lang="postcss">
 	.c-socials > a {
-		@apply flex items-center justify-center no-underline;
+		@apply inline-flex items-center justify-center no-underline md:flex;
 	}
 
-	.c-socials > a > i {
+	.c-socials > a > span {
 		@apply flex size-7 items-center justify-center leading-none;
 	}
 </style>

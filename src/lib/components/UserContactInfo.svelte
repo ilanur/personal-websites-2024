@@ -29,21 +29,21 @@
 		</div>
 	{/if}
 
-	{#if ictData.EuiEmail || ictData.Phones.length}
+	{#if people.euiEmail || ictData.Phones.length}
 		<div class="flex flex-col items-start pb-6 lg:pb-0">
 			<p class="font-bold">Contact info</p>
 
-			{#if ictData.EuiEmail}
-				<a class="mb-2" href={`mailto:${ictData.EuiEmail}`}>{ictData.EuiEmail}</a>
+			{#if people.euiEmail}
+				<a class="mb-2" href={`mailto:${people.euiEmail}`}>{people.euiEmail}</a>
 			{/if}
 
-			{#if ictData.Phones[0]}
+			{#if ictData?.Phones[0]}
 				<a href={`tel:${ictData.Phones[0].External}`}>{ictData.Phones[0].External}</a>
 			{/if}
 		</div>
 	{/if}
 
-	{#if ictData.Offices.length}
+	{#if ictData?.Offices.length}
 		<div class="flex flex-col pb-6 lg:pb-0">
 			<p class="font-bold">Office</p>
 			<p>{ictData.Offices[0].Description}</p>
@@ -53,7 +53,10 @@
 	{#if personalWebsite.nationality.nationality[0]}
 		<div class="flex flex-col pb-6 lg:pb-0">
 			<p class="font-bold">Country</p>
-			<p>{personalWebsite.nationality.nationality[0]} - {personalWebsite.city}</p>
+			<p>
+				{personalWebsite.nationality.nationality[0]}
+				{#if personalWebsite.city}- {personalWebsite.city}{/if}
+			</p>
 		</div>
 	{/if}
 </div>

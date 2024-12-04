@@ -1,11 +1,13 @@
 <script>
 	import { enhance } from '$app/forms'
 	import { goto } from '$app/navigation'
-	import { PUBLIC_EUI_WEB, PUBLIC_EUI_PERSONAL_WEBSITE_URL } from '$env/static/public'
+	import { PUBLIC_EUI_WEB, PUBLIC_EUI_PERSONAL_WEBSITE_URL, PUBLIC_GOOGLE_MAPS_API_KEY } from '$env/static/public'
 	import InputField from '$lib/components/form-elements/InputField.svelte'
 	import SelectField from '$lib/components/form-elements/SelectField.svelte'
 	import Button from '$lib/components/Button.svelte'
 	import clsx from 'clsx'
+	import { onMount } from 'svelte'
+	import * as GoogleMapsApiLoader from '@googlemaps/js-api-loader'
 
 	let { data } = $props()
 
@@ -14,6 +16,9 @@
 	let previewPhoto = $state()
 	let formErrors = $state()
 	let useEuiPhoto = $state(false)
+	let city = $state()
+	let lat = $state()
+	let lng = $state()
 
 	const user = $derived(data.contensisUser)
 	const nationalities = $derived(data.nationalities)
@@ -53,6 +58,41 @@
 			previewPhoto = e.target.result
 		}
 	}
+
+	function disableKeyPress(e) {
+		if (e.keyCode == '13') {
+			e.preventDefault()
+		}
+	}
+
+	onMount(async () => {
+		try {
+			const loader = new GoogleMapsApiLoader.Loader({
+				apiKey: PUBLIC_GOOGLE_MAPS_API_KEY,
+				version: 'weekly',
+				libraries: ['places']
+			})
+
+			const library = await loader.importLibrary('places')
+			const autoComplete = new library.Autocomplete(document.getElementById('autocomplete'), {
+				fields: ['geometry', 'name', 'formatted_address', 'address_components']
+			})
+
+			autoComplete.addListener('place_changed', (e) => {
+				const place = autoComplete.getPlace()
+
+				if (place.address_components) {
+					const address = place.address_components
+
+					city = address.filter((f) => JSON.stringify(f.types) === JSON.stringify(['locality', 'political']))[0].short_name
+					lat = place.geometry.location.lat()
+					lng = place.geometry.location.lng()
+				}
+			})
+		} catch (e) {
+			console.log(`Error loading map: ${e}`)
+		}
+	})
 </script>
 
 <div class="container mx-auto py-16">
@@ -103,6 +143,16 @@
 			textPropertyName="en-GB"
 			error={formErrors?.nationality}
 		/>
+
+		<div>
+			<input type="hidden" name="city" bind:value={city} />
+			<InputField name="autocomplete" label="Address" onkeypress={disableKeyPress} />
+
+			<div class="mt-2 flex gap-x-2">
+				<InputField readonly name="lat" label="Latitude" value={lat} />
+				<InputField readonly name="lng" label="Longitude" value={lng} />
+			</div>
+		</div>
 
 		<div class="!mt-10">
 			<div class="flex">

@@ -30,6 +30,7 @@
 		"@auth/sveltekit": "^1.2.0",
 		"@contensis/canvas-html": "^1.2.0",
 		"@contensis/html-canvas": "^1.1.0",
+		"@googlemaps/js-api-loader": "^1.16.8",
 		"@sveltejs/adapter-node": "^5.2.9",
 		"algoliasearch": "^5.12.0",
 		"clsx": "^2.1.1",

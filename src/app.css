@@ -106,6 +106,31 @@
 	.canvas-content u {
 		@apply no-underline;
 	}
+
+	/* Google places autocomplete */
+	.pac-container:after {
+		@apply content-none;
+	}
+
+	.pac-item {
+		@apply px-3 py-2;
+	}
+
+	.pac-icon {
+		@apply hidden;
+	}
+
+	.pac-item:hover {
+		@apply cursor-pointer;
+	}
+
+	.pac-item-query {
+		@apply text-inherit;
+	}
+
+	.pac-matched {
+		@apply text-inherit;
+	}
 }
 
 @screen md {

@@ -99,6 +99,9 @@ export const actions = {
 				description: contensisUser?.aboutMe ?? '',
 				websiteSlug: formData.slug,
 				usePeopleProfilePicture: formData.useEuiPhoto === 'true',
+				city: formData.city,
+				lat: formData.lat,
+				lng: formData.lng,
 				nationality: {
 					nationality: [formData.nationality]
 				},

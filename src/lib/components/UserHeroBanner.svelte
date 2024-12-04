@@ -25,8 +25,8 @@
 				'md:col-span-8 md:pr-[150px] lg:pr-[200px] xl:pr-[300px]': !isSmall
 			})}
 		>
-			<h1 class="mt-0 text-3xl">{personalWebsite.title}</h1>
-			<div class="mt-4">
+			<h1>{personalWebsite.title}</h1>
+			<div>
 				{@html personalWebsite.description}
 			</div>
 		</div>

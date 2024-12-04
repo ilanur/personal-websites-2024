@@ -10,4 +10,4 @@
 </script>
 
 <h1 class="mb-4 text-3xl">{data.page.title}</h1>
-{@html data.page.canvas ? getCanvasHTML(data.page.canvas) : 'This page is empty'}
+<div class="canvas-content">{@html data.page.canvas ? getCanvasHTML(data.page.canvas) : 'This page is empty'}</div>

@@ -59,11 +59,7 @@
 			})}
 		>
 			<div class="col-span-12 text-white md:col-span-8 md:pr-[150px] lg:pr-[200px] xl:pr-[300px]">
-				<h1
-					class={clsx('mt-0', {
-						'text-3xl': isSmall
-					})}
-				>
+				<h1 class={clsx('mt-0', { 'text-3xl': isSmall })}>
 					{personalWebsite.title}
 				</h1>
 
@@ -74,10 +70,13 @@
 				{#if personalWebsite.socialMedia.length}
 					<UserHeroBannerSocials
 						socials={personalWebsite.socialMedia}
-						class={clsx('mt-10 grid grid-cols-4 justify-between gap-12 border-t pt-10 sm:grid-cols-6 md:w-fit md:gap-x-6 md:gap-y-0 md:pt-6', {
-							'md:flex': isSmall,
-							'md:hidden': !isSmall
-						})}
+						class={clsx(
+							'mt-10 grid grid-cols-4 justify-between gap-12 border-t pt-10 sm:grid-cols-6 md:w-fit md:gap-x-6 md:gap-y-0 md:pt-6',
+							{
+								'md:flex': isSmall,
+								'md:hidden': !isSmall
+							}
+						)}
 					/>
 				{/if}
 			</div>

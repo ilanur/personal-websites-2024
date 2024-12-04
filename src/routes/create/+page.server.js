@@ -74,7 +74,7 @@ export const actions = {
 			let uploadedPhoto = null
 			let createdPersonalWebsite = null
 
-			if (formData.photoUpload.size !== 0) {
+			if (formData.photoUpload.size !== 0 && formData.useEuiPhoto !== 'true') {
 				const arrayBuffer = await formData.photoUpload.arrayBuffer()
 				const fileBuffer = Buffer.from(arrayBuffer)
 				const filename = formData.photoUpload.name
@@ -98,6 +98,7 @@ export const actions = {
 				title: contensisUser?.nameAndSurnameForTheWeb ?? formData.title,
 				description: contensisUser?.aboutMe ?? '',
 				websiteSlug: formData.slug,
+				usePeopleProfilePicture: formData.useEuiPhoto === 'true',
 				nationality: {
 					nationality: [formData.nationality]
 				},
@@ -170,7 +171,9 @@ export const actions = {
 			return { createdPersonalWebsite }
 		} catch (e) {
 			console.error('Error while creating personal website:', e)
-			return fail(e.status, { error: 'Something went wrong while creating the personal website' })
+			return fail(e.status, {
+				error: 'Something went wrong while creating the personal website'
+			})
 		}
 	}
 }

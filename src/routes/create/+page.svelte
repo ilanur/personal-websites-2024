@@ -13,9 +13,24 @@
 	let formLoading = $state(false)
 	let previewPhoto = $state()
 	let formErrors = $state()
+	let useEuiPhoto = $state(false)
 
 	const user = $derived(data.contensisUser)
 	const nationalities = $derived(data.nationalities)
+
+	$effect(() => {
+		if (user.photo && useEuiPhoto) {
+			setEuiProfilePhoto()
+		}
+
+		if (!useEuiPhoto) {
+			onPhotoDeleteClick()
+		}
+	})
+
+	function setEuiProfilePhoto() {
+		previewPhoto = `${PUBLIC_EUI_WEB}/${user.photo.asset.sys.uri}`
+	}
 
 	function onPhotoActionClick() {
 		fileUploadRef.click()
@@ -24,12 +39,15 @@
 	function onPhotoDeleteClick() {
 		previewPhoto = null
 		fileUploadRef.value = null
+		useEuiPhoto = false
 	}
 
 	function photoSelected(e) {
 		const photo = e.target.files[0]
-
 		const reader = new FileReader()
+
+		useEuiPhoto = false
+
 		reader.readAsDataURL(photo)
 		reader.onload = (e) => {
 			previewPhoto = e.target.result
@@ -70,19 +88,8 @@
 		/>
 
 		<div class="grid grid-cols-1 items-end gap-2 md:grid-cols-2">
-			<InputField
-				name="websiteURL"
-				label="Your personal website URL"
-				value={`${PUBLIC_EUI_PERSONAL_WEBSITE_URL}/`}
-				readonly
-			/>
-
-			<InputField
-				name="slug"
-				value={user.sys.slug}
-				placeholder="website slug"
-				error={formErrors?.slug}
-			/>
+			<InputField name="websiteURL" label="Your personal website URL" value={`${PUBLIC_EUI_PERSONAL_WEBSITE_URL}/`} readonly />
+			<InputField name="slug" value={user.sys.slug} placeholder="website slug" error={formErrors?.slug} />
 		</div>
 
 		<InputField name="email" type="email" label="E-mail" value={user.euiEmail} readonly />
@@ -97,51 +104,49 @@
 			error={formErrors?.nationality}
 		/>
 
-		<div class="!mt-10 flex">
-			<div class="size-60 overflow-hidden rounded-md">
-				<input
-					bind:this={fileUploadRef}
-					accept="image/png, image/jpeg"
-					type="file"
-					name="photoUpload"
-					class="hidden"
-					onchange={photoSelected}
-				/>
-
-				<!-- <img
-					src={user.photo
-						? `${PUBLIC_EUI_WEB}/${user.photo.asset.sys.uri}`
-						: 'https://www.eui.eu/web-production/code/assets/img/default-user-dark.jpg'}
-					class="size-full object-cover"
-					alt={user.nameAndSurnameForTheWeb}
-				/> -->
-
-				{#if !previewPhoto}
-					<img
-						src="https://www.eui.eu/web-production/code/assets/img/default-user-dark.jpg"
-						class="size-full object-cover"
-						alt="Empty profile graphic"
+		<div class="!mt-10">
+			<div class="flex">
+				<div class="size-60 overflow-hidden rounded-md">
+					<input
+						bind:this={fileUploadRef}
+						accept="image/png, image/jpeg"
+						type="file"
+						name="photoUpload"
+						class="hidden"
+						onchange={photoSelected}
 					/>
-				{/if}
 
-				{#if previewPhoto}
-					<img
-						src={previewPhoto}
-						class="size-full object-cover"
-						alt={user.nameAndSurnameForTheWeb}
-					/>
+					{#if !previewPhoto}
+						<img
+							src="https://www.eui.eu/web-production/code/assets/img/default-user-dark.jpg"
+							class="size-full object-cover"
+							alt="Empty profile graphic"
+						/>
+					{/if}
+
+					{#if previewPhoto}
+						<img src={previewPhoto} class="size-full object-cover" alt={user.nameAndSurnameForTheWeb} />
+					{/if}
+				</div>
+
+				{#if !useEuiPhoto}
+					<div class="flex flex-col justify-end gap-2 p-2 px-3">
+						{#if !user.photo || !previewPhoto}
+							{@render imgActionButton('Upload photo', 'fa-upload', onPhotoActionClick)}
+						{/if}
+
+						{#if user.photo && previewPhoto}
+							{@render imgActionButton('Change photo', 'fa-arrows-rotate', onPhotoActionClick)}
+							{@render imgActionButton('Delete photo', 'fa-trash', onPhotoDeleteClick)}
+						{/if}
+					</div>
 				{/if}
 			</div>
 
-			<div class="flex flex-col justify-end gap-2 p-2 px-3">
-				{#if !user.photo && !previewPhoto}
-					{@render imgActionButton('Upload photo', 'fa-upload', onPhotoActionClick)}
-				{/if}
-
-				{#if user.photo || previewPhoto}
-					{@render imgActionButton('Change photo', 'fa-arrows-rotate', onPhotoActionClick)}
-					{@render imgActionButton('Change photo', 'fa-trash', onPhotoDeleteClick)}
-				{/if}
+			<div class="mt-4 flex items-center">
+				<input bind:value={useEuiPhoto} type="hidden" name="useEuiPhoto" />
+				<input bind:checked={useEuiPhoto} type="checkbox" id="uploadLocation" name="uploadLocation" />
+				<label for="uploadLocation" class="ml-2 mt-px">Use your EUI profile photo</label>
 			</div>
 		</div>
 
@@ -151,7 +156,7 @@
 
 {#snippet imgActionButton(ariaLabel, icon, callback)}
 	<button
-		class="text-eui-dark-blue-600 border-eui-dark-blue-600 hover:bg-eui-dark-blue-600 flex size-9 items-center justify-center rounded-full border-2 p-0.5 transition hover:text-white"
+		class="flex size-9 items-center justify-center rounded-full border-2 border-eui-dark-blue-600 p-0.5 text-eui-dark-blue-600 transition hover:bg-eui-dark-blue-600 hover:text-white"
 		aria-label={ariaLabel}
 		type="button"
 		onclick={callback}

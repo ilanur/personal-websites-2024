@@ -118,7 +118,7 @@
 
 					{#if !previewPhoto}
 						<img
-							src="https://www.eui.eu/web-production/code/assets/img/default-user-dark.jpg"
+							src={`${PUBLIC_EUI_WEB}/web-production/code/assets/img/default-user-dark.jpg`}
 							class="size-full object-cover"
 							alt="Empty profile graphic"
 						/>
@@ -148,6 +148,10 @@
 				<input bind:checked={useEuiPhoto} type="checkbox" id="uploadLocation" name="uploadLocation" />
 				<label for="uploadLocation" class="ml-2 mt-px">Use your EUI profile photo</label>
 			</div>
+
+			{#if useEuiPhoto && !user.photo}
+				<small>You currently have no EUI profile photo set. As a result, no photo will appear on your personal website.</small>
+			{/if}
 		</div>
 
 		<Button type="submit" loading={formLoading}>Submit</Button>

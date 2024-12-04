@@ -1,29 +1,8 @@
 <script>
-	import UserHeroBanner from '$lib/components/UserHeroBanner.svelte'
-	import PersonalWebsiteNavigation from '$lib/components/PersonalWebsiteNavigation.svelte'
-	import { setContext } from 'svelte'
-	import { writable } from 'svelte/store'
-	import AIEditorAssistant from '$lib/components/AIEditorAssistant.svelte'
-
+	import SharedLayoutWithSidebar from '$lib/components/SharedLayoutWithSidebar.svelte'
 	let { data, children } = $props()
-
-	let smallHeroBanner = writable(false)
-
-	const personalWebsite = $derived(data.personalWebsite)
-	const personalWebsitePages = $derived(data.personalWebsitePages)
-	const hasBlog = $derived(data.hasBlog)
-
-	setContext('smallHeroBanner', smallHeroBanner)
 </script>
 
-<UserHeroBanner {personalWebsite} isSmall={$smallHeroBanner} />
-
-<div class="border-b bg-slate-800">
-	<PersonalWebsiteNavigation {personalWebsitePages} {personalWebsite} {hasBlog} />
-</div>
-
-{@render children?.()}
-
-{#if data.authUser}
-	<AIEditorAssistant class="fixed bottom-8 right-8" />
-{/if}
+<SharedLayoutWithSidebar {data}>
+	{@render children?.()}
+</SharedLayoutWithSidebar>

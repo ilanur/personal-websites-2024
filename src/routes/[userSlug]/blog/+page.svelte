@@ -1,7 +1,7 @@
 <script>
 	import { getContext } from 'svelte'
+	import AppLink from '$lib/components/AppLink.svelte'
 	import { getThumbnail, truncateString } from '$lib/utils/utils'
-	import Button from '$lib/components/Button.svelte'
 
 	let { data } = $props()
 
@@ -10,30 +10,30 @@
 	$smallHeroBanner = true
 </script>
 
-<div class="container py-12">
-	<h1 class="mb-4 text-3xl">Blog</h1>
-
-	<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-		{#each data.blogPosts as post}
-			<a
-				href={`${post.url}`}
-				class="flex flex-col overflow-hidden rounded-lg bg-white no-underline shadow-md transition duration-200 ease-in-out hover:-translate-y-1.5 hover:shadow-xl"
-			>
-				<figure>
-					<img class="aspect-16-9 w-full object-cover object-center" src={getThumbnail(post.entryThumbnail)} alt={post.entryTitle} />
-				</figure>
-				<div class="flex h-full flex-col items-start justify-between p-4">
-					<div>
-						<h3 class="mb-2 mt-0 text-lg font-semibold">{post.entryTitle}</h3>
-
-						{#if post.description}
-							<p class="text-sm text-gray-700">{truncateString(post.description, 200)}</p>
-						{/if}
-					</div>
-
-					<Button class="mt-4 inline-block text-white">Read More</Button>
+<h1>Blog</h1>
+<div class="grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-3">
+	{#each data.blogPosts as post}
+		<article
+			class="group relative flex h-full flex-col items-start items-center overflow-hidden rounded-lg border bg-white transition-all hover:scale-[1.02] hover:shadow-lg"
+		>
+			<figure class="aspect-16-9 w-full shrink-0 overflow-hidden">
+				<img class="h-full w-full object-cover" src={getThumbnail(post.entryThumbnail)} alt={post.entryTitle} />
+			</figure>
+			<div class="h-full p-4 sm:flex sm:flex-col sm:justify-between">
+				<div>
+					<h1 class="text-lg">{post.entryTitle}</h1>
+					{#if post.description}
+						<p class="text-tiny text-gray-700">{truncateString(post.description, 200)}</p>
+					{/if}
 				</div>
-			</a>
-		{/each}
-	</div>
+				<div>
+					<AppLink href={`${post.url}`} class="text-tiny mt-4 font-medium text-eui-light-blue-600/85" showArrow title={post.entryTitle}
+						>Read more
+						<span class="sr-only"> about {post.entryTitle}</span>
+						<span class="absolute inset-x-0 -top-px bottom-0"></span>
+					</AppLink>
+				</div>
+			</div>
+		</article>
+	{/each}
 </div>

@@ -45,10 +45,10 @@
 			{#if personalWebsite.socialMedia.length}
 				<UserHeroBannerSocials
 					socials={personalWebsite.socialMedia}
-					class={clsx(
-						'z-20 mt-4 flex max-h-[300px] gap-4 border-t border-slate-400 pt-4 md:mt-0 md:flex-wrap md:border-t-0 md:ps-6 md:pt-0',
-						{ '': isSmall, 'md:flex-col md:border-s': !isSmall }
-					)}
+					class={clsx('z-20 mt-4 flex max-h-[300px] gap-4 border-t border-slate-400 pt-4 md:mt-0 md:flex-wrap md:border-t-0 md:pt-0', {
+						'': isSmall,
+						'md:flex-col md:border-s md:ps-6': !isSmall
+					})}
 				/>
 			{/if}
 		</div>

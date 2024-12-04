@@ -118,6 +118,31 @@
 	.canvas-content blockquote {
 		@apply my-6 border-s-8 border-gray-200 bg-gray-50 p-6 italic;
 	}
+
+	/* Google places autocomplete */
+	.pac-container:after {
+		@apply content-none;
+	}
+
+	.pac-item {
+		@apply px-3 py-2;
+	}
+
+	.pac-icon {
+		@apply hidden;
+	}
+
+	.pac-item:hover {
+		@apply cursor-pointer;
+	}
+
+	.pac-item-query {
+		@apply text-inherit;
+	}
+
+	.pac-matched {
+		@apply text-inherit;
+	}
 }
 
 @screen md {

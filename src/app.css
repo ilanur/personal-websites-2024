@@ -106,6 +106,18 @@
 	.canvas-content u {
 		@apply no-underline;
 	}
+
+	.canvas-content hr {
+		@apply my-6;
+	}
+
+	.canvas-content img {
+		@apply my-6;
+	}
+
+	.canvas-content blockquote {
+		@apply my-6 border-s-8 border-gray-200 bg-gray-50 p-6 italic;
+	}
 }
 
 @screen md {

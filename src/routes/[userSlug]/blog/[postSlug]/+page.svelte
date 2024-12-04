@@ -36,89 +36,87 @@
 
 <article>
 	<header>
-		<div class="p-8">
-			<div class="max-w-2xl 2xl:mx-auto">
-				<p class="mb-6 text-sm">
-					{#if data.post.categories.length > 0}
-						<span class="item-center inline-flex leading-none">
-							<span class="fa-sharp fa-solid fa-folders me-2 text-eui-light-blue-500"></span>
-							{#each data.post.categories as category, i}
-								<span>
-									{category.entryTitle}
-									{#if i < data.post.categories.length - 1},{/if}
-								</span>
-							{/each}
-						</span>
-					{/if}
-					{#if data.post.categories.length > 0 && data.post.tags.length > 0}
-						<span class="mx-4">|</span>
-					{/if}
-					{#if data.post.tags.length > 0}
-						<span class="item-center inline-flex leading-none">
-							<span class="fa-sharp fa-solid fa-tag me-2 text-eui-light-blue-500"></span>
-							{#each data.post.tags as tag, i}
-								<span>
-									{tag.entryTitle}{#if i < data.post.tags.length - 1},{/if}
-								</span>
-							{/each}
-						</span>
-					{/if}
-				</p>
-				<h1 class="mb-4 text-3xl">{data.post.entryTitle}</h1>
-				{#if audioUrl}
-					<audio controls class="mb-4">
-						<source src={audioUrl} type="audio/mpeg" />
-						Your browser does not support the audio element.
-					</audio>
+		<div class="max-w-2xl 2xl:mx-auto">
+			<p class="mb-6 text-sm">
+				{#if data.post.categories.length > 0}
+					<span class="item-center inline-flex leading-none">
+						<span class="fa-sharp fa-solid fa-folders me-2 text-eui-light-blue-500"></span>
+						{#each data.post.categories as category, i}
+							<span>
+								{category.entryTitle}
+								{#if i < data.post.categories.length - 1},{/if}
+							</span>
+						{/each}
+					</span>
 				{/if}
-				<p>{@html data.post.entryDescription}</p>
-				<div class="relative border-b border-slate-200 text-right">
-					<div class="flex justify-end">
-						<div class="flex translate-y-1/2 items-center gap-x-4 ps-4">
-							<p>
-								<a
-									href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}`}
-									title="Share on X"
-									target="_blank"
-									rel="noopener"
-								>
-									<span class="sr-only">Share on X</span>
-									<span class="fa-brands fa-x-twitter" aria-hidden="true"></span>
-								</a>
-							</p>
-							<p>
-								<a
-									href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`}
-									title="Share on Facebook"
-									target="_blank"
-									rel="noopener"
-								>
-									<span class="sr-only">Share on Facebook</span>
-									<span class="fa-brands fa-facebook" aria-hidden="true"></span>
-								</a>
-							</p>
-							<p>
-								<a
-									href={`http://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(currentUrl)}`}
-									title="Share on LinkedIn"
-									target="_blank"
-									rel="noopener"
-								>
-									<span class="sr-only">Share on LinkedIn</span>
-									<span class="fa-brands fa-linkedin" aria-hidden="true"></span>
-								</a>
-							</p>
-						</div>
+				{#if data.post.categories.length > 0 && data.post.tags.length > 0}
+					<span class="mx-4">|</span>
+				{/if}
+				{#if data.post.tags.length > 0}
+					<span class="item-center inline-flex leading-none">
+						<span class="fa-sharp fa-solid fa-tag me-2 text-eui-light-blue-500"></span>
+						{#each data.post.tags as tag, i}
+							<span>
+								{tag.entryTitle}{#if i < data.post.tags.length - 1},{/if}
+							</span>
+						{/each}
+					</span>
+				{/if}
+			</p>
+			<h1 class="mb-4 text-3xl">{data.post.entryTitle}</h1>
+			{#if audioUrl}
+				<audio controls class="mb-4">
+					<source src={audioUrl} type="audio/mpeg" />
+					Your browser does not support the audio element.
+				</audio>
+			{/if}
+			<p>{@html data.post.entryDescription}</p>
+			<div class="relative border-b border-slate-200 text-right">
+				<div class="flex justify-end">
+					<div class="flex translate-y-1/2 items-center gap-x-4 ps-4">
+						<p>
+							<a
+								href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}`}
+								title="Share on X"
+								target="_blank"
+								rel="noopener"
+							>
+								<span class="sr-only">Share on X</span>
+								<span class="fa-brands fa-x-twitter" aria-hidden="true"></span>
+							</a>
+						</p>
+						<p>
+							<a
+								href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentUrl)}`}
+								title="Share on Facebook"
+								target="_blank"
+								rel="noopener"
+							>
+								<span class="sr-only">Share on Facebook</span>
+								<span class="fa-brands fa-facebook" aria-hidden="true"></span>
+							</a>
+						</p>
+						<p>
+							<a
+								href={`http://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(currentUrl)}`}
+								title="Share on LinkedIn"
+								target="_blank"
+								rel="noopener"
+							>
+								<span class="sr-only">Share on LinkedIn</span>
+								<span class="fa-brands fa-linkedin" aria-hidden="true"></span>
+							</a>
+						</p>
 					</div>
 				</div>
-				{#if user}
-					<div class="mt-4">
-						<a href={editUrl} target="_blank" class="px-4 text-eui-light-blue-500 hover:underline"> Edit this page </a>
-						<a href={generateSpeechMailToWebunit} class="px-4 text-eui-light-blue-500 hover:underline"> Generate speech </a>
-						<a href={generateTopicsMailToWebunit} class="px-4 text-eui-light-blue-500 hover:underline"> Generate topics </a>
-					</div>
-				{/if}
 			</div>
+			{#if user}
+				<div class="mt-4">
+					<a href={editUrl} target="_blank" class="px-4 text-eui-light-blue-500 hover:underline"> Edit this page </a>
+					<a href={generateSpeechMailToWebunit} class="px-4 text-eui-light-blue-500 hover:underline"> Generate speech </a>
+					<a href={generateTopicsMailToWebunit} class="px-4 text-eui-light-blue-500 hover:underline"> Generate topics </a>
+				</div>
+			{/if}
 		</div>
 	</header>
 

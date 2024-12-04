@@ -13,6 +13,11 @@
 			</AppNavLink>
 		</li>
 	{/each}
+	{#if personalWebsite.enableCadmusPublications}
+		<li>
+			<AppNavLink class="whitespace nowrap" href={`/${personalWebsite.websiteSlug}/cadmus-publications`}>Cadmus publications</AppNavLink>
+		</li>
+	{/if}
 	{#if hasBlog}
 		<li>
 			<AppNavLink class="whitespace-nowrap" href={`/${personalWebsite.websiteSlug}/blog`}>Blog</AppNavLink>

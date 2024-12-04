@@ -5,7 +5,8 @@
 	import { setContext } from 'svelte'
 	import { writable } from 'svelte/store'
 
-	let { data, children } = $props()
+	let { data, children, hasSidebar } = $props()
+	console.log('hasSidebar', hasSidebar)
 
 	let smallHeroBanner = writable(false)
 
@@ -23,10 +24,16 @@
 </div>
 
 <div class="container grid grid-cols-3 gap-x-16 py-12 md:py-16 xl:gap-x-36">
-	<div class="col-span-3 max-w-prose leading-relaxed lg:col-span-2">
-		{@render children?.()}
-	</div>
-	<div class="border-eui-gray-70 col-span-3 mt-14 border-t pt-14 lg:col-span-1 lg:m-0 lg:border-t-0 lg:p-0">
-		<UserContactInfo {personalWebsite} people={personalWebsite.people} />
-	</div>
+	{#if hasSidebar}
+		<div class="col-span-3 max-w-prose leading-relaxed lg:col-span-2">
+			{@render children?.()}
+		</div>
+		<div class="border-eui-gray-70 col-span-3 mt-14 border-t pt-14 lg:col-span-1 lg:m-0 lg:border-t-0 lg:p-0">
+			<UserContactInfo {personalWebsite} people={personalWebsite.people} />
+		</div>
+	{:else}
+		<div class="col-span-3">
+			{@render children?.()}
+		</div>
+	{/if}
 </div>

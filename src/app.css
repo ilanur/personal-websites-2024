@@ -51,7 +51,7 @@
 	}
 
 	.canvas-content a {
-		@apply font-medium text-eui-light-blue-600/85 underline;
+		@apply break-words font-medium text-eui-light-blue-600/85 underline;
 	}
 }
 

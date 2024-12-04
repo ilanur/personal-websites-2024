@@ -5,7 +5,7 @@
 	let { personalWebsitePages, personalWebsite, hasBlog, ...rest } = $props()
 </script>
 
-<ul class={clsx(rest.class, 'container flex items-center gap-x-6 overflow-y-auto md:gap-x-10')}>
+<ul class={clsx(rest.class, 'container flex items-center gap-x-6 overflow-y-auto py-3 md:gap-x-10')}>
 	{#each personalWebsitePages as page}
 		<li>
 			<AppNavLink class="whitespace-nowrap" href={`/${personalWebsite.websiteSlug}/${page.pageSlug}`}>
@@ -28,7 +28,7 @@
 
 	/* Track */
 	::-webkit-scrollbar-track {
-		@apply bg-intranet-gray-100;
+		@apply bg-intranet-gray-200;
 	}
 
 	/* Handle */

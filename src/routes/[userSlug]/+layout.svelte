@@ -18,7 +18,7 @@
 
 <UserHeroBanner {personalWebsite} isSmall={$smallHeroBanner} />
 
-<div class="border-b bg-slate-800 py-3">
+<div class="border-b bg-slate-800">
 	<PersonalWebsiteNavigation {personalWebsitePages} {personalWebsite} {hasBlog} />
 </div>
 

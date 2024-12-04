@@ -9,5 +9,5 @@
 	$smallHeroBanner = true
 </script>
 
-<h1 class="mb-4 text-3xl">{data.page.title}</h1>
+<h1>{data.page.title}</h1>
 <div class="canvas-content">{@html data.page.canvas ? getCanvasHTML(data.page.canvas) : 'This page is empty'}</div>

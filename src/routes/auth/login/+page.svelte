@@ -1,10 +1,10 @@
 <script>
-	import { SignIn } from '@auth/sveltekit/components';
-	import { browser } from '$app/environment';
-	import IconLogoEui from '$lib/components/icons/IconLogoEui.svelte';
+	import { SignIn } from '@auth/sveltekit/components'
+	import { browser } from '$app/environment'
+	import IconLogoEui from '$lib/components/icons/IconLogoEui.svelte'
 
 	if (browser) {
-		document.querySelector('body').classList.add('overflow-hidden');
+		document.querySelector('body').classList.add('overflow-hidden')
 	}
 </script>
 
@@ -21,21 +21,15 @@
 			</div>
 
 			<div class="flex size-full flex-col items-center justify-center">
-				<h1 class="text-7xl font-black text-[#1E293B]">EUI Intranet Portal</h1>
+				<h1 class="text-7xl font-black text-[#1E293B]">EUI Personal Websites</h1>
 
 				<SignIn signInPage="auth/login" provider="microsoft-entra-id" className="mb-11 mt-9">
-					<div
-						slot="submitButton"
-						class="rounded bg-[#0555A2] px-11 py-4 text-2xl font-bold text-white"
-					>
+					<div slot="submitButton" class="rounded bg-[#0555A2] px-11 py-4 text-2xl font-bold text-white">
 						<span>Sign in</span>
 					</div>
 				</SignIn>
 
-				<p class="max-w-2xl text-center text-base">
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et elit pretium, placerat
-					risus et, hendrerit urna. Morbi ac nibh fermentum, congue ligula ac, tristique purus.
-				</p>
+				<p class="max-w-2xl text-center text-base">Login using your EUI credentials</p>
 			</div>
 		</div>
 	</div>

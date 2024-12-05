@@ -7,12 +7,12 @@
 
 	let { ...rest } = $props()
 	const authUser = $derived($page.data.authUser)
-	const personalWebsite = $derived($page.data.personalWebsite)
+	const currentUserPersonalWebsite = $derived($page.data.currentUserPersonalWebsite)
 
 	// Placeholder function to check if the user's website exists
 	// This should be replaced with actual logic or API call
 	function userWebsiteExists() {
-		if (personalWebsite) return true
+		if (currentUserPersonalWebsite) return true
 		return false // Assume it doesn't exist for now
 	}
 </script>
@@ -25,11 +25,12 @@
 		<div class="flex items-center">
 			{#if authUser}
 				{#if userWebsiteExists()}
-					<a href="/{personalWebsite.websiteSlug}" class="mr-4 rounded bg-eui-dark-blue-500 px-2 py-1 text-xs font-semibold text-white"
-						>Your personal website</a
+					<a
+						href="/{currentUserPersonalWebsite.websiteSlug}"
+						class="mr-4 rounded bg-eui-dark-blue-500 px-2 py-1 text-xs font-semibold text-white">Your personal website</a
 					>
 					<a
-						href="/{personalWebsite.websiteSlug}/settings"
+						href="/{currentUserPersonalWebsite.websiteSlug}/settings"
 						class="mr-4 rounded bg-eui-light-blue-500 px-2 py-1 text-xs font-semibold text-white">Edit your settings</a
 					>
 				{:else}

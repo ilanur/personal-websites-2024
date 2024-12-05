@@ -9,6 +9,6 @@ export async function load(event) {
 
 	return {
 		authUser: session ? session.user : null,
-		personalWebsite: personalWebsite ? personalWebsite : null
+		currentUserPersonalWebsite: personalWebsite ? personalWebsite : null
 	}
 }

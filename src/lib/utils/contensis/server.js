@@ -26,19 +26,16 @@ export async function getPeopleEntryByEmail(email) {
 export async function getPersonalWebsiteByEmail(email) {
 	// Pieter-Jan to check why this is not working
 	try {
-		const personalWebsites = await DeliveryClient.entries.search(
-			{
-				where: [
-					{ field: 'sys.contentTypeId', equalTo: 'personalWebsites' },
-					{ field: 'sys.versionStatus', equalTo: 'published' },
-					{ field: 'people.email', equalTo: email }
-				]
-			},
-			2
-		)
+		const people = await getPeopleEntryByEmail(email)
 
-		console.log('email', email)
-		console.log('personalWebsites', personalWebsites)
+		const query = {
+			where: [
+				{ field: 'sys.contentTypeId', equalTo: 'personalWebsites' },
+				{ field: 'sys.versionStatus', equalTo: 'published' },
+				{ field: 'people.sys.id', equalTo: people.sys.id }
+			]
+		}
+		const personalWebsites = await DeliveryClient.entries.search(query, 1)
 
 		if (!personalWebsites.items.length) return null
 
@@ -71,13 +68,7 @@ export async function authenticateContensis() {
 
 export async function uploadAsset(fileBuffer, filename, options = {}) {
 	try {
-		const {
-			language = 'en-GB',
-			description = '',
-			folderId = '',
-			title = filename,
-			contentType = 'audio/mpeg'
-		} = options
+		const { language = 'en-GB', description = '', folderId = '', title = filename, contentType = 'audio/mpeg' } = options
 
 		const authData = await authenticateContensis()
 

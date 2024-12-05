@@ -7,7 +7,7 @@ import slugify from 'slugify'
 export async function load(event) {
 	// Check if has session
 	const session = await event.locals.auth()
-	if (!session) redirect(302, '/')
+	if (!session) redirect(302, '/auth/login')
 
 	// Check if user exists in the people collection in Contensis
 	// const contensisUser = await getPeopleEntryByEmail('emanuele.strano@eui.eu')

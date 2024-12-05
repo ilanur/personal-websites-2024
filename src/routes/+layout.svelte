@@ -7,8 +7,6 @@
 
 <AppHeader class="sticky top-0 z-30" />
 
-<main>
-	{@render children?.()}
-</main>
+{@render children?.()}
 
 <AppFooter />

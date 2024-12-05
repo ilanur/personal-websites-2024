@@ -20,20 +20,23 @@
 <UserHeroBanner {personalWebsite} isSmall={$smallHeroBanner} />
 
 <div class="border-b bg-slate-800">
-	<PersonalWebsiteNavigation {personalWebsitePages} {personalWebsite} {hasBlog} />
+	<nav>
+		<h2 class="sr-only">Subsite navigation</h2>
+		<PersonalWebsiteNavigation {personalWebsitePages} {personalWebsite} {hasBlog} />
+	</nav>
 </div>
 
 <div class="container grid grid-cols-3 gap-x-16 py-12 md:py-16 xl:gap-x-36">
 	{#if hasSidebar}
-		<div class="col-span-3 max-w-prose leading-relaxed lg:col-span-2">
+		<main class="col-span-3 max-w-prose leading-relaxed lg:col-span-2">
 			{@render children?.()}
-		</div>
-		<div class="border-eui-gray-70 col-span-3 mt-14 border-t pt-14 lg:col-span-1 lg:m-0 lg:border-t-0 lg:p-0">
+		</main>
+		<aside class="border-eui-gray-70 col-span-3 mt-14 border-t pt-14 lg:col-span-1 lg:m-0 lg:border-t-0 lg:p-0">
 			<UserContactInfo {personalWebsite} people={personalWebsite.people} />
-		</div>
+		</aside>
 	{:else}
-		<div class="col-span-3">
+		<main class="col-span-3">
 			{@render children?.()}
-		</div>
+		</main>
 	{/if}
 </div>

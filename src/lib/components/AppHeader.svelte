@@ -9,8 +9,9 @@
 	const authUser = $derived($page.data.authUser)
 </script>
 
-<div class={clsx(rest.class, 'border-b bg-white shadow-md')}>
+<header class={clsx(rest.class, 'border-b bg-white shadow-md')}>
 	<nav class="container flex justify-between py-3">
+		<h2 class="sr-only">Main navigation</h2>
 		<a href="/" class="h-10 shrink-0" aria-label="European University Institute logo">
 			<IconLogoEui />
 		</a>
@@ -23,4 +24,4 @@
 			{/if}
 		</div>
 	</nav>
-</div>
+</header>

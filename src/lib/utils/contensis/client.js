@@ -17,5 +17,5 @@ export function getCorrectEntryPhoto(personalWebsiteEntry, userEntry) {
 		return `${PUBLIC_EUI_WEB}${personalWebsiteEntry.image.asset.sys.uri}`
 	}
 
-	return `${PUBLIC_EUI_WEB}/web-production/code/assets/img/default-user-dark.jpg`
+	return `${PUBLIC_EUI_WEB}/web-production/code/assets/img/default-avatar.svg`
 }

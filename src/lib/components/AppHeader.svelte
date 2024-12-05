@@ -28,6 +28,10 @@
 					<a href="/{personalWebsite.websiteSlug}" class="mr-4 rounded bg-eui-dark-blue-500 px-2 py-1 text-xs font-semibold text-white"
 						>Your personal website</a
 					>
+					<a
+						href="/{personalWebsite.websiteSlug}/settings"
+						class="mr-4 rounded bg-eui-light-blue-500 px-2 py-1 text-xs font-semibold text-white">Edit your settings</a
+					>
 				{:else}
 					<a href="/create" class="mr-4 rounded bg-eui-dark-blue-500 px-2 py-1 text-xs font-semibold text-white">Create Website</a>
 				{/if}

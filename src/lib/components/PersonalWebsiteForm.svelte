@@ -111,7 +111,9 @@
 		use:enhance={() => {
 			formLoading = true
 			formErrors = null
+
 			return async ({ update, result }) => {
+				console.log('result', result)
 				await update({ reset: false })
 				formLoading = false
 
@@ -120,7 +122,7 @@
 				}
 
 				if (result.status === 200 && result.data.createdPersonalWebsite) {
-					// handle success (maybe redirect)
+					goto(`/${result.data.createdPersonalWebsite.websiteSlug}`)
 				}
 			}
 		}}
@@ -151,7 +153,7 @@
 		/>
 
 		<div>
-			<input type="hidden" name="city" value={city} />
+			<input type="hidden" name="city" bind:value={city} />
 			<InputField name="autocomplete" label="Address" onkeypress={disableKeyPress} />
 
 			<div class="mt-2 flex gap-x-2">
@@ -169,7 +171,7 @@
 						type="file"
 						name="photoUpload"
 						class="hidden"
-						on:change={photoSelected}
+						onchange={photoSelected}
 					/>
 
 					{#if !previewPhoto}
@@ -188,50 +190,39 @@
 				{#if !useEuiPhoto}
 					<div class="flex flex-col justify-end gap-2 p-2 px-3">
 						{#if !user.photo || !previewPhoto}
-							<button
-								class="flex size-9 items-center justify-center rounded-full border-2 border-eui-dark-blue-600 p-0.5 text-eui-dark-blue-600 hover:bg-eui-dark-blue-600 hover:text-white"
-								aria-label="Upload photo"
-								type="button"
-								on:click={onPhotoActionClick}
-							>
-								<i class={clsx('fa-solid', 'fa-upload')}></i>
-							</button>
+							{@render imgActionButton('Upload photo', 'fa-upload', onPhotoActionClick)}
 						{/if}
 
 						{#if user.photo && previewPhoto}
-							<button
-								class="flex size-9 items-center justify-center rounded-full border-2 border-eui-dark-blue-600 p-0.5 text-eui-dark-blue-600 hover:bg-eui-dark-blue-600 hover:text-white"
-								aria-label="Change photo"
-								type="button"
-								on:click={onPhotoActionClick}
-							>
-								<i class={clsx('fa-solid', 'fa-arrows-rotate')}></i>
-							</button>
-
-							<button
-								class="flex size-9 items-center justify-center rounded-full border-2 border-eui-dark-blue-600 p-0.5 text-eui-dark-blue-600 hover:bg-eui-dark-blue-600 hover:text-white"
-								aria-label="Delete photo"
-								type="button"
-								on:click={onPhotoDeleteClick}
-							>
-								<i class={clsx('fa-solid', 'fa-trash')}></i>
-							</button>
+							{@render imgActionButton('Change photo', 'fa-arrows-rotate', onPhotoActionClick)}
+							{@render imgActionButton('Delete photo', 'fa-trash', onPhotoDeleteClick)}
 						{/if}
 					</div>
 				{/if}
 			</div>
 
 			<div class="mt-4 flex items-center">
-				<input type="hidden" name="useEuiPhoto" value={useEuiPhoto} />
+				<input bind:value={useEuiPhoto} type="hidden" name="useEuiPhoto" />
 				<input bind:checked={useEuiPhoto} type="checkbox" id="uploadLocation" name="uploadLocation" />
 				<label for="uploadLocation" class="ml-2 mt-px">Use your EUI profile photo</label>
 			</div>
 
 			{#if useEuiPhoto && !user.photo}
-				<small>You currently have no EUI profile photo set.</small>
+				<small>You currently have no EUI profile photo set. As a result, no photo will appear on your personal website.</small>
 			{/if}
 		</div>
 
 		<Button type="submit" loading={formLoading}>Submit</Button>
 	</form>
 </div>
+
+{#snippet imgActionButton(ariaLabel, icon, callback)}
+	<button
+		class="flex size-9 items-center justify-center rounded-full border-2 border-eui-dark-blue-600 p-0.5 text-eui-dark-blue-600 transition hover:bg-eui-dark-blue-600 hover:text-white"
+		aria-label={ariaLabel}
+		type="button"
+		onclick={callback}
+	>
+		<i class={clsx('fa-solid text-inherit', icon)}></i>
+	</button>
+{/snippet}

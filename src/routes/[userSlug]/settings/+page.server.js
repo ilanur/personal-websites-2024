@@ -6,6 +6,7 @@ export async function load({ parent }) {
 		redirect(301, '/')
 	}
 	return {
+		user: parentData.personalWebsite.people,
 		personalWebsite: parentData.personalWebsite
 	}
 }

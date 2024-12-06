@@ -19,14 +19,14 @@ export async function getPeopleEntryByEmail(email) {
 	} catch (e) {
 		console.error('Error while getting people entry:', e.data)
 		if (e.status === 404) return null
-		error(e.status, e.data)
+		throw error(e.status, e.data)
 	}
 }
 
 export async function getPersonalWebsiteByEmail(email) {
-	// Pieter-Jan to check why this is not working
 	try {
 		const people = await getPeopleEntryByEmail(email)
+		if (!people) return null
 
 		const query = {
 			where: [
@@ -41,9 +41,9 @@ export async function getPersonalWebsiteByEmail(email) {
 
 		return personalWebsites.items[0]
 	} catch (e) {
-		console.error('Error while getting personal Website entry:', e.data)
+		console.error('Error while getting personal website entry:', e.data)
 		if (e.status === 404) return null
-		error(e.status, e.data)
+		throw error(e.status, e.data)
 	}
 }
 
@@ -72,27 +72,19 @@ export async function uploadAsset(fileBuffer, filename, options = {}) {
 
 		const authData = await authenticateContensis()
 
-		// Create FormData with both metadata and file
 		const formData = new FormData()
-
-		// Add metadata as JSON
 		const metadata = {
-			title: title,
-			description: description,
-			language: language,
-			folderId: folderId,
-			properties: {
-				contentType: contentType
-			}
+			title,
+			description,
+			language,
+			folderId,
+			properties: { contentType }
 		}
 
 		formData.append('metadata', JSON.stringify(metadata))
-
 		const blob = new Blob([fileBuffer], { type: contentType })
-
 		formData.append('file', blob, filename)
 
-		// Single request to create and upload asset
 		const url = `${PUBLIC_CONTENSIS_MANAGEMENT_URL}/assets`
 		const asset = await ofetch(url, {
 			method: 'POST',
@@ -102,9 +94,8 @@ export async function uploadAsset(fileBuffer, filename, options = {}) {
 			body: formData
 		})
 
-		// Create a new asset entry
 		const entryData = {
-			title: title,
+			title,
 			sysAssetFile: {
 				fileId: asset[0].fileId,
 				parentNodePath: folderId
@@ -121,5 +112,17 @@ export async function uploadAsset(fileBuffer, filename, options = {}) {
 	} catch (e) {
 		console.error('Error uploading asset to Contensis:', e)
 		throw error(400, `Failed to upload asset: ${e.message}`)
+	}
+}
+
+export async function getNationalities() {
+	try {
+		const nationalityComponent = await ManagementClient.components.get('nationality')
+		const nationalities = nationalityComponent.fields[0].validations.allowedValues.values
+		return nationalities
+	} catch (e) {
+		console.error('Error fetching nationalities:', e.data || e)
+		if (e.status === 404) return null
+		throw error(e.status, e.data)
 	}
 }

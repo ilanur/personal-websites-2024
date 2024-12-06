@@ -31,18 +31,8 @@ export async function load(event) {
 
 	if (personalWebsite) redirect(302, `/${personalWebsite.websiteSlug}`)
 
-	// Get nationalities for creation page
-	let nationalities = []
-
-	try {
-		nationalities = await ManagementClient.components.get('nationality')
-	} catch (e) {
-		console.error('Error while fetching nationalities: ', e)
-	}
-
 	return {
-		contensisUser,
-		nationalities: nationalities.fields[0].validations.allowedValues.values
+		contensisUser
 	}
 }
 

@@ -19,6 +19,6 @@
 	/>
 
 	{#if error}
-		<small class="absolute -bottom-4 pl-1 text-xs text-red-600">{error}</small>
+		<small class="absolute -bottom-px translate-y-full pl-1 text-xs text-red-600">{error}</small>
 	{/if}
 </div>

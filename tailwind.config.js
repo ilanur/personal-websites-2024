@@ -18,6 +18,7 @@ export default {
 				inter: ['Inter', 'sans-serif']
 			},
 			fontSize: {
+				xs: '0.6rem',
 				sm: '0.69rem',
 				tiny: '0.83rem',
 				base: '1rem',

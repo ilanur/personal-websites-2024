@@ -12,9 +12,7 @@ export function getCanvasHTML(canvas) {
 
 	const renderer = createRenderer()
 	const getCanvasHtml = (data) => renderer({ data })
-	const html = getCanvasHtml(mapped)
-
-	return html
+	return getCanvasHtml(mapped)
 }
 
 export function getCorrectEntryPhoto(personalWebsiteEntry, userEntry) {

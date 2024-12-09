@@ -1,8 +1,10 @@
+import slugify from 'slugify'
+import formatZodError from '$lib/utils/format-zod-error.js'
 import { error, fail, redirect } from '@sveltejs/kit'
 import { ManagementClient, DeliveryClient } from '$lib/utils/contensis/_clients'
 import { getPeopleEntryByEmail, uploadAsset } from '$lib/utils/contensis/server'
 import { parseHtml } from '@contensis/html-canvas'
-import slugify from 'slugify'
+import { pwFormSchema } from '$lib/zod-schemas/personal-website-form.js'
 
 export async function load(event) {
 	// Check if has session
@@ -40,22 +42,10 @@ export const actions = {
 	default: async ({ request }) => {
 		try {
 			const formData = Object.fromEntries(await request.formData())
-			const formErrors = {}
+			const formValidation = pwFormSchema.safeParse(formData)
 
-			// Form validations
-			if (!formData.slug.trim()) {
-				formErrors.slug = 'Slug is required'
-			}
-
-			if (!formData.nationality) {
-				formErrors.nationality = 'Nationality is required'
-			}
-
-			if (Object.keys(formErrors).length > 0) {
-				return fail(400, {
-					success: false,
-					formErrors
-				})
+			if (!formValidation.success) {
+				return fail(400, { success: false, formErrors: formatZodError(formValidation.error) })
 			}
 
 			// Get contensis user from the People collection in the euiWebsite project.

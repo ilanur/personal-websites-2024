@@ -11,8 +11,8 @@
 
 	let { user, personalWebsite } = $props()
 
-	// console.log('user', user)
-	// console.log('PersonalWebsite', personalWebsite)
+	console.log('user', user)
+	console.log('PersonalWebsite', personalWebsite)
 
 	let fileUploadRef = null
 	let formLoading = $state(false)
@@ -116,15 +116,12 @@
 		formErrors = null
 
 		return async ({ update, result }) => {
-			console.log('result', result)
 			await update({ reset: false })
 			formLoading = false
-			const fErrors = result.data.formErrors ? JSON.parse(result.data.formErrors) : null
-
-			console.log('fErrors', fErrors.issues)
+			const fErrors = result.data.formErrors ?? null
 
 			if (result.type === 'failure' && fErrors) {
-				formErrors = fErrors.issues
+				formErrors = fErrors
 			}
 
 			if (result.status === 200 && result.data.createdPersonalWebsite) {
@@ -154,7 +151,7 @@
 
 	<div>
 		<input type="hidden" name="city" bind:value={city} />
-		<InputField name="autocomplete" label="Address" onkeypress={disableKeyPress} />
+		<InputField value={city} name="autocomplete" label="Address" onkeypress={disableKeyPress} />
 
 		<div class="mt-2 flex gap-x-2">
 			<InputField readonly name="lat" label="Latitude" value={lat} />

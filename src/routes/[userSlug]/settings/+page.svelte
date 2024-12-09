@@ -1,9 +1,8 @@
 <script>
 	import { getContext } from 'svelte'
-
 	import PersonalWebsiteForm from '$lib/components/PersonalWebsiteForm.svelte'
 
-	let { data, ...rest } = $props()
+	let { data } = $props()
 	const smallHeroBanner = getContext('smallHeroBanner')
 
 	$smallHeroBanner = true

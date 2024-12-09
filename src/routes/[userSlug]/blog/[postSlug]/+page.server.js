@@ -2,8 +2,7 @@
 import { error } from '@sveltejs/kit'
 import { DeliveryClient } from '$lib/utils/contensis/_clients'
 import { createRenderer } from '@contensis/canvas-html'
-
-import { PUBLIC_PREVIEW_COOKIE_NAME, PUBLIC_PREVIEW_PARAM } from '$env/static/public'
+import { PUBLIC_PREVIEW_COOKIE_NAME, PUBLIC_PREVIEW_PARAM, PUBLIC_EUI_WEB } from '$env/static/public'
 
 export async function load({ params, cookies, url }) {
 	try {
@@ -31,9 +30,21 @@ export async function load({ params, cookies, url }) {
 
 			// Only try to render canvas if it exists
 			if (post.canvas) {
+				console.log('CANVAS 2', post.canvas)
+
+				const mapped = post.canvas.map((el) => {
+					const obj = el
+
+					if (el.type === '_image' && el.value.asset.sys.uri.startsWith('/Content-Types-Assets/')) {
+						obj.value.asset.sys.uri = `${PUBLIC_EUI_WEB}${el.value.asset.sys.uri}`
+					}
+
+					return obj
+				})
+
 				const renderer = createRenderer()
 				const getCanvasHtml = (data) => renderer({ data })
-				post['canvasHtml'] = getCanvasHtml(post.canvas)
+				post['canvasHtml'] = getCanvasHtml(mapped)
 			}
 
 			// if (post.authors && post.authors.length > 0) {

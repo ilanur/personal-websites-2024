@@ -14,7 +14,7 @@
 				<div class="flex items-center">
 					<span class="fa-solid fa-memo-circle-info fa-sm fa-fw me-2" aria-hidden="true"></span>
 					<a
-						class="text-eui-light-blue-600/85 underline"
+						class="text-eui-light-blue-600/85 underline underline-offset-2"
 						href={`${PUBLIC_EUI_WEB}${personalWebsite.cv.sys.uri}`}
 						title="View {personalWebsite.title} Curriculum vitae"
 						target="_blank"
@@ -28,7 +28,7 @@
 				<div class="mt-2 flex items-center">
 					<span class="fa-solid fa-address-card fa-sm fa-fw me-2" aria-hidden="true"></span>
 					<a
-						class="text-eui-light-blue-600/85 underline"
+						class="text-eui-light-blue-600/85 underline underline-offset-2"
 						href={`${PUBLIC_EUI_WEB}/people?id=${people.sys.slug}`}
 						title="View {personalWebsite.title} EUI profile"
 						target="_blank"
@@ -47,16 +47,22 @@
 			{#if people.euiEmail}
 				<div class="flex items-center">
 					<span class="fa-solid fa-envelope fa-sm fa-fw me-2" aria-hidden="true"></span>
-					<a class="text-eui-light-blue-600/85 underline" href={`mailto:${people.euiEmail}`} title="Email {personalWebsite.title}"
-						>{people.euiEmail}</a
+					<a
+						class="text-eui-light-blue-600/85 underline underline-offset-2"
+						href={`mailto:${people.euiEmail}`}
+						title="Email {personalWebsite.title}"
+					>
+						{people.euiEmail}</a
 					>
 				</div>
 			{/if}
 			{#if ictData?.Phones[0]}
 				<div class="mt-2 flex items-center">
 					<span class="fa-solid fa-phone-office fa-sm fa-fw me-2" aria-hidden="true"></span>
-					<a class="text-eui-light-blue-600/85 underline" href={`tel:${ictData.Phones[0].External}`} title="Call {personalWebsite.title}"
-						>{ictData.Phones[0].External}</a
+					<a
+						class="text-eui-light-blue-600/85 underline underline-offset-2"
+						href={`tel:${ictData.Phones[0].External}`}
+						title="Call {personalWebsite.title}">{ictData.Phones[0].External}</a
 					>
 				</div>
 			{/if}

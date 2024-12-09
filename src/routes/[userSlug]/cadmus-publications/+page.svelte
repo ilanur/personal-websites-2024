@@ -10,22 +10,46 @@
 
 <h1 class="mb-4 text-3xl">Publications in Cadmus</h1>
 {#each data.publications as pub}
-	<div class="mb-6 rounded-lg border p-4 shadow-md">
-		<h2 class="mb-2 text-xl font-bold">
-			<a href={pub.uri} target="_blank" rel="noopener" class="hover:underline">{pub.title}</a>
-		</h2>
+	<article class="group relative mb-6 rounded-lg border p-4 transition-all hover:scale-[1.02] hover:shadow-lg">
+		<h1 class="text-lg">
+			{pub.title}
+		</h1>
 		{#if pub.authors.length > 0}
-			<p class="mb-1 text-sm text-gray-700"><strong>Authors:</strong> {pub.authors.join(', ')}</p>
+			<p class="mb-1 text-tiny text-gray-700"><strong>Authors:</strong> {pub.authors.join(', ')}</p>
 		{/if}
 		{#if pub.editors.length > 0}
-			<p class="mb-1 text-sm text-gray-700"><strong>Editors:</strong> {pub.editors.join(', ')}</p>
+			<p class="mb-1 text-tiny text-gray-700"><strong>Editors:</strong> {pub.editors.join(', ')}</p>
 		{/if}
 		{#if pub.others.length > 0}
-			<p class="mb-1 text-sm text-gray-700"><strong>Others:</strong> {pub.others.join(', ')}</p>
+			<p class="mb-1 text-tiny text-gray-700"><strong>Others:</strong> {pub.others.join(', ')}</p>
 		{/if}
-		<p class="mb-1 text-sm text-gray-700"><strong>Date:</strong> {pub.date}</p>
-		<p class="mb-1 text-sm text-gray-700"><strong>Type:</strong> {pub.type}</p>
-	</div>
+		<p class="mb-1 text-tiny text-gray-700"><strong>Date:</strong> {pub.date}</p>
+		<p class="mb-1 text-tiny text-gray-700"><strong>Type:</strong> {pub.type}</p>
+		<a
+			href={pub.uri}
+			class="group mt-4 inline-flex items-center text-tiny font-medium text-eui-light-blue-600/85"
+			title={pub.title}
+			target="_blank"
+			rel="noopener"
+		>
+			View <span class="sr-only"> {pub.title}</span> on Cadmus
+			<span class="absolute inset-x-0 -top-px bottom-0"></span>
+			<svg
+				width="100%"
+				height="100%"
+				viewBox="0 0 24 24"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+				class="ml-0.5 size-6 duration-300 group-hover:translate-x-1"
+				><path
+					fill-rule="evenodd"
+					clip-rule="evenodd"
+					d="M6.00012 11.9998C6.00012 11.8009 6.07914 11.6101 6.21979 11.4695C6.36045 11.3288 6.55121 11.2498 6.75012 11.2498L15.4396 11.2498L12.2191 8.03079C12.1494 7.96106 12.0941 7.87828 12.0563 7.78717C12.0186 7.69606 11.9992 7.59841 11.9992 7.49979C11.9992 7.40118 12.0186 7.30353 12.0563 7.21242C12.0941 7.12131 12.1494 7.03852 12.2191 6.96879C12.2889 6.89906 12.3716 6.84375 12.4627 6.80601C12.5539 6.76827 12.6515 6.74885 12.7501 6.74885C12.8487 6.74885 12.9464 6.76827 13.0375 6.80601C13.1286 6.84375 13.2114 6.89906 13.2811 6.96879L17.7811 11.4688C17.851 11.5385 17.9064 11.6212 17.9442 11.7123C17.982 11.8035 18.0015 11.9011 18.0015 11.9998C18.0015 12.0984 17.982 12.1961 17.9442 12.2872C17.9064 12.3784 17.851 12.4611 17.7811 12.5308L13.2811 17.0308C13.1403 17.1716 12.9493 17.2507 12.7501 17.2507C12.551 17.2507 12.36 17.1716 12.2191 17.0308C12.0783 16.89 11.9992 16.699 11.9992 16.4998C11.9992 16.3006 12.0783 16.1096 12.2191 15.9688L15.4396 12.7498L6.75012 12.7498C6.55121 12.7498 6.36045 12.6708 6.21979 12.5301C6.07914 12.3895 6.00012 12.1987 6.00012 11.9998Z"
+					fill="currentColor"
+				></path></svg
+			>
+		</a>
+	</article>
 {/each}
 
 <a

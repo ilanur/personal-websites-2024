@@ -85,20 +85,20 @@
 		@apply break-words font-medium text-eui-light-blue-600/85 underline;
 	}
 
-	.canvas-content ul,
-	.canvas-content ol {
+	.canvas-content > ul,
+	.canvas-content > ol {
 		@apply my-3 ms-5;
 	}
 
-	.canvas-content ul li {
+	.canvas-content ul > li {
 		@apply relative mb-1 ps-5;
 	}
 
-	.canvas-content ol li {
+	.canvas-content ol > li {
 		@apply list-decimal ps-3;
 	}
 
-	.canvas-content ul li::before {
+	.canvas-content ul > li::before {
 		content: '';
 		@apply absolute left-0 top-2 me-2 h-2 w-2 rounded-full bg-slate-700;
 	}

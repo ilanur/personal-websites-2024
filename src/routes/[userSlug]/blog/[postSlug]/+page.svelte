@@ -71,9 +71,9 @@
 				</audio>
 			{/if}
 			<p>{@html data.post.entryDescription}</p>
-			<div class="relative border-b border-slate-200 text-right">
+			<div class="relative mb-6 border-b border-slate-200 text-right">
 				<div class="flex justify-end">
-					<div class="flex translate-y-1/2 items-center gap-x-4 ps-4">
+					<div class="flex translate-y-1/2 items-center gap-x-4 bg-white ps-4">
 						<p>
 							<a
 								href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(currentUrl)}`}

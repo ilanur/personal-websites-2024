@@ -119,6 +119,14 @@
 		@apply my-6 border-s-8 border-gray-200 bg-gray-50 p-6 italic;
 	}
 
+	.canvas-content figure {
+		@apply my-6;
+	}
+
+	.canvas-content figcaption {
+		@apply text-sm italic text-gray-600;
+	}
+
 	/* Google places autocomplete */
 	.pac-container:after {
 		@apply content-none;

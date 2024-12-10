@@ -126,31 +126,6 @@
 	.canvas-content figcaption {
 		@apply text-sm italic text-gray-600;
 	}
-
-	/* Google places autocomplete */
-	.pac-container:after {
-		@apply content-none;
-	}
-
-	.pac-item {
-		@apply px-3 py-2;
-	}
-
-	.pac-icon {
-		@apply hidden;
-	}
-
-	.pac-item:hover {
-		@apply cursor-pointer;
-	}
-
-	.pac-item-query {
-		@apply text-inherit;
-	}
-
-	.pac-matched {
-		@apply text-inherit;
-	}
 }
 
 @screen md {
@@ -181,4 +156,29 @@
 	.animation-delay-4000 {
 		animation-delay: 4s;
 	}
+}
+
+/* Google places autocomplete */
+.pac-container:after {
+	@apply content-none;
+}
+
+.pac-item {
+	@apply px-3 py-2;
+}
+
+.pac-icon {
+	@apply hidden;
+}
+
+.pac-item:hover {
+	@apply cursor-pointer;
+}
+
+.pac-item-query {
+	@apply text-inherit;
+}
+
+.pac-matched {
+	@apply text-inherit;
 }

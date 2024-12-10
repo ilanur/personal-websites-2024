@@ -18,7 +18,7 @@
 	let formLoading = $state(false)
 	let previewPhoto = $state()
 	let formErrors = $state()
-	let useEuiPhoto = $state(false)
+	let useEuiPhoto = $state(personalWebsite.usePeopleProfilePicture)
 	let city = $state(personalWebsite.city)
 	let lat = $state(personalWebsite.lat)
 	let lng = $state(personalWebsite.lng)
@@ -146,6 +146,7 @@
 		placeholder="Select your nationality"
 		valuePropertyName="en-GB"
 		textPropertyName="en-GB"
+		value={personalWebsite.nationality.nationality[0]}
 		error={formErrors?.nationality}
 	/>
 

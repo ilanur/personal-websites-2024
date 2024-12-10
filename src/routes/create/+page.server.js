@@ -39,8 +39,9 @@ export async function load(event) {
 }
 
 export const actions = {
-	default: async ({ request }) => {
+	default: async ({ request, locals }) => {
 		try {
+			const authUser = await locals.auth()
 			const formData = Object.fromEntries(await request.formData())
 			const formValidation = pwFormSchema.safeParse(formData)
 
@@ -49,7 +50,7 @@ export const actions = {
 			}
 
 			// Get contensis user from the People collection in the euiWebsite project.
-			const contensisUser = await getPeopleEntryByEmail(formData.email)
+			const contensisUser = await getPeopleEntryByEmail(authUser.user.email)
 
 			let uploadedPhoto = null
 			let createdPersonalWebsite = null
@@ -148,7 +149,7 @@ export const actions = {
 				}
 			} catch (e) {
 				console.error('Error while creating pages: ', JSON.stringify(e))
-				return error(e.status, 'Error while creating pages')
+				error(e.status, 'Error while creating pages')
 			}
 
 			return { createdPersonalWebsite }

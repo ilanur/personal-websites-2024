@@ -66,6 +66,10 @@
 		}
 	}
 
+	function getSocialMedia(social) {
+		return personalWebsite.socialMedia.find((el) => el.type === social)
+	}
+
 	onMount(async () => {
 		try {
 			const res = await fetch('/api/nationalities')
@@ -109,7 +113,6 @@
 
 <form
 	method="POST"
-	class="space-y-5 sm:w-fit sm:min-w-80"
 	enctype="multipart/form-data"
 	use:enhance={() => {
 		formLoading = true
@@ -130,84 +133,109 @@
 		}
 	}}
 >
-	<InputField class="col-span-2 sm:col-span-1" name="title" label="Title of your personal website" value={user.nameAndSurnameForTheWeb} readonly />
+	<div class="grid grid-cols-2 items-start gap-10">
+		<!-- General settings -->
+		<div class="flex flex-col gap-4">
+			<InputField
+				class="col-span-2 sm:col-span-1"
+				name="title"
+				label="Title of your personal website"
+				value={user.nameAndSurnameForTheWeb}
+				readonly
+			/>
 
-	<div class="grid grid-cols-1 items-end gap-2 md:grid-cols-2">
-		<InputField name="websiteURL" label="Your personal website URL" value={`${PUBLIC_EUI_PERSONAL_WEBSITE_URL}/`} readonly />
-		<InputField name="slug" value={user.sys.slug} placeholder="website slug" error={formErrors?.slug} />
-	</div>
-
-	<InputField name="email" type="email" label="E-mail" value={user.euiEmail} readonly />
-
-	<SelectField
-		name="nationality"
-		options={nationalities}
-		label="Nationality"
-		placeholder="Select your nationality"
-		valuePropertyName="en-GB"
-		textPropertyName="en-GB"
-		value={personalWebsite.nationality.nationality[0]}
-		error={formErrors?.nationality}
-	/>
-
-	<div>
-		<input type="hidden" name="city" bind:value={city} />
-		<InputField value={city} name="autocomplete" label="Address" onkeypress={disableKeyPress} />
-
-		<div class="mt-2 flex gap-x-2">
-			<InputField readonly name="lat" label="Latitude" value={lat} />
-			<InputField readonly name="lng" label="Longitude" value={lng} />
-		</div>
-	</div>
-
-	<div class="!mt-10">
-		<div class="flex">
-			<div class="size-60 overflow-hidden rounded-md">
-				<input
-					bind:this={fileUploadRef}
-					accept="image/png, image/jpeg"
-					type="file"
-					name="photoUpload"
-					class="hidden"
-					onchange={photoSelected}
-				/>
-
-				{#if !previewPhoto}
-					<img
-						src={`${PUBLIC_EUI_WEB}/web-production/code/assets/img/default-user-dark.jpg`}
-						class="size-full object-cover"
-						alt="Empty profile graphic"
-					/>
-				{/if}
-
-				{#if previewPhoto}
-					<img src={previewPhoto} class="size-full object-cover" alt={user.nameAndSurnameForTheWeb} />
-				{/if}
+			<div class="grid grid-cols-1 items-end gap-2 md:grid-cols-2">
+				<InputField name="websiteURL" label="Your personal website URL" value={`${PUBLIC_EUI_PERSONAL_WEBSITE_URL}/`} readonly />
+				<InputField name="slug" value={user.sys.slug} placeholder="website slug" error={formErrors?.slug} />
 			</div>
 
-			{#if !useEuiPhoto}
-				<div class="flex flex-col justify-end gap-2 p-2 px-3">
-					{#if !user.photo || !previewPhoto}
-						{@render imgActionButton('Upload photo', 'fa-upload', onPhotoActionClick)}
-					{/if}
+			<InputField name="email" type="email" label="E-mail" value={user.euiEmail} readonly />
 
-					{#if user.photo && previewPhoto}
-						{@render imgActionButton('Change photo', 'fa-arrows-rotate', onPhotoActionClick)}
-						{@render imgActionButton('Delete photo', 'fa-trash', onPhotoDeleteClick)}
+			<SelectField
+				name="nationality"
+				options={nationalities}
+				label="Nationality"
+				placeholder="Select your nationality"
+				valuePropertyName="en-GB"
+				textPropertyName="en-GB"
+				value={personalWebsite.nationality.nationality[0]}
+				error={formErrors?.nationality}
+			/>
+
+			<div>
+				<input type="hidden" name="city" bind:value={city} />
+				<InputField value={city} name="autocomplete" label="Address" onkeypress={disableKeyPress} />
+
+				<div class="mt-4 flex w-full gap-x-2">
+					<InputField class="w-full" name="lat" label="Latitude" value={lat} readonly />
+					<InputField class="w-full" name="lng" label="Longitude" value={lng} readonly />
+				</div>
+			</div>
+
+			<div class="!mt-10">
+				<div class="flex">
+					<div class="size-60 overflow-hidden rounded-md">
+						<input
+							bind:this={fileUploadRef}
+							accept="image/png, image/jpeg"
+							type="file"
+							name="photoUpload"
+							class="hidden"
+							onchange={photoSelected}
+						/>
+
+						{#if !previewPhoto}
+							<img
+								src={`${PUBLIC_EUI_WEB}/web-production/code/assets/img/default-user-dark.jpg`}
+								class="size-full object-cover"
+								alt="Empty profile graphic"
+							/>
+						{/if}
+
+						{#if previewPhoto}
+							<img src={previewPhoto} class="size-full object-cover" alt={user.nameAndSurnameForTheWeb} />
+						{/if}
+					</div>
+
+					{#if !useEuiPhoto}
+						<div class="flex flex-col justify-end gap-2 p-2 px-3">
+							{#if !user.photo || !previewPhoto}
+								{@render imgActionButton('Upload photo', 'fa-upload', onPhotoActionClick)}
+							{/if}
+
+							{#if user.photo && previewPhoto}
+								{@render imgActionButton('Change photo', 'fa-arrows-rotate', onPhotoActionClick)}
+								{@render imgActionButton('Delete photo', 'fa-trash', onPhotoDeleteClick)}
+							{/if}
+						</div>
 					{/if}
 				</div>
-			{/if}
+
+				<div class="mt-4 flex items-center">
+					<input bind:value={useEuiPhoto} type="hidden" name="useEuiPhoto" />
+					<input bind:checked={useEuiPhoto} type="checkbox" id="uploadLocation" name="uploadLocation" />
+					<label for="uploadLocation" class="ml-2 mt-px">Use your EUI profile photo</label>
+				</div>
+
+				{#if useEuiPhoto && !user.photo}
+					<small>You currently have no EUI profile photo set. As a result, no photo will appear on your personal website.</small>
+				{/if}
+			</div>
 		</div>
 
-		<div class="mt-4 flex items-center">
-			<input bind:value={useEuiPhoto} type="hidden" name="useEuiPhoto" />
-			<input bind:checked={useEuiPhoto} type="checkbox" id="uploadLocation" name="uploadLocation" />
-			<label for="uploadLocation" class="ml-2 mt-px">Use your EUI profile photo</label>
+		<!-- Socials -->
+		<div class="grid grid-cols-2 gap-x-2 gap-y-4">
+			<InputField name="linkedin" type="text" label="LinkedIn" value={getSocialMedia('Linkedin')?.url} />
+			<InputField name="facebook" type="text" label="Facebook" value={getSocialMedia('Facebook')?.url} />
+			<InputField name="twitter" type="text" label="Twitter" value={getSocialMedia('Twitter')?.url} />
+			<InputField name="instagram" type="text" label="Instagram" value={getSocialMedia('Instagram')?.url} />
+			<InputField name="youtube" type="text" label="Youtube" value={getSocialMedia('Youtube')?.url} />
+			<InputField name="blog" type="text" label="Blog" value={getSocialMedia('Blog')?.url} />
+			<InputField name="flickr" type="text" label="Flickr" value={getSocialMedia('Flickr')?.url} />
+			<InputField name="researchGate" type="text" label="ResearchGate" value={getSocialMedia('ResearchGate')?.url} />
+			<InputField name="AcademiaEdu" type="text" label="Academia.edu" value={getSocialMedia('Academia.edu')?.url} />
+			<InputField name="bluesky" type="text" label="Bluesky" value={getSocialMedia('Bluesky')?.url} />
 		</div>
-
-		{#if useEuiPhoto && !user.photo}
-			<small>You currently have no EUI profile photo set. As a result, no photo will appear on your personal website.</small>
-		{/if}
 	</div>
 
 	<Button type="submit" loading={formLoading}>Submit</Button>

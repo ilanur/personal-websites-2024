@@ -133,7 +133,7 @@
 		}
 	}}
 >
-	<div class="grid grid-cols-2 items-start gap-10">
+	<div class="grid grid-cols-1 items-start gap-10 lg:grid-cols-2">
 		<!-- General settings -->
 		<div class="flex flex-col gap-4">
 			<InputField
@@ -144,9 +144,9 @@
 				readonly
 			/>
 
-			<div class="grid grid-cols-1 items-end gap-2 md:grid-cols-2">
+			<div class="grid grid-cols-1 items-end gap-4 md:grid-cols-2 md:gap-2">
 				<InputField name="websiteURL" label="Your personal website URL" value={`${PUBLIC_EUI_PERSONAL_WEBSITE_URL}/`} readonly />
-				<InputField name="slug" value={user.sys.slug} placeholder="website slug" error={formErrors?.slug} />
+				<InputField name="slug" label="Slug" value={user.sys.slug} placeholder="website slug" error={formErrors?.slug} />
 			</div>
 
 			<InputField name="email" type="email" label="E-mail" value={user.euiEmail} readonly />
@@ -166,13 +166,13 @@
 				<input type="hidden" name="city" bind:value={city} />
 				<InputField value={city} name="autocomplete" label="Address" onkeypress={disableKeyPress} />
 
-				<div class="mt-4 flex w-full gap-x-2">
-					<InputField class="w-full" name="lat" label="Latitude" value={lat} readonly />
-					<InputField class="w-full" name="lng" label="Longitude" value={lng} readonly />
+				<div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-2">
+					<InputField name="lat" label="Latitude" value={lat} readonly />
+					<InputField name="lng" label="Longitude" value={lng} readonly />
 				</div>
 			</div>
 
-			<div class="!mt-10">
+			<div class="!mt-4">
 				<div class="flex">
 					<div class="size-60 overflow-hidden rounded-md">
 						<input
@@ -224,21 +224,21 @@
 		</div>
 
 		<!-- Socials -->
-		<div class="grid grid-cols-2 gap-x-2 gap-y-4">
-			<InputField name="linkedin" type="text" label="LinkedIn" value={getSocialMedia('Linkedin')?.url} />
-			<InputField name="facebook" type="text" label="Facebook" value={getSocialMedia('Facebook')?.url} />
-			<InputField name="twitter" type="text" label="Twitter" value={getSocialMedia('Twitter')?.url} />
-			<InputField name="instagram" type="text" label="Instagram" value={getSocialMedia('Instagram')?.url} />
-			<InputField name="youtube" type="text" label="Youtube" value={getSocialMedia('Youtube')?.url} />
-			<InputField name="blog" type="text" label="Blog" value={getSocialMedia('Blog')?.url} />
-			<InputField name="flickr" type="text" label="Flickr" value={getSocialMedia('Flickr')?.url} />
-			<InputField name="researchGate" type="text" label="ResearchGate" value={getSocialMedia('ResearchGate')?.url} />
-			<InputField name="AcademiaEdu" type="text" label="Academia.edu" value={getSocialMedia('Academia.edu')?.url} />
-			<InputField name="bluesky" type="text" label="Bluesky" value={getSocialMedia('Bluesky')?.url} />
+		<div class="grid grid-cols-1 gap-x-2 gap-y-4 xl:grid-cols-2">
+			<InputField name="Linkedin" type="text" label="LinkedIn" value={getSocialMedia('Linkedin')?.url} />
+			<InputField name="Facebook" type="text" label="Facebook" value={getSocialMedia('Facebook')?.url} />
+			<InputField name="Twitter" type="text" label="Twitter" value={getSocialMedia('Twitter')?.url} />
+			<InputField name="Instagram" type="text" label="Instagram" value={getSocialMedia('Instagram')?.url} />
+			<InputField name="Youtube" type="text" label="Youtube" value={getSocialMedia('Youtube')?.url} />
+			<InputField name="Blog" type="text" label="Blog" value={getSocialMedia('Blog')?.url} />
+			<InputField name="Flickr" type="text" label="Flickr" value={getSocialMedia('Flickr')?.url} />
+			<InputField name="ResearchGate" type="text" label="ResearchGate" value={getSocialMedia('ResearchGate')?.url} />
+			<InputField name="Academia.edu" type="text" label="Academia.edu" value={getSocialMedia('Academia.edu')?.url} />
+			<InputField name="Bluesky" type="text" label="Bluesky" value={getSocialMedia('Bluesky')?.url} />
 		</div>
 	</div>
 
-	<Button type="submit" loading={formLoading}>Submit</Button>
+	<Button class="mt-10" type="submit" loading={formLoading}>Submit</Button>
 </form>
 
 {#snippet imgActionButton(ariaLabel, icon, callback)}

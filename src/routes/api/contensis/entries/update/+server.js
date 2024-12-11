@@ -4,18 +4,12 @@ import { error, json } from '@sveltejs/kit'
 export const PUT = async ({ request }) => {
 	const body = await request.json()
 
-	console.log(body)
-
 	try {
 		const latestEntry = await ManagementClient.entries.get(body.entry.sys.id)
-
-		console.log('latestEntry', latestEntry)
 
 		for (const updatedField of body.updatedFields) {
 			latestEntry[updatedField] = body.entry[updatedField]
 		}
-
-		console.log('LATEST', latestEntry.canvas)
 
 		const updatedEntry = await ManagementClient.entries.update(latestEntry)
 		await ManagementClient.entries.invokeWorkflow(updatedEntry, 'draft.publish')

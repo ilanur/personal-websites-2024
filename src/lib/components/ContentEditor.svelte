@@ -2,12 +2,13 @@
 	import { onMount } from 'svelte'
 	import { ofetch } from 'ofetch'
 	import { parseHtml } from '@contensis/html-canvas'
+	import { base64toFile } from '$lib/utils/utils'
+	import { PUBLIC_EUI_WEB } from '$env/static/public'
 	import clsx from 'clsx'
-	import DOMPurify from 'dompurify'
 	import Button from '$lib/components/Button.svelte'
 	import 'quill/dist/quill.snow.css'
 
-	const { editorId, htmlContent, page, enabled } = $props()
+	const { editorId, htmlContent, page, enabled, assetUploadFolder } = $props()
 
 	let editMode = $state(false)
 	let saveLoading = $state(false)
@@ -26,8 +27,15 @@
 			theme: 'snow'
 		})
 
-		quillInstance.root.innerHTML = DOMPurify.sanitize(htmlContent)
+		console.log('htmlToRender', htmlToRender)
+
+		quillInstance.root.innerHTML = htmlToRender
 	})
+
+	function onEditClick() {
+		editMode = true
+		quillInstance.root.innerHTML = htmlToRender
+	}
 
 	async function onSave() {
 		console.log('save', quillInstance.getSemanticHTML())
@@ -43,13 +51,18 @@
 
 			for (const item of canvas) {
 				if (item.type === '_image' && item.value.asset.sys.uri.startsWith('data:image')) {
-					console.log('Upload image')
+					const uploadedUrl = await uploadImage(item.value.asset.sys.uri)
+					item.value.asset.sys.uri = uploadedUrl
 				}
 			}
 
+			console.log('CANVA', canvas)
+
 			updatedPage['canvas'] = canvas
 
-			const response = await ofetch('/api/contensis-entry/update', {
+			console.log('updatedPage', updatedPage)
+
+			const response = await ofetch('/api/contensis/entries/update', {
 				method: 'PUT',
 				body: {
 					entry: updatedPage,
@@ -58,6 +71,7 @@
 			})
 
 			console.log('response', response)
+
 			htmlToRender = updatedHtml
 		} catch (error) {
 			console.error('Error updating page:', error)
@@ -65,6 +79,21 @@
 			saveLoading = false
 			editMode = false
 		}
+	}
+
+	async function uploadImage(localUrl) {
+		const file = base64toFile(localUrl)
+
+		const formData = new FormData()
+		formData.append('image', file, file.name)
+		formData.append('folder', assetUploadFolder)
+
+		const response = await ofetch('/api/contensis/assets/upload', {
+			method: 'POST',
+			body: formData
+		})
+
+		return `${PUBLIC_EUI_WEB}${response.uploadedPhoto.sys.uri}`
 	}
 </script>
 
@@ -76,11 +105,7 @@
 		})}
 	>
 		{@html htmlToRender}
-		<button
-			class="absolute -right-2 -top-2 size-8 bg-gray-200 text-gray-500 hover:bg-gray-300"
-			aria-label="Edit section"
-			onclick={(editMode = true)}
-		>
+		<button class="absolute -right-2 -top-2 size-8 bg-gray-200 text-gray-500 hover:bg-gray-300" aria-label="Edit section" onclick={onEditClick}>
 			<i class="fa-solid fa-pencil"></i>
 		</button>
 	</div>

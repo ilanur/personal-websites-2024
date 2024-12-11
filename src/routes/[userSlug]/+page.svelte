@@ -16,5 +16,12 @@
 
 {#if data.page}
 	<h1>{data.page.title}</h1>
-	<ContentEditor editorId="canvas-editor" htmlContent={getCanvasHTML(data.page.canvas)} page={data.page} enabled={isAuthUserWebsite} />
+
+	<ContentEditor
+		editorId="canvas-editor"
+		htmlContent={getCanvasHTML(data.page.canvas)}
+		page={data.page}
+		enabled={isAuthUserWebsite}
+		assetUploadFolder="/Content-Types-Assets/PersonalWebsites/Pages"
+	/>
 {/if}

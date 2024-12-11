@@ -6,7 +6,6 @@
 	import { writable } from 'svelte/store'
 
 	let { data, children, hasSidebar } = $props()
-	console.log('hasSidebar', hasSidebar)
 
 	let smallHeroBanner = writable(false)
 

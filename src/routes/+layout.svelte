@@ -2,6 +2,7 @@
 	import AppHeader from '$lib/components/AppHeader.svelte'
 	import AppFooter from '$lib/components/AppFooter.svelte'
 	import '../app.css'
+
 	let { children } = $props()
 </script>
 

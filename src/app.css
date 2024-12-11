@@ -73,16 +73,29 @@
 	.canvas-content h3,
 	.canvas-content h4,
 	.canvas-content h5,
-	.canvas-content h6 {
+	.canvas-content h6,
+	.ql-editor h1,
+	.ql-editor h2,
+	.ql-editor h3,
+	.ql-editor h4,
+	.ql-editor h5,
+	.ql-editor h6 {
 		@apply mt-8;
 	}
 
-	.canvas-content p {
-		@apply mb-4;
+	.canvas-content,
+	.ql-editor {
+		@apply text-base;
 	}
 
-	.canvas-content a {
-		@apply break-words font-medium text-eui-light-blue-600/85 underline;
+	.canvas-content p,
+	.ql-editor p {
+		@apply !mb-4;
+	}
+
+	.canvas-content a,
+	.ql-editor a {
+		@apply break-words font-medium text-eui-light-blue-600/85 underline underline-offset-2;
 	}
 
 	.canvas-content > ul,
@@ -91,39 +104,43 @@
 	}
 
 	.canvas-content ul > li {
-		@apply relative mb-1 ps-5;
+		@apply relative mb-1 list-disc ps-2;
 	}
 
 	.canvas-content ol > li {
-		@apply list-decimal ps-3;
+		@apply list-decimal ps-2;
 	}
 
-	.canvas-content ul > li::before {
-		content: '';
-		@apply absolute left-0 top-2 me-2 h-2 w-2 rounded-full bg-slate-700;
-	}
+	/* .canvas-content ul > li::marker {
+		@apply absolute left-0 top-[0.55rem] me-3 size-1.5 rounded-full bg-slate-700 content-[''];
+	} */
 
 	.canvas-content u {
 		@apply no-underline;
 	}
 
-	.canvas-content hr {
+	.canvas-content hr,
+	.ql-editor hr {
 		@apply my-6;
 	}
 
-	.canvas-content img {
+	.canvas-content img,
+	.ql-editor img {
 		@apply my-6;
 	}
 
-	.canvas-content blockquote {
+	.canvas-content blockquote,
+	.ql-editor blockquote {
 		@apply my-6 border-s-8 border-gray-200 bg-gray-50 p-6 italic;
 	}
 
-	.canvas-content figure {
+	.canvas-content figure,
+	.ql-editor figure {
 		@apply my-6;
 	}
 
-	.canvas-content figcaption {
+	.canvas-content figcaption,
+	.ql-editor figcaption {
 		@apply text-sm italic text-gray-600;
 	}
 }

@@ -9,7 +9,9 @@
 
 	const smallHeroBanner = getContext('smallHeroBanner')
 
-	let isAuthUserWebsite = $derived(data.personalWebsite.people.email === data.authUser.email)
+	let isAuthUserWebsite = $derived(data.personalWebsite.people.email === data.authUser?.email)
+
+	let isAdmin = $derived(data.authUser?.role?.includes('admin'))
 
 	$smallHeroBanner = false
 </script>
@@ -17,11 +19,15 @@
 {#if data.page}
 	<h1>{data.page.title}</h1>
 
-	<ContentEditor
-		editorId="canvas-editor"
-		htmlContent={getCanvasHTML(data.page.canvas)}
-		page={data.page}
-		enabled={isAuthUserWebsite}
-		assetUploadFolder="/Content-Types-Assets/PersonalWebsites/Pages"
-	/>
+	{#if isAuthUserWebsite || isAdmin}
+		<ContentEditor
+			editorId="canvas-editor"
+			htmlContent={getCanvasHTML(data.page.canvas)}
+			page={data.page}
+			enabled={isAuthUserWebsite || isAdmin}
+			assetUploadFolder="/Content-Types-Assets/PersonalWebsites/Pages"
+		/>
+	{:else}
+		<div class="canvas-content">{@html data.page.canvas ? getCanvasHTML(data.page.canvas) : 'This page is empty'}</div>
+	{/if}
 {/if}

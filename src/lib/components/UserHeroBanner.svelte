@@ -1,10 +1,14 @@
 <script>
+	import { getCorrectEntryPhoto } from '$lib/utils/contensis/client'
 	import clsx from 'clsx'
 	import UserHeroBannerSocials from '$lib/components/UserHeroBannerSocials.svelte'
 	import HeroBannerGraphic from '$lib/components/graphics/HeroBannerGraphic.svelte'
-	import { getCorrectEntryPhoto } from '$lib/utils/contensis/client'
+	import EditableContent from '$lib/components/EditableContent.svelte'
 
-	let { personalWebsite, isSmall } = $props()
+	let { personalWebsite, isSmall, authUser } = $props()
+
+	let isAuthUserWebsite = $derived(personalWebsite.people.email === authUser?.email)
+	let isAdmin = $derived(authUser?.role?.includes('admin'))
 </script>
 
 <div class={clsx('relative overflow-hidden bg-eui-dark-blue-500 pt-0 md:bg-[transparent]', { 'md:py-8': isSmall, 'md:py-12': !isSmall })}>
@@ -23,10 +27,15 @@
 				'md:col-span-8 md:pr-[150px] lg:pr-[200px] xl:pr-[300px]': !isSmall
 			})}
 		>
-			<h1>{personalWebsite.title} <span class="sr-only"> personal website</span></h1>
-			<p>
-				{@html personalWebsite.description}
-			</p>
+			<h1>{personalWebsite.title} <span class="sr-only">personal website</span></h1>
+			<EditableContent
+				editorId="description-editor"
+				htmlContent={personalWebsite.description ?? ''}
+				enabled={isAuthUserWebsite || isAdmin}
+				onSave={async () => {
+					console.log('update description')
+				}}
+			/>
 		</div>
 	</div>
 	<div class="bottom-0 left-0 right-0 top-0 grid grid-cols-12 md:absolute">

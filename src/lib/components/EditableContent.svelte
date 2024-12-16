@@ -7,16 +7,17 @@
 	import Button from '$lib/components/Button.svelte'
 	import 'quill/dist/quill.snow.css'
 
-	const { editorId = 'canvas-editor', htmlContent, enabled, onSave } = $props()
+	const { editorId = 'canvas-editor', htmlContent, enabled = false, onSave } = $props()
 
 	let editMode = $state(false)
 	let saveLoading = $state(false)
 	let quillInstance = $state(null)
 	let htmlToRender = $state(htmlContent)
 
+	const hasNoContent = $derived(!htmlToRender || htmlToRender === '<p></p>')
+
 	onMount(async () => {
 		const Quill = (await import('quill')).default
-
 		quillInstance = new Quill(`#${editorId}`, {
 			modules: {
 				toolbar: {
@@ -25,9 +26,7 @@
 			},
 			theme: 'snow'
 		})
-
 		quillInstance.root.innerHTML = htmlToRender
-
 		imageLoader()
 	})
 
@@ -90,18 +89,22 @@
 			hidden: editMode
 		})}
 	>
-		{#if !htmlToRender || htmlToRender === '<p></p>'}
+		{#if hasNoContent}
 			Add content
 		{:else}
 			{@html htmlToRender}
 		{/if}
 
-		<button class="absolute -right-2 -top-2 size-8 bg-gray-200 text-gray-500 hover:bg-gray-300" aria-label="Edit section" onclick={onEditClick}>
+		<button
+			class={clsx('absolute -right-2 -top-2 size-10 bg-gray-200 text-gray-500 hover:bg-gray-300')}
+			aria-label="Edit section"
+			onclick={onEditClick}
+		>
 			<i class="fa-solid fa-pencil"></i>
 		</button>
 	</div>
 
-	<div class:hidden={!editMode} class="relative">
+	<div class:hidden={!editMode} class="relative bg-white text-intranet-black-950">
 		<div id={editorId}></div>
 		<div class="absolute right-1 top-1 flex gap-x-1">
 			<Button class="flex size-8 items-center justify-center border-gray-200 bg-gray-200 !text-gray-500" onclick={() => (editMode = false)}>

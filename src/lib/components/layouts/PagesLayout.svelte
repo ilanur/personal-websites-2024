@@ -12,11 +12,12 @@
 	const personalWebsite = $derived(data.personalWebsite)
 	const personalWebsitePages = $derived(data.personalWebsitePages)
 	const hasBlog = $derived(data.hasBlog)
+	const authUser = $derived(data.authUser)
 
 	setContext('smallHeroBanner', smallHeroBanner)
 </script>
 
-<UserHeroBanner {personalWebsite} isSmall={$smallHeroBanner} />
+<UserHeroBanner {personalWebsite} {authUser} isSmall={$smallHeroBanner} />
 
 <div class="border-b bg-slate-800">
 	<nav>

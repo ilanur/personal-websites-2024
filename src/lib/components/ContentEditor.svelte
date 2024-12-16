@@ -4,6 +4,7 @@
 	import { parseHtml } from '@contensis/html-canvas'
 	import { base64toFile } from '$lib/utils/utils'
 	import { PUBLIC_EUI_WEB } from '$env/static/public'
+	import { getCanvasHTML } from '$lib/utils/contensis/client'
 	import clsx from 'clsx'
 	import Button from '$lib/components/Button.svelte'
 	import 'quill/dist/quill.snow.css'
@@ -27,10 +28,40 @@
 			theme: 'snow'
 		})
 
-		console.log('htmlToRender', htmlToRender)
-
 		quillInstance.root.innerHTML = htmlToRender
+
+		imageLoader()
 	})
+
+	$effect(async () => {})
+
+	async function imageLoader() {
+		const canvas = await parseHtml(htmlToRender)
+		let mappedCanvas
+
+		await new Promise((resolve) => {
+			const mapped = canvas.map((item) => {
+				if (item.type === '_image' && item.value.asset.sys.uri.startsWith(`${PUBLIC_EUI_WEB}/Content-Types-Assets`)) {
+					const img = new Image()
+
+					img.src = item.value.asset.sys.uri
+
+					img.onerror = () => {
+						item.value.asset.sys.uri = `${PUBLIC_EUI_WEB}/web-production/code/assets/img/image-processing.jpg`
+						resolve()
+					}
+				}
+
+				return item
+			})
+
+			mappedCanvas = mapped
+		})
+
+		if (mappedCanvas) {
+			htmlToRender = getCanvasHTML(mappedCanvas)
+		}
+	}
 
 	function onEditClick() {
 		editMode = true
@@ -38,16 +69,12 @@
 	}
 
 	async function onSave() {
-		console.log('save', quillInstance.getSemanticHTML())
-
 		try {
 			saveLoading = true
 
 			const updatedPage = { ...page }
 			const updatedHtml = quillInstance.getSemanticHTML()
 			const canvas = await parseHtml(updatedHtml)
-
-			console.log('canvas', canvas)
 
 			for (const item of canvas) {
 				if (item.type === '_image' && item.value.asset.sys.uri.startsWith('data:image')) {
@@ -58,15 +85,13 @@
 
 			updatedPage['canvas'] = canvas
 
-			const response = await ofetch('/api/contensis/entries/update', {
+			await ofetch('/api/contensis/entries/update', {
 				method: 'PUT',
 				body: {
 					entry: updatedPage,
 					updatedFields: ['canvas']
 				}
 			})
-
-			console.log('response', response)
 
 			htmlToRender = updatedHtml
 		} catch (error) {

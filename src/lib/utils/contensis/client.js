@@ -1,5 +1,6 @@
 import { createRenderer } from '@contensis/canvas-html'
 import { PUBLIC_EUI_WEB } from '$env/static/public'
+import { ofetch } from 'ofetch'
 
 export function getCanvasHTML(canvas) {
 	const mapped = canvas.map((el) => {
@@ -25,4 +26,34 @@ export function getCorrectEntryPhoto(personalWebsiteEntry, userEntry) {
 	}
 
 	return `${PUBLIC_EUI_WEB}/web-production/code/assets/img/default-avatar.svg`
+}
+
+export async function savePageContent(page, canvas, assetsUploadFolder) {
+	const updatedPage = { ...page }
+
+	for (const item of canvas) {
+		if (item.type === '_image' && item.value.asset.sys.uri.startsWith('data:image')) {
+			const file = base64toFile(item.value.asset.sys.uri)
+			const formData = new FormData()
+			formData.append('image', file, file.name)
+			formData.append('folder', assetsUploadFolder)
+
+			const response = await ofetch('/api/contensis/assets/upload', {
+				method: 'POST',
+				body: formData
+			})
+
+			item.value.asset.sys.uri = `${PUBLIC_EUI_WEB}${response.uploadedPhoto.sys.uri}`
+		}
+	}
+
+	updatedPage['canvas'] = canvas
+
+	await ofetch('/api/contensis/entries/update', {
+		method: 'PUT',
+		body: {
+			entry: updatedPage,
+			updatedFields: ['canvas']
+		}
+	})
 }

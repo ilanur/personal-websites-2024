@@ -9,6 +9,7 @@
 </script>
 
 <h1 class="mb-4 text-3xl">Publications in Cadmus</h1>
+
 {#each data.publications as pub}
 	<article class="group relative mb-6 rounded-lg border p-4 transition-all hover:scale-[1.02] hover:shadow-lg">
 		<h1 class="text-lg">

@@ -5,6 +5,7 @@
 	import dayjs from 'dayjs'
 
 	let { data } = $props()
+
 	let audioUrl = $state(null)
 
 	const user = $derived.by(() => $page.data.session?.user)
@@ -49,12 +50,15 @@
 						{/each}
 					</span>
 				{/if}
+
 				{#if data.post.categories.length > 0 && data.post.tags.length > 0}
 					<span class="mx-4">|</span>
 				{/if}
+
 				{#if data.post.tags.length > 0}
 					<span class="item-center inline-flex leading-none">
 						<span class="fa-sharp fa-solid fa-tag me-2 text-eui-light-blue-500"></span>
+
 						{#each data.post.tags as tag, i}
 							<span>
 								{tag.entryTitle}{#if i < data.post.tags.length - 1},{/if}
@@ -63,14 +67,18 @@
 					</span>
 				{/if}
 			</p>
+
 			<h1 class="mb-4 text-3xl">{data.post.entryTitle}</h1>
+
 			{#if audioUrl}
 				<audio controls class="mb-4">
 					<source src={audioUrl} type="audio/mpeg" />
 					Your browser does not support the audio element.
 				</audio>
 			{/if}
+
 			<p>{@html data.post.entryDescription}</p>
+
 			<div class="relative mb-6 border-b border-slate-200 text-right">
 				<div class="flex justify-end">
 					<div class="flex translate-y-1/2 items-center gap-x-4 bg-white ps-4">
@@ -110,6 +118,7 @@
 					</div>
 				</div>
 			</div>
+
 			{#if user}
 				<div class="mt-4">
 					<a href={editUrl} target="_blank" class="px-4 text-eui-light-blue-500 hover:underline"> Edit this page </a>
@@ -131,6 +140,7 @@
 		<p class="my-6 text-sm">
 			Published on: {dayjs(data.post.publishingDate).format('DD/MM/YYYY')}
 		</p>
+
 		{#if data.post.themesTopicGenerator?.added?.length > 0}
 			<div class="mb-4 flex items-center">
 				<p class="me-2 text-sm">Topics:</p>

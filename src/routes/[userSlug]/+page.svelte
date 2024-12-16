@@ -1,11 +1,12 @@
 <script>
 	import { getContext } from 'svelte'
-	import { getCanvasHTML } from '$lib/utils/contensis/client'
-	import ContentEditor from '$lib/components/ContentEditor.svelte'
+	import { getCanvasHTML, savePageContent } from '$lib/utils/contensis/client.js'
+	import { PUBLIC_CONTENSIS_PAGES_ASSETS_FOLDER } from '$env/static/public'
+	import EditableContent from '$lib/components/EditableContent.svelte'
 
 	let { data } = $props()
 
-	console.log('data', data)
+	console.log(data)
 
 	const smallHeroBanner = getContext('smallHeroBanner')
 
@@ -15,14 +16,10 @@
 	$smallHeroBanner = false
 </script>
 
-{#if data.page}
-	<h1>{data.page.title}</h1>
+<h1>{data.page?.title}</h1>
 
-	<ContentEditor
-		editorId="canvas-editor"
-		htmlContent={getCanvasHTML(data.page.canvas)}
-		page={data.page}
-		enabled={isAuthUserWebsite}
-		assetUploadFolder="/Content-Types-Assets/PersonalWebsites/Pages"
-	/>
-{/if}
+<EditableContent
+	htmlContent={data.page ? getCanvasHTML(data.page.canvas) : ''}
+	enabled={isAuthUserWebsite || isAdmin}
+	onSave={async (canvas) => await savePageContent(data.page, canvas, PUBLIC_CONTENSIS_PAGES_ASSETS_FOLDER)}
+/>

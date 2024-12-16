@@ -71,7 +71,6 @@ export async function uploadAsset(fileBuffer, filename, options = {}) {
 		const { language = 'en-GB', description = '', folderId = '', title = filename, contentType = 'audio/mpeg' } = options
 
 		const authData = await authenticateContensis()
-
 		const formData = new FormData()
 		const metadata = {
 			title,

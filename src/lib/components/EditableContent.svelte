@@ -1,15 +1,13 @@
 <script>
 	import { onMount } from 'svelte'
-	import { ofetch } from 'ofetch'
 	import { parseHtml } from '@contensis/html-canvas'
-	import { base64toFile } from '$lib/utils/utils'
 	import { PUBLIC_EUI_WEB } from '$env/static/public'
 	import { getCanvasHTML } from '$lib/utils/contensis/client'
 	import clsx from 'clsx'
 	import Button from '$lib/components/Button.svelte'
 	import 'quill/dist/quill.snow.css'
 
-	const { editorId, htmlContent, page, enabled, assetUploadFolder } = $props()
+	const { editorId = 'canvas-editor', htmlContent, enabled, onSave } = $props()
 
 	let editMode = $state(false)
 	let saveLoading = $state(false)
@@ -32,8 +30,6 @@
 
 		imageLoader()
 	})
-
-	$effect(async () => {})
 
 	async function imageLoader() {
 		const canvas = await parseHtml(htmlToRender)
@@ -68,30 +64,14 @@
 		quillInstance.root.innerHTML = htmlToRender
 	}
 
-	async function onSave() {
+	async function onSaveClick() {
 		try {
 			saveLoading = true
 
-			const updatedPage = { ...page }
 			const updatedHtml = quillInstance.getSemanticHTML()
 			const canvas = await parseHtml(updatedHtml)
 
-			for (const item of canvas) {
-				if (item.type === '_image' && item.value.asset.sys.uri.startsWith('data:image')) {
-					const uploadedUrl = await uploadImage(item.value.asset.sys.uri)
-					item.value.asset.sys.uri = uploadedUrl
-				}
-			}
-
-			updatedPage['canvas'] = canvas
-
-			await ofetch('/api/contensis/entries/update', {
-				method: 'PUT',
-				body: {
-					entry: updatedPage,
-					updatedFields: ['canvas']
-				}
-			})
+			await onSave(canvas)
 
 			htmlToRender = updatedHtml
 		} catch (error) {
@@ -100,21 +80,6 @@
 			saveLoading = false
 			editMode = false
 		}
-	}
-
-	async function uploadImage(localUrl) {
-		const file = base64toFile(localUrl)
-
-		const formData = new FormData()
-		formData.append('image', file, file.name)
-		formData.append('folder', assetUploadFolder)
-
-		const response = await ofetch('/api/contensis/assets/upload', {
-			method: 'POST',
-			body: formData
-		})
-
-		return `${PUBLIC_EUI_WEB}${response.uploadedPhoto.sys.uri}`
 	}
 </script>
 
@@ -125,7 +90,12 @@
 			hidden: editMode
 		})}
 	>
-		{@html htmlToRender}
+		{#if !htmlToRender || htmlToRender === '<p></p>'}
+			Add content
+		{:else}
+			{@html htmlToRender}
+		{/if}
+
 		<button class="absolute -right-2 -top-2 size-8 bg-gray-200 text-gray-500 hover:bg-gray-300" aria-label="Edit section" onclick={onEditClick}>
 			<i class="fa-solid fa-pencil"></i>
 		</button>
@@ -137,7 +107,7 @@
 			<Button class="flex size-8 items-center justify-center border-gray-200 bg-gray-200 !text-gray-500" onclick={() => (editMode = false)}>
 				<i class="fa-solid fa-xmark"></i>
 			</Button>
-			<Button class="flex size-8 items-center justify-center" loading={saveLoading} onclick={onSave}>
+			<Button class="flex size-8 items-center justify-center" loading={saveLoading} onclick={onSaveClick}>
 				<i class="fa-solid fa-floppy-disk"></i>
 			</Button>
 		</div>

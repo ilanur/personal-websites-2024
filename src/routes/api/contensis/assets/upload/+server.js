@@ -1,3 +1,4 @@
+import { ManagementClient } from '$lib/utils/contensis/_clients.js'
 import { uploadAsset } from '$lib/utils/contensis/server.js'
 import { json } from '@sveltejs/kit'
 
@@ -19,6 +20,8 @@ export const POST = async ({ request }) => {
 			})
 
 			console.log(uploadedPhoto)
+
+			await ManagementClient.entries.invokeWorkflow(uploadedPhoto, 'draft.publish')
 
 			return json(
 				{

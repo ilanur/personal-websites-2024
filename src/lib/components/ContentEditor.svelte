@@ -56,11 +56,7 @@
 				}
 			}
 
-			console.log('CANVA', canvas)
-
 			updatedPage['canvas'] = canvas
-
-			console.log('updatedPage', updatedPage)
 
 			const response = await ofetch('/api/contensis/entries/update', {
 				method: 'PUT',

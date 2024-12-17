@@ -22,7 +22,7 @@
 <div class="border-b bg-slate-800">
 	<nav>
 		<h2 class="sr-only">Subsite navigation</h2>
-		<PersonalWebsiteNavigation {personalWebsitePages} {personalWebsite} hasBlog={hasBlog || authUser.email === personalWebsite.people.email} />
+		<PersonalWebsiteNavigation {personalWebsitePages} {personalWebsite} hasBlog={hasBlog || authUser?.email === personalWebsite.people.email} />
 	</nav>
 </div>
 

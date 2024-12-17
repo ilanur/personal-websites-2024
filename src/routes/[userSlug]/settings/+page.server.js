@@ -3,16 +3,25 @@ import { getPersonalWebsiteByEmail } from '$lib/utils/contensis/server.js'
 import { pwFormSchema } from '$lib/zod-schemas/personal-website-form.js'
 import { error, fail, redirect } from '@sveltejs/kit'
 import { ManagementClient } from '$lib/utils/contensis/_clients.js'
+import { admins } from '$lib/utils/permissions'
 
 export async function load({ parent }) {
 	const parentData = await parent()
-	if (parentData.authUser.email != parentData.personalWebsite.people.euiEmail) {
-		redirect(301, '/')
-	}
-	return {
+
+	const pageData = {
 		user: parentData.personalWebsite.people,
 		personalWebsite: parentData.personalWebsite
 	}
+
+	if (parentData.authUser?.role === 'admin') {
+		return pageData
+	}
+
+	if (parentData.authUser.email != parentData.personalWebsite.people.euiEmail) {
+		redirect(301, '/')
+	}
+
+	return pageData
 }
 
 export const actions = {
@@ -20,13 +29,14 @@ export const actions = {
 		const authUser = await locals.auth()
 		const formData = Object.fromEntries(await request.formData())
 		const formValidation = pwFormSchema.safeParse(formData)
+		const userIsAdmin = admins.includes(authUser?.user.email)
 
 		if (!formValidation.success) {
 			return fail(400, { success: false, formErrors: formatZodError(formValidation.error) })
 		}
 
 		try {
-			const personalWebsite = await getPersonalWebsiteByEmail(authUser.user.email)
+			const personalWebsite = await getPersonalWebsiteByEmail(userIsAdmin ? formData.email : authUser.user.email)
 
 			if (personalWebsite) {
 				personalWebsite['websiteSlug'] = formData.slug

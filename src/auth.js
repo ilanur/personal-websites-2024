@@ -1,11 +1,6 @@
 import { SvelteKitAuth } from '@auth/sveltekit'
 import Entra from '@auth/sveltekit/providers/microsoft-entra-id'
-import {
-	PRIVATE_CLIENT_ID,
-	PRIVATE_CLIENT_SECRET,
-	PRIVATE_TENANT_ID,
-	PRIVATE_AUTH_SECRET
-} from '$env/static/private'
+import { PRIVATE_CLIENT_ID, PRIVATE_CLIENT_SECRET, PRIVATE_TENANT_ID, PRIVATE_AUTH_SECRET } from '$env/static/private'
 
 export const { handle, signIn, signOut } = SvelteKitAuth(async () => {
 	const authOptions = {

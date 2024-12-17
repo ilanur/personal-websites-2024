@@ -1,6 +1,5 @@
 <script>
 	import { getCanvasHTML, getCorrectEntryPhoto } from '$lib/utils/contensis/client'
-	import { convert } from 'html-to-text'
 	import { ofetch } from 'ofetch'
 	import clsx from 'clsx'
 	import UserHeroBannerSocials from '$lib/components/UserHeroBannerSocials.svelte'
@@ -13,13 +12,11 @@
 	let isAdmin = $derived(authUser?.role?.includes('admin'))
 
 	async function updateDescription(canvas) {
-		const html = getCanvasHTML(canvas)
-		const text = convert(html)
-
 		try {
+			const html = getCanvasHTML(canvas)
 			const personalWebsiteEntry = { ...personalWebsite }
 
-			personalWebsiteEntry.description = text
+			personalWebsiteEntry.description = html
 
 			await ofetch('/api/contensis/entries/update', {
 				method: 'PUT',
@@ -52,9 +49,11 @@
 		>
 			<h1>{personalWebsite.title} <span class="sr-only">personal website</span></h1>
 			<EditableContent
+				class="[&_a]:text-white"
 				editorId="description-editor"
 				htmlContent={personalWebsite.description ?? ''}
 				enabled={isAuthUserWebsite || isAdmin}
+				toolbar={['bold', 'italic', 'link']}
 				onSave={updateDescription}
 			/>
 		</div>

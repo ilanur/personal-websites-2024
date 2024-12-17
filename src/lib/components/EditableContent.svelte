@@ -7,7 +7,14 @@
 	import Button from '$lib/components/Button.svelte'
 	import 'quill/dist/quill.snow.css'
 
-	const { editorId = 'canvas-editor', htmlContent, enabled = false, onSave } = $props()
+	const {
+		editorId = 'canvas-editor',
+		htmlContent,
+		enabled = false,
+		toolbar = ['bold', 'italic', 'underline', 'link', 'image', 'code-block', { list: 'ordered' }, { list: 'bullet' }],
+		onSave,
+		...rest
+	} = $props()
 
 	let editMode = $state(false)
 	let saveLoading = $state(false)
@@ -21,7 +28,7 @@
 		quillInstance = new Quill(`#${editorId}`, {
 			modules: {
 				toolbar: {
-					container: ['bold', 'italic', 'underline', 'link', 'image', 'code-block', { list: 'ordered' }, { list: 'bullet' }]
+					container: toolbar
 				}
 			},
 			theme: 'snow'
@@ -82,7 +89,7 @@
 	}
 </script>
 
-<div>
+<div class={rest.class}>
 	<div
 		class={clsx('canvas-content', {
 			'relative outline outline-2 outline-offset-8 outline-gray-200 hover:outline-gray-300': enabled,

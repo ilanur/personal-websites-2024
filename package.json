@@ -23,7 +23,6 @@
 		"contensis-delivery-api": "^1.5.0",
 		"contensis-management-api": "^2.2.0",
 		"dayjs": "^1.11.13",
-		"html-to-text": "^9.0.5",
 		"instantsearch.js": "^4.75.3",
 		"ofetch": "^1.4.1",
 		"openai": "^4.72.0",

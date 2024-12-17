@@ -12,7 +12,6 @@ export async function load(event) {
 	if (!session) redirect(302, '/auth/login')
 
 	// Check if user exists in the people collection in Contensis
-	// const contensisUser = await getPeopleEntryByEmail('emanuele.strano@eui.eu')
 	const contensisUser = await getPeopleEntryByEmail(session.user.email) // --> Enable this line to use real user
 
 	if (!contensisUser) redirect(302, '/')

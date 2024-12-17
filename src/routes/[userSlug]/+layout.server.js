@@ -36,7 +36,7 @@ export async function load({ params }) {
 		]
 	}
 	const blogPosts = await DeliveryClient.entries.search(query)
-	const hasBlog = blogPosts.items.length > 0 ? true : false
+	const hasBlog = blogPosts.items.length > 0
 
 	return {
 		personalWebsite: results.items.length ? results.items[0] : null,

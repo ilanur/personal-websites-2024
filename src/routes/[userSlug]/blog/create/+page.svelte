@@ -1,0 +1,17 @@
+<script>
+	import { enhance } from '$app/forms'
+	import Button from '$lib/components/Button.svelte'
+	import InputField from '$lib/components/form-elements/InputField.svelte'
+	import TextArea from '$lib/components/form-elements/TextArea.svelte'
+	import TextEditor from '$lib/components/TextEditor.svelte'
+</script>
+
+<form method="POST" class="flex flex-col gap-4" use:enhance>
+	<InputField type="text" name="title" label="Title of blogpost" />
+	<TextArea name="description" label="Description" />
+	<TextEditor label="Content" htmlContent={''} />
+
+	<div>
+		<Button type="submit">Submit</Button>
+	</div>
+</form>

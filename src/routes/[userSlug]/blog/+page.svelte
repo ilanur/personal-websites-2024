@@ -2,40 +2,53 @@
 	import { getContext } from 'svelte'
 	import AppLink from '$lib/components/AppLink.svelte'
 	import { getThumbnail, truncateString } from '$lib/utils/utils'
+	import Button from '$lib/components/Button.svelte'
 
 	let { data } = $props()
 
 	const smallHeroBanner = getContext('smallHeroBanner')
 
 	$smallHeroBanner = true
+
+	console.log('data', data)
 </script>
 
-<h1>Blog</h1>
-<div class="grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-3">
-	{#each data.blogPosts as post}
-		<article
-			class="group relative flex h-full flex-col overflow-hidden rounded-lg border bg-white transition-all hover:scale-[1.02] hover:shadow-lg"
-		>
-			<figure class="aspect-16-9 w-full shrink-0 overflow-hidden">
-				<img class="h-full w-full object-cover" src={getThumbnail(post.entryThumbnail)} alt={post.entryTitle} />
-			</figure>
+{#if data.blogPosts.length > 0}
+	<h1>Blog</h1>
 
-			<div class="h-full p-4 sm:flex sm:flex-col sm:justify-between">
-				<div>
-					<h1 class="text-lg">{post.entryTitle}</h1>
-					{#if post.description}
-						<p class="text-tiny text-gray-700">{truncateString(post.description, 200)}</p>
-					{/if}
-				</div>
+	<div class="grid grid-cols-1 gap-12 md:grid-cols-2 xl:grid-cols-3">
+		{#each data.blogPosts as post}
+			<article
+				class="group relative flex h-full flex-col overflow-hidden rounded-lg border bg-white transition-all hover:scale-[1.02] hover:shadow-lg"
+			>
+				<figure class="aspect-16-9 w-full shrink-0 overflow-hidden">
+					<img class="h-full w-full object-cover" src={getThumbnail(post.entryThumbnail)} alt={post.entryTitle} />
+				</figure>
 
-				<div>
-					<AppLink href={`${post.url}`} class="mt-4 text-tiny font-medium text-eui-light-blue-600/85" showArrow title={post.entryTitle}>
-						Read more
-						<span class="sr-only"> about {post.entryTitle}</span>
-						<span class="absolute inset-x-0 -top-px bottom-0"></span>
-					</AppLink>
+				<div class="h-full p-4 sm:flex sm:flex-col sm:justify-between">
+					<div>
+						<h1 class="text-lg">{post.entryTitle}</h1>
+						{#if post.description}
+							<p class="text-tiny text-gray-700">{truncateString(post.description, 200)}</p>
+						{/if}
+					</div>
+
+					<div>
+						<AppLink href={`${post.url}`} class="mt-4 text-tiny font-medium text-eui-light-blue-600/85" showArrow title={post.entryTitle}>
+							Read more
+							<span class="sr-only"> about {post.entryTitle}</span>
+							<span class="absolute inset-x-0 -top-px bottom-0"></span>
+						</AppLink>
+					</div>
 				</div>
-			</div>
-		</article>
-	{/each}
-</div>
+			</article>
+		{/each}
+	</div>
+{:else}
+	<div class="text-center">
+		<h2>You currently don't have any blogposts</h2>
+		<a href="blog/create">
+			<Button>Create blogpost</Button>
+		</a>
+	</div>
+{/if}

@@ -7,7 +7,7 @@
 	import Button from '$lib/components/Button.svelte'
 	import 'quill/dist/quill.snow.css'
 
-	const {
+	let {
 		editorId = 'canvas-editor',
 		htmlContent,
 		enabled = false,

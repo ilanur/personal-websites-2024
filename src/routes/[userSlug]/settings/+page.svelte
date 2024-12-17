@@ -3,6 +3,7 @@
 	import PersonalWebsiteForm from '$lib/components/PersonalWebsiteForm.svelte'
 
 	let { data } = $props()
+
 	const smallHeroBanner = getContext('smallHeroBanner')
 
 	$smallHeroBanner = true

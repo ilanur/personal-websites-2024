@@ -102,13 +102,15 @@
 			{@html htmlToRender}
 		{/if}
 
-		<button
-			class={clsx('absolute -right-2 -top-2 size-10 bg-gray-200 text-gray-500 hover:bg-gray-300')}
-			aria-label="Edit section"
-			onclick={onEditClick}
-		>
-			<i class="fa-solid fa-pencil"></i>
-		</button>
+		{#if enabled}
+			<button
+				class={clsx('absolute -right-2 -top-2 size-10 bg-gray-200 text-gray-500 hover:bg-gray-300')}
+				aria-label="Edit section"
+				onclick={onEditClick}
+			>
+				<i class="fa-solid fa-pencil"></i>
+			</button>
+		{/if}
 	</div>
 
 	<div class:hidden={!editMode} class="relative bg-white text-intranet-black-950">

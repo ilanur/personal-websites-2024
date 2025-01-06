@@ -3,11 +3,12 @@
 	import { enhance } from '$app/forms'
 	import { goto } from '$app/navigation'
 	import { PUBLIC_EUI_WEB, PUBLIC_EUI_PERSONAL_WEBSITE_URL, PUBLIC_GOOGLE_MAPS_API_KEY } from '$env/static/public'
+	import clsx from 'clsx'
 	import InputField from '$lib/components/form-elements/InputField.svelte'
 	import SelectField from '$lib/components/form-elements/SelectField.svelte'
 	import Button from '$lib/components/Button.svelte'
-	import clsx from 'clsx'
 	import * as GoogleMapsApiLoader from '@googlemaps/js-api-loader'
+	import CheckboxField from '$lib/components/form-elements/CheckboxField.svelte'
 
 	let { user, personalWebsite } = $props()
 
@@ -136,6 +137,8 @@
 	<div class="grid grid-cols-1 items-start gap-10 lg:grid-cols-2">
 		<!-- General settings -->
 		<div class="flex flex-col gap-4">
+			<p class="font-bold">General settings</p>
+
 			<InputField
 				class="col-span-2 sm:col-span-1"
 				name="title"
@@ -211,11 +214,13 @@
 					{/if}
 				</div>
 
-				<div class="mt-4 flex items-center">
+				<!-- <div class="mt-4 flex items-center">
 					<input bind:value={useEuiPhoto} type="hidden" name="useEuiPhoto" />
 					<input bind:checked={useEuiPhoto} type="checkbox" id="uploadLocation" name="uploadLocation" />
 					<label for="uploadLocation" class="ml-2 mt-px">Use your EUI profile photo</label>
-				</div>
+				</div> -->
+
+				<CheckboxField bind:value={useEuiPhoto} bind:checked={useEuiPhoto} id="useEuiPhoto" label="Use your EUI profile photo" />
 
 				{#if useEuiPhoto && !user.photo}
 					<small>You currently have no EUI profile photo set. As a result, no photo will appear on your personal website.</small>
@@ -224,17 +229,34 @@
 		</div>
 
 		<!-- Socials -->
-		<div class="grid grid-cols-1 gap-x-2 gap-y-4 xl:grid-cols-2">
-			<InputField name="Linkedin" type="text" label="LinkedIn" value={getSocialMedia('Linkedin')?.url} />
-			<InputField name="Facebook" type="text" label="Facebook" value={getSocialMedia('Facebook')?.url} />
-			<InputField name="Twitter" type="text" label="Twitter" value={getSocialMedia('Twitter')?.url} />
-			<InputField name="Instagram" type="text" label="Instagram" value={getSocialMedia('Instagram')?.url} />
-			<InputField name="Youtube" type="text" label="Youtube" value={getSocialMedia('Youtube')?.url} />
-			<InputField name="Blog" type="text" label="Blog" value={getSocialMedia('Blog')?.url} />
-			<InputField name="Flickr" type="text" label="Flickr" value={getSocialMedia('Flickr')?.url} />
-			<InputField name="ResearchGate" type="text" label="ResearchGate" value={getSocialMedia('ResearchGate')?.url} />
-			<InputField name="Academia.edu" type="text" label="Academia.edu" value={getSocialMedia('Academia.edu')?.url} />
-			<InputField name="Bluesky" type="text" label="Bluesky" value={getSocialMedia('Bluesky')?.url} />
+
+		<div>
+			<div>
+				<p class="mb-4 font-bold">Socials</p>
+				<div class="grid grid-cols-1 gap-x-2 gap-y-4 xl:grid-cols-2">
+					<InputField name="Linkedin" type="text" label="LinkedIn" value={getSocialMedia('Linkedin')?.url} />
+					<InputField name="Facebook" type="text" label="Facebook" value={getSocialMedia('Facebook')?.url} />
+					<InputField name="Twitter" type="text" label="Twitter" value={getSocialMedia('Twitter')?.url} />
+					<InputField name="Instagram" type="text" label="Instagram" value={getSocialMedia('Instagram')?.url} />
+					<InputField name="Youtube" type="text" label="Youtube" value={getSocialMedia('Youtube')?.url} />
+					<InputField name="Blog" type="text" label="Blog" value={getSocialMedia('Blog')?.url} />
+					<InputField name="Flickr" type="text" label="Flickr" value={getSocialMedia('Flickr')?.url} />
+					<InputField name="ResearchGate" type="text" label="ResearchGate" value={getSocialMedia('ResearchGate')?.url} />
+					<InputField name="Academia.edu" type="text" label="Academia.edu" value={getSocialMedia('Academia.edu')?.url} />
+					<InputField name="Bluesky" type="text" label="Bluesky" value={getSocialMedia('Bluesky')?.url} />
+				</div>
+			</div>
+
+			<hr class="my-6" />
+
+			<div>
+				<p class="mb-4 font-bold">Publish/unpublish optional pages</p>
+
+				<CheckboxField id="useListOfPublications" label="List of publications" />
+				<CheckboxField id="usePublicationsInCadmus" label="Publications in cadmus" />
+				<CheckboxField id="useResearch" label="Research" />
+				<CheckboxField id="useWorkInProgress" label="Work in progress" />
+			</div>
 		</div>
 	</div>
 

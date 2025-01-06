@@ -2,7 +2,7 @@
 	let { value = $bindable(), checked = $bindable(), label, ...rest } = $props()
 </script>
 
-<div>
+<div class={rest.class}>
 	<input bind:value type="hidden" name={rest.name} />
 	<input bind:checked type="checkbox" id={rest.name} />
 

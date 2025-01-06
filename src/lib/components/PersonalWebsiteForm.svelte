@@ -220,7 +220,13 @@
 					<label for="uploadLocation" class="ml-2 mt-px">Use your EUI profile photo</label>
 				</div> -->
 
-				<CheckboxField bind:value={useEuiPhoto} bind:checked={useEuiPhoto} name="useEuiPhoto" label="Use your EUI profile photo" />
+				<CheckboxField
+					bind:value={useEuiPhoto}
+					bind:checked={useEuiPhoto}
+					class="mt-4"
+					name="useEuiPhoto"
+					label="Use your EUI profile photo"
+				/>
 
 				{#if useEuiPhoto && !user.photo}
 					<small>You currently have no EUI profile photo set. As a result, no photo will appear on your personal website.</small>
@@ -252,10 +258,12 @@
 			<div>
 				<p class="mb-4 font-bold">Publish/unpublish optional pages</p>
 
-				<CheckboxField name="useListOfPublications" label="List of publications" />
-				<CheckboxField name="usePublicationsInCadmus" label="Publications in cadmus" />
-				<CheckboxField name="useResearch" label="Research" />
-				<CheckboxField name="useWorkInProgress" label="Work in progress" />
+				<div class="space-y-1">
+					<CheckboxField name="useListOfPublications" label="List of publications" />
+					<CheckboxField name="usePublicationsInCadmus" label="Publications in cadmus" />
+					<CheckboxField name="useResearch" label="Research" />
+					<CheckboxField name="useWorkInProgress" label="Work in progress" />
+				</div>
 			</div>
 		</div>
 	</div>

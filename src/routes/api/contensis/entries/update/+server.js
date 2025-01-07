@@ -12,7 +12,10 @@ export const PUT = async ({ request }) => {
 		}
 
 		const updatedEntry = await ManagementClient.entries.update(latestEntry)
-		await ManagementClient.entries.invokeWorkflow(updatedEntry, 'draft.publish')
+
+		if (updatedEntry.sys.workflow.state === 'draft') {
+			await ManagementClient.entries.invokeWorkflow(updatedEntry, 'draft.publish')
+		}
 
 		return json(200, {
 			message: 'Success'

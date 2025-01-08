@@ -47,6 +47,7 @@ export const actions = {
 				where: [
 					{ field: 'sys.contentTypeId', equalTo: 'personalWebsitePage' },
 					{ field: 'sys.versionStatus', equalTo: 'latest' },
+					// { field: 'sys.versionStatus', equalTo: 'draft' },
 					{ field: 'personalWebsite.sys.id', equalTo: personalWebsite.sys.id }
 				]
 			})
@@ -54,15 +55,18 @@ export const actions = {
 			// PUBLISH/UNPUBLISH/CREATE PAGES
 			try {
 				for (const [key, value] of Object.entries(JSON.parse(formData.pagesToPublish))) {
-					console.log('Page:', key, value)
-					console.log('===')
-
 					const pageEntry = personalWebsitePages.items.find((el) => el.pageSlug === key)
 
-					console.log('pageEntry', pageEntry)
+					if (pageEntry) {
+						console.log('===')
+						console.log('Slug:', pageEntry.pageSlug)
+						console.log('Workflow:', pageEntry.sys.workflow)
+						console.log('versionStatus:', pageEntry.sys.versionStatus)
+						console.log('===')
+					}
 
 					// If page exists, but value === false; unpublish the page.
-					if (pageEntry && pageEntry.sys.workflow.state === 'published' && !value) {
+					if (pageEntry && pageEntry.sys.workflow.state === 'versionComplete' && !value) {
 						await ManagementClient.entries.invokeWorkflow(pageEntry, 'versionComplete.sysUnpublish')
 						console.log('Unpublish:', pageEntry.title)
 					}
@@ -75,12 +79,6 @@ export const actions = {
 					// If page doesn't exist, but value === true; create the page.
 
 					// const pageEntry = await ManagementClient.entries.get(page[1])
-
-					// if (page[0] === 'publish') {
-					// 	await ManagementClient.entries.invokeWorkflow(pageEntry, 'draft.publish')
-					// } else {
-					// 	await ManagementClient.entries.invokeWorkflow(pageEntry, 'draft.unpublish')
-					// }
 				}
 			} catch (e) {
 				console.error('Error while publishing/unpublishing pages:', e)

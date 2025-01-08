@@ -2,7 +2,7 @@ import formatZodError from '$lib/utils/format-zod-error.js'
 import { getPersonalWebsiteByEmail } from '$lib/utils/contensis/server.js'
 import { pwFormSchema } from '$lib/zod-schemas/personal-website-form.js'
 import { error, fail, redirect } from '@sveltejs/kit'
-import { ManagementClient } from '$lib/utils/contensis/_clients.js'
+import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients.js'
 import { admins } from '$lib/utils/permissions'
 
 export async function load({ parent }) {
@@ -31,12 +31,62 @@ export const actions = {
 		const formValidation = pwFormSchema.safeParse(formData)
 		const userIsAdmin = admins.includes(authUser?.user.email)
 
+		if (formData.usePublications === 'true') {
+			console.log('PUBLISH PUBLICATIONS')
+		}
+
 		if (!formValidation.success) {
 			return fail(400, { success: false, formErrors: formatZodError(formValidation.error) })
 		}
 
 		try {
 			const personalWebsite = await getPersonalWebsiteByEmail(userIsAdmin ? formData.email : authUser.user.email)
+
+			// Fetch pages because unpublished pages are not shown on the personal website record.
+			const personalWebsitePages = await DeliveryClient.entries.search({
+				where: [
+					{ field: 'sys.contentTypeId', equalTo: 'personalWebsitePage' },
+					{ field: 'sys.versionStatus', equalTo: 'latest' },
+					{ field: 'personalWebsite.sys.id', equalTo: personalWebsite.sys.id }
+				]
+			})
+
+			// PUBLISH/UNPUBLISH/CREATE PAGES
+			try {
+				for (const [key, value] of Object.entries(JSON.parse(formData.pagesToPublish))) {
+					console.log('Page:', key, value)
+					console.log('===')
+
+					const pageEntry = personalWebsitePages.items.find((el) => el.pageSlug === key)
+
+					console.log('pageEntry', pageEntry)
+
+					// If page exists, but value === false; unpublish the page.
+					if (pageEntry && pageEntry.sys.workflow.state === 'published' && !value) {
+						await ManagementClient.entries.invokeWorkflow(pageEntry, 'versionComplete.sysUnpublish')
+						console.log('Unpublish:', pageEntry.title)
+					}
+					// If page exists, but value === true; publish the page.
+					else if (pageEntry && pageEntry.sys.workflow.state === 'draft' && value) {
+						await ManagementClient.entries.invokeWorkflow(pageEntry, 'draft.publish')
+						console.log('PUBLISH PAGE', pageEntry.title)
+					}
+
+					// If page doesn't exist, but value === true; create the page.
+
+					// const pageEntry = await ManagementClient.entries.get(page[1])
+
+					// if (page[0] === 'publish') {
+					// 	await ManagementClient.entries.invokeWorkflow(pageEntry, 'draft.publish')
+					// } else {
+					// 	await ManagementClient.entries.invokeWorkflow(pageEntry, 'draft.unpublish')
+					// }
+				}
+			} catch (e) {
+				console.error('Error while publishing/unpublishing pages:', e)
+			}
+
+			return { success: true }
 
 			if (personalWebsite) {
 				personalWebsite['websiteSlug'] = formData.slug

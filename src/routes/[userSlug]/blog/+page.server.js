@@ -18,8 +18,6 @@ export async function load({ parent }) {
 	// Check if personal website already exists for this email by delivery search
 	const blogPosts = await DeliveryClient.entries.search(query)
 
-	console.log(blogPosts)
-
 	// For each blog post, generate the url based on personalWebsite slug and blog post slug
 	blogPosts.items = blogPosts.items.map((blogPost) => {
 		const userSlug = parentData.personalWebsite.websiteSlug

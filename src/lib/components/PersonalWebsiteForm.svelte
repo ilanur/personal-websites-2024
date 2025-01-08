@@ -9,11 +9,9 @@
 	import Button from '$lib/components/Button.svelte'
 	import * as GoogleMapsApiLoader from '@googlemaps/js-api-loader'
 	import CheckboxField from '$lib/components/form-elements/CheckboxField.svelte'
+	import { stringify } from 'postcss'
 
 	let { user, personalWebsite } = $props()
-
-	console.log('user', user)
-	console.log('PersonalWebsite', personalWebsite)
 
 	let fileUploadRef = null
 	let formLoading = $state(false)
@@ -24,6 +22,13 @@
 	let lat = $state(personalWebsite.lat)
 	let lng = $state(personalWebsite.lng)
 	let nationalities = $state()
+	let pagesToPublish = $state({
+		publications: checkIfPagePublished('publications'),
+		publicationsInCadmus: checkIfPagePublished('publications-in-cadmus'),
+		research: checkIfPagePublished('research'),
+		workInProgress: checkIfPagePublished('work-in-progress'),
+		teaching: checkIfPagePublished('teaching')
+	})
 
 	$effect(() => {
 		if (user.photo && useEuiPhoto) {
@@ -34,6 +39,11 @@
 			onPhotoDeleteClick()
 		}
 	})
+
+	function checkIfPagePublished(slug) {
+		const page = personalWebsite.pages.find((el) => el.pageSlug === slug)
+		return page ? (page.sys.versionStatus === 'published' ? true : false) : false
+	}
 
 	function setEuiProfilePhoto() {
 		previewPhoto = `${PUBLIC_EUI_WEB}/${user.photo.asset.sys.uri}`
@@ -259,10 +269,12 @@
 				<p class="mb-4 font-bold">Publish/unpublish optional pages</p>
 
 				<div class="space-y-1">
-					<CheckboxField name="useListOfPublications" label="List of publications" />
-					<CheckboxField name="usePublicationsInCadmus" label="Publications in cadmus" />
-					<CheckboxField name="useResearch" label="Research" />
-					<CheckboxField name="useWorkInProgress" label="Work in progress" />
+					<input type="hidden" name="pagesToPublish" value={JSON.stringify(pagesToPublish)} />
+					<CheckboxField bind:value={pagesToPublish.publications} name="publications" label="List of publications" />
+					<CheckboxField bind:value={pagesToPublish.publicationsInCadmus} name="publicationsInCadmus" label="Publications in cadmus" />
+					<CheckboxField bind:value={pagesToPublish.research} name="research" label="Research" />
+					<CheckboxField bind:value={pagesToPublish.workInProgress} name="workInProgress" label="Work in progress" />
+					<CheckboxField bind:value={pagesToPublish.teaching} name="teaching" label="Teaching" />
 				</div>
 			</div>
 		</div>

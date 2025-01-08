@@ -6,8 +6,6 @@
 
 	let { data } = $props()
 
-	console.log(data)
-
 	const smallHeroBanner = getContext('smallHeroBanner')
 
 	let isAuthUserWebsite = $derived(data.personalWebsite.people.email === data.authUser?.email)

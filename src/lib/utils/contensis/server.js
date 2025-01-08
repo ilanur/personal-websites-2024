@@ -35,7 +35,7 @@ export async function getPersonalWebsiteByEmail(email) {
 				{ field: 'people.sys.id', equalTo: people.sys.id }
 			]
 		}
-		const personalWebsites = await DeliveryClient.entries.search(query, 1)
+		const personalWebsites = await DeliveryClient.entries.search(query, 2)
 
 		if (!personalWebsites.items.length) return null
 

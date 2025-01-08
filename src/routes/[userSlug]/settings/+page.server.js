@@ -25,15 +25,11 @@ export async function load({ parent }) {
 }
 
 export const actions = {
-	default: async ({ request, locals }) => {
+	default: async ({ request, locals, fetch }) => {
 		const authUser = await locals.auth()
 		const formData = Object.fromEntries(await request.formData())
 		const formValidation = pwFormSchema.safeParse(formData)
 		const userIsAdmin = admins.includes(authUser?.user.email)
-
-		if (formData.usePublications === 'true') {
-			console.log('PUBLISH PUBLICATIONS')
-		}
 
 		if (!formValidation.success) {
 			return fail(400, { success: false, formErrors: formatZodError(formValidation.error) })
@@ -47,7 +43,6 @@ export const actions = {
 				where: [
 					{ field: 'sys.contentTypeId', equalTo: 'personalWebsitePage' },
 					{ field: 'sys.versionStatus', equalTo: 'latest' },
-					// { field: 'sys.versionStatus', equalTo: 'draft' },
 					{ field: 'personalWebsite.sys.id', equalTo: personalWebsite.sys.id }
 				]
 			})
@@ -57,28 +52,54 @@ export const actions = {
 				for (const [key, value] of Object.entries(JSON.parse(formData.pagesToPublish))) {
 					const pageEntry = personalWebsitePages.items.find((el) => el.pageSlug === key)
 
-					if (pageEntry) {
-						console.log('===')
-						console.log('Slug:', pageEntry.pageSlug)
-						console.log('Workflow:', pageEntry.sys.workflow)
-						console.log('versionStatus:', pageEntry.sys.versionStatus)
-						console.log('===')
-					}
-
-					// If page exists, but value === false; unpublish the page.
+					// If page exists, and value === false; unpublish the page.
 					if (pageEntry && pageEntry.sys.workflow.state === 'versionComplete' && !value) {
 						await ManagementClient.entries.invokeWorkflow(pageEntry, 'versionComplete.sysUnpublish')
-						console.log('Unpublish:', pageEntry.title)
 					}
-					// If page exists, but value === true; publish the page.
+					// If page exists, and value === true; publish the page.
 					else if (pageEntry && pageEntry.sys.workflow.state === 'draft' && value) {
 						await ManagementClient.entries.invokeWorkflow(pageEntry, 'draft.publish')
-						console.log('PUBLISH PAGE', pageEntry.title)
 					}
+					// If page doesn't exist, and value === true; create the page.
+					else if (!pageEntry && value) {
+						const titleSpaced = key.replace(/-/g, ' ')
+						const createdPage = await ManagementClient.entries.create({
+							title: titleSpaced.charAt(0).toUpperCase() + titleSpaced.slice(1).toLowerCase(),
+							canvas: null,
+							pageSlug: key,
+							personalWebsite: {
+								sys: {
+									id: personalWebsite.sys.id,
+									contentType: 'personalWebsites'
+								}
+							},
+							sys: {
+								contentTypeId: 'personalWebsitePage',
+								language: 'en-GB',
+								dataFormat: 'entry'
+							}
+						})
 
-					// If page doesn't exist, but value === true; create the page.
+						await ManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
 
-					// const pageEntry = await ManagementClient.entries.get(page[1])
+						// Link new page to existing personal website.
+						const totalPages = [
+							...personalWebsite.pages,
+							{
+								sys: { id: createdPage.sys.id, contentTypeId: 'personalWebsitePage' }
+							}
+						]
+
+						personalWebsite.pages = totalPages
+
+						await fetch('/api/contensis/entries/update', {
+							method: 'PUT',
+							body: JSON.stringify({
+								entry: personalWebsite,
+								updatedFields: ['pages']
+							})
+						})
+					}
 				}
 			} catch (e) {
 				console.error('Error while publishing/unpublishing pages:', e)

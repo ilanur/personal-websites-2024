@@ -13,13 +13,13 @@ export const PUT = async ({ request }) => {
 
 		const updatedEntry = await ManagementClient.entries.update(latestEntry)
 
+		console.log('OEPDATE', updatedEntry)
+
 		if (updatedEntry.sys.workflow.state === 'draft') {
 			await ManagementClient.entries.invokeWorkflow(updatedEntry, 'draft.publish')
 		}
 
-		return json(200, {
-			message: 'Success'
-		})
+		return json(updatedEntry, 200)
 	} catch (e) {
 		console.error(e.data)
 		error(500, 'Error while updating entry')

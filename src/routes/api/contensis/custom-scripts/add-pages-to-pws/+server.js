@@ -40,9 +40,12 @@ export const PUT = async ({ fetch }) => {
 			console.log(`${i + 1}/${personalWebsites.items.length} items updated.`)
 		}
 
-		return json(200, {
-			message: 'Success'
-		})
+		return json(
+			{
+				message: 'Success'
+			},
+			200
+		)
 	} catch (e) {
 		console.error(e)
 		error(500, 'Error while updating entries.', e)

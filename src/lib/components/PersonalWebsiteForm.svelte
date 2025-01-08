@@ -9,7 +9,6 @@
 	import Button from '$lib/components/Button.svelte'
 	import * as GoogleMapsApiLoader from '@googlemaps/js-api-loader'
 	import CheckboxField from '$lib/components/form-elements/CheckboxField.svelte'
-	import { stringify } from 'postcss'
 
 	let { user, personalWebsite } = $props()
 
@@ -24,9 +23,9 @@
 	let nationalities = $state()
 	let pagesToPublish = $state({
 		publications: checkIfPagePublished('publications'),
-		publicationsInCadmus: checkIfPagePublished('publications-in-cadmus'),
+		'publications-in-cadmus': checkIfPagePublished('publications-in-cadmus'),
 		research: checkIfPagePublished('research'),
-		workInProgress: checkIfPagePublished('work-in-progress'),
+		'work-in-progress': checkIfPagePublished('work-in-progress'),
 		teaching: checkIfPagePublished('teaching')
 	})
 
@@ -271,9 +270,9 @@
 				<div class="space-y-1">
 					<input type="hidden" name="pagesToPublish" value={JSON.stringify(pagesToPublish)} />
 					<CheckboxField bind:value={pagesToPublish.publications} name="publications" label="List of publications" />
-					<CheckboxField bind:value={pagesToPublish.publicationsInCadmus} name="publicationsInCadmus" label="Publications in cadmus" />
+					<CheckboxField bind:value={pagesToPublish['publications-in-cadmus']} name="publicationsInCadmus" label="Publications in cadmus" />
 					<CheckboxField bind:value={pagesToPublish.research} name="research" label="Research" />
-					<CheckboxField bind:value={pagesToPublish.workInProgress} name="workInProgress" label="Work in progress" />
+					<CheckboxField bind:value={pagesToPublish['work-in-progress']} name="workInProgress" label="Work in progress" />
 					<CheckboxField bind:value={pagesToPublish.teaching} name="teaching" label="Teaching" />
 				</div>
 			</div>

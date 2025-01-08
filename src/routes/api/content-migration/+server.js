@@ -43,12 +43,7 @@ async function importAsset(url, title, description, folder) {
 // Create personal website pages
 async function createPwPages(createdPersonalWebsite, personalData) {
 	// Define pages to exclude from migration.
-	const pagesToExclude = [
-		'Blog',
-		'Contact Me',
-		'Personal Website Settings',
-		'Publications in Cadmus'
-	]
+	const pagesToExclude = ['Blog', 'Contact Me', 'Personal Website Settings', 'Publications in Cadmus']
 
 	// Loop over pages
 	for (let i = 0, ilen = personalData.pages.length; i < ilen; i++) {
@@ -87,7 +82,7 @@ async function createPwPages(createdPersonalWebsite, personalData) {
 		const createdPage = await ManagementClient.entries.create({
 			title,
 			canvas,
-			pageSlug: pageSlug,
+			pageSlug,
 			personalWebsite: {
 				sys: {
 					id: createdPersonalWebsite.sys.id,
@@ -325,10 +320,7 @@ export const GET = async () => {
 	const email = 'anatole.cheysson@eui.eu'
 	const personalWebsite = personalWebsites.items.find((pw) => pw.people.email === email)
 
-	return json(
-		{ success: true, personalWebsites: personalWebsites.items, personalWebsite },
-		{ status: 200 }
-	)
+	return json({ success: true, personalWebsites: personalWebsites.items, personalWebsite }, { status: 200 })
 }
 
 export const POST = async ({ url }) => {

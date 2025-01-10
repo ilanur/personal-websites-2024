@@ -31,10 +31,7 @@ export const PUT = async ({ fetch }) => {
 
 			await fetch('/api/contensis/entries/update', {
 				method: 'PUT',
-				body: JSON.stringify({
-					entry: pw,
-					updatedFields: ['pages']
-				})
+				body: JSON.stringify(pw)
 			})
 
 			console.log(`${i + 1}/${personalWebsites.items.length} items updated.`)

@@ -8,20 +8,21 @@
 	{...rest}
 	class={clsx(
 		rest.class,
-		'border-eui-dark-blue-600 relative rounded-md border-2 px-3 py-2 text-sm font-bold transition duration-200 lg:px-4 lg:py-1.5 lg:text-base',
+		'relative rounded-md border-2 border-eui-dark-blue-600 px-3 py-2 text-sm font-bold transition duration-200 disabled:opacity-70 lg:px-4 lg:py-1.5 lg:text-base',
 		{
 			// Colors
 			'bg-eui-dark-blue-500 text-white hover:bg-opacity-90': !outlined,
-			'hover:bg-eui-dark-blue-500 text-eui-dark-blue-600 bg-white hover:text-white': outlined
+			'bg-white text-eui-dark-blue-600 hover:bg-eui-dark-blue-500 hover:text-white': outlined
 		}
 	)}
+	disabled={loading}
 	{onclick}
 >
 	{#if loading}
 		<div role="status" class="absolute inset-0 flex items-center justify-center">
 			<svg
 				aria-hidden="true"
-				class="text-intranet-black-300 size-6 animate-spin fill-white text-opacity-10"
+				class="size-6 animate-spin fill-white text-intranet-black-300 text-opacity-10"
 				viewBox="0 0 100 101"
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"

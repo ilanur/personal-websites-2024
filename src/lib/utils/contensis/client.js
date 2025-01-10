@@ -51,9 +51,6 @@ export async function savePageContent(page, canvas, assetsUploadFolder) {
 
 	await ofetch('/api/contensis/entries/update', {
 		method: 'PUT',
-		body: {
-			entry: updatedPage,
-			updatedFields: ['canvas']
-		}
+		body: updatedPage
 	})
 }

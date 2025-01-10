@@ -5,15 +5,22 @@ export const PUT = async ({ request }) => {
 	const body = await request.json()
 
 	try {
-		const latestEntry = await ManagementClient.entries.get(body.entry.sys.id)
+		const latestEntry = await ManagementClient.entries.get(body.sys.id)
 
-		for (const updatedField of body.updatedFields) {
-			latestEntry[updatedField] = body.entry[updatedField]
+		for (const [field, value] of Object.entries(body)) {
+			if (value?.sys && value.sys.dataFormat === 'entry') {
+				latestEntry[field] = {
+					sys: {
+						id: value.sys.id,
+						contentTypeId: value.sys.contentTypeId
+					}
+				}
+			} else if (field !== 'sys') {
+				latestEntry[field] = value
+			}
 		}
 
 		const updatedEntry = await ManagementClient.entries.update(latestEntry)
-
-		console.log('OEPDATE', updatedEntry)
 
 		if (updatedEntry.sys.workflow.state === 'draft') {
 			await ManagementClient.entries.invokeWorkflow(updatedEntry, 'draft.publish')
@@ -21,7 +28,7 @@ export const PUT = async ({ request }) => {
 
 		return json(updatedEntry, 200)
 	} catch (e) {
-		console.error(e.data)
+		console.error(e.data ?? e)
 		error(500, 'Error while updating entry')
 	}
 }

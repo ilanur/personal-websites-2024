@@ -36,78 +36,79 @@ export const actions = {
 		}
 
 		try {
-			const personalWebsite = await getPersonalWebsiteByEmail(userIsAdmin ? formData.email : authUser.user.email)
-
-			// Fetch pages because unpublished pages are not shown on the personal website record.
-			const personalWebsitePages = await DeliveryClient.entries.search({
-				where: [
-					{ field: 'sys.contentTypeId', equalTo: 'personalWebsitePage' },
-					{ field: 'sys.versionStatus', equalTo: 'latest' },
-					{ field: 'personalWebsite.sys.id', equalTo: personalWebsite.sys.id }
-				]
-			})
-
-			// PUBLISH/UNPUBLISH/CREATE PAGES
-			try {
-				for (const [key, value] of Object.entries(JSON.parse(formData.pagesToPublish))) {
-					const pageEntry = personalWebsitePages.items.find((el) => el.pageSlug === key)
-
-					// If page exists, and value === false; unpublish the page.
-					if (pageEntry && pageEntry.sys.workflow.state === 'versionComplete' && !value) {
-						await ManagementClient.entries.invokeWorkflow(pageEntry, 'versionComplete.sysUnpublish')
-					}
-					// If page exists, and value === true; publish the page.
-					else if (pageEntry && pageEntry.sys.workflow.state === 'draft' && value) {
-						await ManagementClient.entries.invokeWorkflow(pageEntry, 'draft.publish')
-					}
-					// If page doesn't exist, and value === true; create the page.
-					else if (!pageEntry && value) {
-						const titleSpaced = key.replace(/-/g, ' ')
-						const createdPage = await ManagementClient.entries.create({
-							title: titleSpaced.charAt(0).toUpperCase() + titleSpaced.slice(1).toLowerCase(),
-							canvas: null,
-							pageSlug: key,
-							personalWebsite: {
-								sys: {
-									id: personalWebsite.sys.id,
-									contentType: 'personalWebsites'
-								}
-							},
-							sys: {
-								contentTypeId: 'personalWebsitePage',
-								language: 'en-GB',
-								dataFormat: 'entry'
-							}
-						})
-
-						await ManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
-
-						// Link new page to existing personal website.
-						const totalPages = [
-							...personalWebsite.pages,
-							{
-								sys: { id: createdPage.sys.id, contentTypeId: 'personalWebsitePage' }
-							}
-						]
-
-						personalWebsite.pages = totalPages
-
-						await fetch('/api/contensis/entries/update', {
-							method: 'PUT',
-							body: JSON.stringify({
-								entry: personalWebsite,
-								updatedFields: ['pages']
-							})
-						})
-					}
-				}
-			} catch (e) {
-				console.error('Error while publishing/unpublishing pages:', e)
-			}
-
-			return { success: true }
+			let personalWebsite = await getPersonalWebsiteByEmail(userIsAdmin ? formData.email : authUser.user.email)
 
 			if (personalWebsite) {
+				// Fetch pages because unpublished pages are not shown on the personal website record.
+				const personalWebsitePages = await DeliveryClient.entries.search({
+					where: [
+						{ field: 'sys.contentTypeId', equalTo: 'personalWebsitePage' },
+						{ field: 'sys.versionStatus', equalTo: 'latest' },
+						{ field: 'personalWebsite.sys.id', equalTo: personalWebsite.sys.id }
+					]
+				})
+
+				// PUBLISH/UNPUBLISH/CREATE PAGES
+				try {
+					for (const [key, value] of Object.entries(JSON.parse(formData.pagesToPublish))) {
+						const pageEntry = personalWebsitePages.items.find((el) => el.pageSlug === key)
+
+						// Enable/disable publications-in-cadmus page.
+						if (key === 'publications-in-cadmus' && personalWebsite.enableCadmusPublications !== value) {
+							personalWebsite.enableCadmusPublications = value
+
+							continue
+						}
+
+						if (!pageEntry) {
+							continue
+						}
+
+						// If page exists, and value === false; unpublish the page.
+						if (pageEntry && pageEntry.sys.workflow.state === 'versionComplete' && !value) {
+							await ManagementClient.entries.invokeWorkflow(pageEntry, 'versionComplete.sysUnpublish')
+						}
+						// If page exists, and value === true; publish the page.
+						else if (pageEntry && pageEntry.sys.workflow.state === 'draft' && value) {
+							await ManagementClient.entries.invokeWorkflow(pageEntry, 'draft.publish')
+						}
+						// If page doesn't exist, and value === true; create the page.
+						else if (!pageEntry && value && key !== 'publications-in-cadmus') {
+							const titleSpaced = key.replace(/-/g, ' ')
+							const createdPage = await ManagementClient.entries.create({
+								title: titleSpaced.charAt(0).toUpperCase() + titleSpaced.slice(1).toLowerCase(),
+								canvas: null,
+								pageSlug: key,
+								personalWebsite: {
+									sys: {
+										id: personalWebsite.sys.id,
+										contentType: 'personalWebsites'
+									}
+								},
+								sys: {
+									contentTypeId: 'personalWebsitePage',
+									language: 'en-GB',
+									dataFormat: 'entry'
+								}
+							})
+
+							await ManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
+
+							// Link new page to existing personal website.
+							const totalPages = [
+								...personalWebsite.pages,
+								{
+									sys: { id: createdPage.sys.id, contentTypeId: 'personalWebsitePage' }
+								}
+							]
+
+							personalWebsite.pages = totalPages
+						}
+					}
+				} catch (e) {
+					console.error('Error while publishing/unpublishing pages:', e.data)
+				}
+
 				personalWebsite['websiteSlug'] = formData.slug
 				personalWebsite['nationality'] = { nationality: [formData.nationality] }
 				personalWebsite['city'] = formData.city
@@ -181,11 +182,10 @@ export const actions = {
 				}))
 			}
 
-			const updatedPersonalWebsite = await ManagementClient.entries.update(personalWebsite)
-
-			if (updatedPersonalWebsite.sys.workflow.state === 'draft') {
-				await ManagementClient.entries.invokeWorkflow(updatedPersonalWebsite, 'draft.publish')
-			}
+			await fetch('/api/contensis/entries/update', {
+				method: 'PUT',
+				body: JSON.stringify(personalWebsite)
+			})
 
 			return { success: true }
 		} catch (e) {

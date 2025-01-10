@@ -20,10 +20,7 @@
 
 			await ofetch('/api/contensis/entries/update', {
 				method: 'PUT',
-				body: {
-					entry: personalWebsiteEntry,
-					updatedFields: ['description']
-				}
+				body: personalWebsiteEntry
 			})
 		} catch (e) {
 			console.error('Error updating description', e)

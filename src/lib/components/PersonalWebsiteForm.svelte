@@ -23,7 +23,7 @@
 	let nationalities = $state()
 	let pagesToPublish = $state({
 		publications: checkIfPagePublished('publications'),
-		'publications-in-cadmus': checkIfPagePublished('publications-in-cadmus'),
+		'publications-in-cadmus': personalWebsite.enableCadmusPublications,
 		research: checkIfPagePublished('research'),
 		'work-in-progress': checkIfPagePublished('work-in-progress'),
 		teaching: checkIfPagePublished('teaching')
@@ -131,7 +131,7 @@
 		return async ({ update, result }) => {
 			await update({ reset: false })
 			formLoading = false
-			const fErrors = result.data.formErrors ?? null
+			const fErrors = result.data?.formErrors ?? null
 
 			if (result.type === 'failure' && fErrors) {
 				formErrors = fErrors

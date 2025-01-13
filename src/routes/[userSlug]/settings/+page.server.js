@@ -109,27 +109,37 @@ export const actions = {
 					console.error('Error while publishing/unpublishing pages:', e.data)
 				}
 
+				// Delete old cv when changed cv is uploaded
+				if (personalWebsite.cv) {
+					try {
+						await ManagementClient.entries.delete(personalWebsite.cv.sys.id)
+					} catch (e) {
+						console.error('Error while deleting existing CV:', e)
+					}
+				}
+
 				// Upload and link cv
-				let uploadedPdf = null
+				let uploadedCv = null
+
 				try {
 					const pdf = formData.cvUpload
 					const pdfBuffer = Buffer.from(await pdf.arrayBuffer())
 
 					// Upload CV
-					uploadedPdf = await uploadAsset(pdfBuffer, pdf.name, {
+					uploadedCv = await uploadAsset(pdfBuffer, pdf.name, {
 						description: `CV of ${formData.title}`,
 						folderId: '/Content-Types-Assets/PersonalWebsites/CVs',
 						contentType: 'application/pdf',
 						title: `${formData.slug}-cv`
 					})
 				} catch (e) {
-					console.log('Error uploading cv', e)
+					console.log('Error uploading CV:', e)
 				}
 
-				if (uploadedPdf) {
+				if (uploadedCv) {
 					personalWebsite['cv'] = {
 						sys: {
-							id: uploadedPdf.sys.id,
+							id: uploadedCv.sys.id,
 							contentTypeId: 'asset',
 							language: 'en-GB',
 							dataFormat: 'asset'

@@ -18,6 +18,7 @@
 	let lat = $state(personalWebsite.lat)
 	let lng = $state(personalWebsite.lng)
 	let nationalities = $state()
+	let cv = $state(personalWebsite.cv)
 	let pagesToPublish = $state({
 		publications: checkIfPagePublished('publications'),
 		'publications-in-cadmus': personalWebsite.enableCadmusPublications,
@@ -145,9 +146,19 @@
 				</div>
 			</div>
 
+			<!-- CV -->
 			<div>
 				<p class="my-4 font-bold">Curriculum vitae</p>
-				<input title="Choose CV" type="file" name="cvUpload" accept="application/pdf" required />
+
+				{#if cv}
+					<div class="flex items-center gap-x-2">
+						<i class="fa-solid fa-file"></i>
+						{cv.title}
+						<Button class="ml-4" type="button" onclick={() => (cv = null)}>Change CV</Button>
+					</div>
+				{:else}
+					<input title="Choose CV" type="file" name="cvUpload" accept="application/pdf" required />
+				{/if}
 			</div>
 
 			<div class="mt-4 grid gap-x-2 md:grid-cols-2">

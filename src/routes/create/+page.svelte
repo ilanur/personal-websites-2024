@@ -1,7 +1,7 @@
 <script>
-	import PersonalWebsiteForm from '$lib/components/PersonalWebsiteForm.svelte'
+	import PwForm from '$lib/components/personal-website-form/PwForm.svelte'
 
 	let { data } = $props()
 </script>
 
-<PersonalWebsiteForm user={data.contensisUser} />
+<PwForm user={data.contensisUser} />

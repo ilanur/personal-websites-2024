@@ -1,5 +1,5 @@
 import formatZodError from '$lib/utils/format-zod-error.js'
-import { getPersonalWebsiteByEmail } from '$lib/utils/contensis/server.js'
+import { getPersonalWebsiteByEmail, uploadAsset } from '$lib/utils/contensis/server.js'
 import { pwFormSchema } from '$lib/zod-schemas/personal-website-form.js'
 import { error, fail, redirect } from '@sveltejs/kit'
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients.js'
@@ -107,6 +107,34 @@ export const actions = {
 					}
 				} catch (e) {
 					console.error('Error while publishing/unpublishing pages:', e.data)
+				}
+
+				// Upload and link cv
+				let uploadedPdf = null
+				try {
+					const pdf = formData.cvUpload
+					const pdfBuffer = Buffer.from(await pdf.arrayBuffer())
+
+					// Upload CV
+					uploadedPdf = await uploadAsset(pdfBuffer, pdf.name, {
+						description: `CV of ${formData.title}`,
+						folderId: '/Content-Types-Assets/PersonalWebsites/CVs',
+						contentType: 'application/pdf',
+						title: `${formData.slug}-cv`
+					})
+				} catch (e) {
+					console.log('Error uploading cv', e)
+				}
+
+				if (uploadedPdf) {
+					personalWebsite['cv'] = {
+						sys: {
+							id: uploadedPdf.sys.id,
+							contentTypeId: 'asset',
+							language: 'en-GB',
+							dataFormat: 'asset'
+						}
+					}
 				}
 
 				personalWebsite['websiteSlug'] = formData.slug

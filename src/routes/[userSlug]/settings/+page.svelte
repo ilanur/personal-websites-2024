@@ -1,6 +1,6 @@
 <script>
 	import { getContext } from 'svelte'
-	import PersonalWebsiteForm from '$lib/components/PersonalWebsiteForm.svelte'
+	import PwForm from '$lib/components/personal-website-form/PwForm.svelte'
 
 	let { data } = $props()
 
@@ -9,4 +9,4 @@
 	$smallHeroBanner = true
 </script>
 
-<PersonalWebsiteForm user={data.user} personalWebsite={data.personalWebsite} />
+<PwForm user={data.user} personalWebsite={data.personalWebsite} />

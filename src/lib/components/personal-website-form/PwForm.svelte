@@ -19,6 +19,8 @@
 	let lng = $state(personalWebsite.lng)
 	let nationalities = $state()
 	let cv = $state(personalWebsite.cv)
+	let cvChanged = $state(false)
+	let publishedState = $state(personalWebsite.sys.versionStatus ? true : false)
 	let pagesToPublish = $state({
 		publications: checkIfPagePublished('publications'),
 		'publications-in-cadmus': personalWebsite.enableCadmusPublications,
@@ -26,21 +28,6 @@
 		'work-in-progress': checkIfPagePublished('work-in-progress'),
 		teaching: checkIfPagePublished('teaching')
 	})
-
-	function checkIfPagePublished(slug) {
-		const page = personalWebsite.pages.find((el) => el.pageSlug === slug)
-		return page ? (page.sys.versionStatus === 'published' ? true : false) : false
-	}
-
-	function disableKeyPress(e) {
-		if (e.keyCode == '13') {
-			e.preventDefault()
-		}
-	}
-
-	function getSocialMedia(social) {
-		return personalWebsite.socialMedia.find((el) => el.type === social)
-	}
 
 	onMount(async () => {
 		try {
@@ -81,6 +68,26 @@
 			console.log(`Error loading map: ${e}`)
 		}
 	})
+
+	function checkIfPagePublished(slug) {
+		const page = personalWebsite.pages.find((el) => el.pageSlug === slug)
+		return page ? (page.sys.versionStatus === 'published' ? true : false) : false
+	}
+
+	function disableKeyPress(e) {
+		if (e.keyCode == '13') {
+			e.preventDefault()
+		}
+	}
+
+	function getSocialMedia(social) {
+		return personalWebsite.socialMedia.find((el) => el.type === social)
+	}
+
+	function onCvChange() {
+		cvChanged = true
+		cv = null
+	}
 </script>
 
 <form
@@ -148,13 +155,14 @@
 
 			<!-- CV -->
 			<div>
+				<input type="hidden" name="cvChanged" bind:value={cvChanged} />
 				<p class="my-4 font-bold">Curriculum vitae</p>
 
 				{#if cv}
 					<div class="flex items-center gap-x-2">
 						<i class="fa-solid fa-file"></i>
 						{cv.title}
-						<Button class="ml-4" type="button" onclick={() => (cv = null)}>Change CV</Button>
+						<Button class="ml-4 !text-tiny" type="button" onclick={onCvChange}>Change CV</Button>
 					</div>
 				{:else}
 					<input title="Choose CV" type="file" name="cvUpload" accept="application/pdf" required />
@@ -200,6 +208,18 @@
 					<CheckboxField bind:value={pagesToPublish['work-in-progress']} name="workInProgress" label="Work in progress" />
 					<CheckboxField bind:value={pagesToPublish.teaching} name="teaching" label="Teaching" />
 				</div>
+			</div>
+
+			<hr class="my-6" />
+
+			<div>
+				<p class="mb-4 font-bold">Publish/unpublish your personal website</p>
+				<p class="text-tiny [&_a]:text-eui-light-blue-600/85">
+					While the website is unpublished, it can only be seen by you. Once published, your website will be live and visible by everybody,
+					including search engines. Your website will be listed on <a href={PUBLIC_EUI_PERSONAL_WEBSITE_URL}>me.eui.eu</a> after a manual check.
+				</p>
+
+				<CheckboxField bind:value={publishedState} class="mt-4" name="pwPublishState" label="Publish/unpublish personal website" />
 			</div>
 		</div>
 	</div>

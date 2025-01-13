@@ -36,7 +36,7 @@ export const actions = {
 		}
 
 		try {
-			let personalWebsite = await getPersonalWebsiteByEmail(userIsAdmin ? formData.email : authUser.user.email)
+			let personalWebsite = await getPersonalWebsiteByEmail(userIsAdmin ? formData.email : authUser.user.email, 'latest')
 
 			if (personalWebsite) {
 				// Fetch pages because unpublished pages are not shown on the personal website record.
@@ -48,7 +48,7 @@ export const actions = {
 					]
 				})
 
-				// PUBLISH/UNPUBLISH/CREATE PAGES
+				// PUBLISH/UNPUBLISH/CREATE pages
 				try {
 					for (const [key, value] of Object.entries(JSON.parse(formData.pagesToPublish))) {
 						const pageEntry = personalWebsitePages.items.find((el) => el.pageSlug === key)
@@ -56,7 +56,6 @@ export const actions = {
 						// Enable/disable publications-in-cadmus page.
 						if (key === 'publications-in-cadmus' && personalWebsite.enableCadmusPublications !== value) {
 							personalWebsite.enableCadmusPublications = value
-
 							continue
 						}
 
@@ -110,7 +109,7 @@ export const actions = {
 				}
 
 				// Delete old cv when changed cv is uploaded
-				if (personalWebsite.cv) {
+				if (formData.cvChanged === 'true') {
 					try {
 						await ManagementClient.entries.delete(personalWebsite.cv.sys.id)
 					} catch (e) {
@@ -119,30 +118,32 @@ export const actions = {
 				}
 
 				// Upload and link cv
-				let uploadedCv = null
+				if (formData.cvUpload) {
+					let uploadedCv = null
 
-				try {
-					const pdf = formData.cvUpload
-					const pdfBuffer = Buffer.from(await pdf.arrayBuffer())
+					try {
+						const pdf = formData.cvUpload
+						const pdfBuffer = Buffer.from(await pdf.arrayBuffer())
 
-					// Upload CV
-					uploadedCv = await uploadAsset(pdfBuffer, pdf.name, {
-						description: `CV of ${formData.title}`,
-						folderId: '/Content-Types-Assets/PersonalWebsites/CVs',
-						contentType: 'application/pdf',
-						title: `${formData.slug}-cv`
-					})
-				} catch (e) {
-					console.log('Error uploading CV:', e)
-				}
+						// Upload CV
+						uploadedCv = await uploadAsset(pdfBuffer, pdf.name, {
+							description: `CV of ${formData.title}`,
+							folderId: '/Content-Types-Assets/PersonalWebsites/CVs',
+							contentType: 'application/pdf',
+							title: `${formData.slug}-cv`
+						})
+					} catch (e) {
+						console.log('Error uploading CV:', e)
+					}
 
-				if (uploadedCv) {
-					personalWebsite['cv'] = {
-						sys: {
-							id: uploadedCv.sys.id,
-							contentTypeId: 'asset',
-							language: 'en-GB',
-							dataFormat: 'asset'
+					if (uploadedCv) {
+						personalWebsite['cv'] = {
+							sys: {
+								id: uploadedCv.sys.id,
+								contentTypeId: 'asset',
+								language: 'en-GB',
+								dataFormat: 'asset'
+							}
 						}
 					}
 				}
@@ -224,6 +225,12 @@ export const actions = {
 				method: 'PUT',
 				body: JSON.stringify(personalWebsite)
 			})
+
+			// PUBLISH/UNPUBLISH personal website
+			const pwSys = personalWebsite.sys
+			if (pwSys.versionStatus === 'published' && pwSys.workflow.state === 'versionComplete' && formData.pwPublishState === 'false') {
+				await ManagementClient.entries.invokeWorkflow(personalWebsite, 'versionComplete.sysUnpublish')
+			}
 
 			return { success: true }
 		} catch (e) {

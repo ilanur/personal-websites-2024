@@ -23,7 +23,7 @@ export async function getPeopleEntryByEmail(email) {
 	}
 }
 
-export async function getPersonalWebsiteByEmail(email) {
+export async function getPersonalWebsiteByEmail(email, versionStatus = 'published') {
 	try {
 		const people = await getPeopleEntryByEmail(email)
 		if (!people) return null
@@ -31,7 +31,7 @@ export async function getPersonalWebsiteByEmail(email) {
 		const query = {
 			where: [
 				{ field: 'sys.contentTypeId', equalTo: 'personalWebsites' },
-				{ field: 'sys.versionStatus', equalTo: 'published' },
+				{ field: 'sys.versionStatus', equalTo: versionStatus },
 				{ field: 'people.sys.id', equalTo: people.sys.id }
 			]
 		}

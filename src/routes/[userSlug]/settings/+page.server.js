@@ -36,7 +36,7 @@ export const actions = {
 		}
 
 		try {
-			let personalWebsite = await getPersonalWebsiteByEmail(userIsAdmin ? formData.email : authUser.user.email, 'latest')
+			let personalWebsite = await getPersonalWebsiteByEmail(userIsAdmin ? formData.email : authUser.user.email)
 
 			if (personalWebsite) {
 				// Fetch pages because unpublished pages are not shown on the personal website record.
@@ -59,10 +59,6 @@ export const actions = {
 							continue
 						}
 
-						if (!pageEntry) {
-							continue
-						}
-
 						// If page exists, and value === false; unpublish the page.
 						if (pageEntry && pageEntry.sys.workflow.state === 'versionComplete' && !value) {
 							await ManagementClient.entries.invokeWorkflow(pageEntry, 'versionComplete.sysUnpublish')
@@ -73,6 +69,7 @@ export const actions = {
 						}
 						// If page doesn't exist, and value === true; create the page.
 						else if (!pageEntry && value && key !== 'publications-in-cadmus') {
+							console.log('CREATE PAGE', key)
 							const titleSpaced = key.replace(/-/g, ' ')
 							const createdPage = await ManagementClient.entries.create({
 								title: titleSpaced.charAt(0).toUpperCase() + titleSpaced.slice(1).toLowerCase(),
@@ -100,6 +97,8 @@ export const actions = {
 									sys: { id: createdPage.sys.id, contentTypeId: 'personalWebsitePage' }
 								}
 							]
+
+							console.log('TOTAL PAGES', totalPages)
 
 							personalWebsite.pages = totalPages
 						}
@@ -221,16 +220,18 @@ export const actions = {
 				}))
 			}
 
+			console.log('personalWebsite before publish', personalWebsite)
+
 			await fetch('/api/contensis/entries/update', {
 				method: 'PUT',
 				body: JSON.stringify(personalWebsite)
 			})
 
 			// PUBLISH/UNPUBLISH personal website
-			const pwSys = personalWebsite.sys
-			if (pwSys.versionStatus === 'published' && pwSys.workflow.state === 'versionComplete' && formData.pwPublishState === 'false') {
-				await ManagementClient.entries.invokeWorkflow(personalWebsite, 'versionComplete.sysUnpublish')
-			}
+			// const pwSys = personalWebsite.sys
+			// if (pwSys.versionStatus === 'published' && pwSys.workflow.state === 'versionComplete' && formData.pwPublishState === 'false') {
+			// 	await ManagementClient.entries.invokeWorkflow(personalWebsite, 'versionComplete.sysUnpublish')
+			// }
 
 			return { success: true }
 		} catch (e) {

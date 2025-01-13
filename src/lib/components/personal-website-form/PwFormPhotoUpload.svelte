@@ -7,7 +7,7 @@
 
 	let fileUploadRef = null
 	let previewPhoto = $state()
-	let useEuiPhoto = $state(personalWebsite.usePeopleProfilePicture)
+	let useEuiPhoto = $state(personalWebsite?.usePeopleProfilePicture)
 
 	$effect(() => {
 		if (user.photo && useEuiPhoto) {

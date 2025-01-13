@@ -4,4 +4,6 @@
 	let { data } = $props()
 </script>
 
-<PwForm user={data.contensisUser} />
+<div class="container py-12 md:py-16">
+	<PwForm user={data.contensisUser} />
+</div>

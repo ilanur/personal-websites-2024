@@ -14,16 +14,16 @@
 
 	let formLoading = $state(false)
 	let formErrors = $state()
-	let city = $state(personalWebsite.city)
-	let lat = $state(personalWebsite.lat)
-	let lng = $state(personalWebsite.lng)
+	let city = $state(personalWebsite?.city)
+	let lat = $state(personalWebsite?.lat)
+	let lng = $state(personalWebsite?.lng)
 	let nationalities = $state()
-	let cv = $state(personalWebsite.cv)
+	let cv = $state(personalWebsite?.cv)
 	let cvChanged = $state(false)
-	let publishedState = $state(personalWebsite.sys.versionStatus ? true : false)
+	let publishedState = $state(personalWebsite?.sys.versionStatus ? true : false)
 	let pagesToPublish = $state({
 		publications: checkIfPagePublished('publications'),
-		'publications-in-cadmus': personalWebsite.enableCadmusPublications,
+		'publications-in-cadmus': personalWebsite?.enableCadmusPublications,
 		research: checkIfPagePublished('research'),
 		'work-in-progress': checkIfPagePublished('work-in-progress'),
 		teaching: checkIfPagePublished('teaching')
@@ -70,7 +70,7 @@
 	})
 
 	function checkIfPagePublished(slug) {
-		const page = personalWebsite.pages.find((el) => el.pageSlug === slug)
+		const page = personalWebsite?.pages.find((el) => el.pageSlug === slug)
 		return page ? (page.sys.versionStatus === 'published' ? true : false) : false
 	}
 
@@ -81,7 +81,7 @@
 	}
 
 	function getSocialMedia(social) {
-		return personalWebsite.socialMedia.find((el) => el.type === social)
+		return personalWebsite?.socialMedia.find((el) => el.type === social)
 	}
 
 	function onCvChange() {
@@ -139,7 +139,7 @@
 				placeholder="Select your nationality"
 				valuePropertyName="en-GB"
 				textPropertyName="en-GB"
-				value={personalWebsite.nationality.nationality[0]}
+				value={personalWebsite?.nationality.nationality[0]}
 				error={formErrors?.nationality}
 			/>
 

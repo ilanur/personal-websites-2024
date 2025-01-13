@@ -17,7 +17,7 @@
 <h1 class="mb-4 text-3xl">{data.page.title}</h1>
 
 <EditableContent
-	htmlContent={data.page ? getCanvasHTML(data.page.canvas) : ''}
+	htmlContent={data.page?.canvas ? getCanvasHTML(data.page.canvas) : ''}
 	enabled={isAuthUserWebsite || isAdmin}
 	onSave={async (canvas) => await savePageContent(data.page, canvas, PUBLIC_CONTENSIS_PAGES_ASSETS_FOLDER)}
 />

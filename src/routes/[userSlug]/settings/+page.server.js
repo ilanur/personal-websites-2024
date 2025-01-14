@@ -98,8 +98,6 @@ export const actions = {
 								}
 							]
 
-							console.log('TOTAL PAGES', totalPages)
-
 							personalWebsite.pages = totalPages
 						}
 					}

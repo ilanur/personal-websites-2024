@@ -37,4 +37,5 @@
 <div class={clsx('flex h-40 flex-col', rest.class)}>
 	<label for={editorId} class="mb-1 text-sm" onclick={quillInstance.focus()}>{label}</label>
 	<div class="canvas-editor" id={editorId}></div>
+	<input type="hidden" name={rest.name} {value} />
 </div>

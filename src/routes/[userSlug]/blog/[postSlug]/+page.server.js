@@ -3,21 +3,12 @@ import { DeliveryClient } from '$lib/utils/contensis/_clients'
 import { PUBLIC_PREVIEW_COOKIE_NAME, PUBLIC_PREVIEW_PARAM } from '$env/static/public'
 import { getCanvasHTML } from '$lib/utils/contensis/client.js'
 
-export async function load({ params, cookies, url }) {
+export async function load({ params, parent }) {
+	const parentData = await parent()
+
 	try {
-		// Get preview state using constants
-		const isPreviewCookie = cookies.get(PUBLIC_PREVIEW_COOKIE_NAME) === 'true'
-		const isPreviewParam = url.searchParams.get(PUBLIC_PREVIEW_PARAM) === 'true'
-
-		const isPreview = isPreviewCookie || isPreviewParam
-		const optionsPost = {
-			versionStatus: isPreview ? 'latest' : 'published',
-			id: params.postSlug,
-			linkDepth: 0
-		}
-
 		async function getPost() {
-			const post = await DeliveryClient.entries.get(optionsPost)
+			const post = parentData.personalWebsite.blogPosts.find((post) => post.sys.slug === params.postSlug)
 
 			if (!post) {
 				error(404, {
@@ -34,10 +25,7 @@ export async function load({ params, cookies, url }) {
 		}
 
 		return {
-			post: await getPost(),
-			preview: {
-				active: isPreviewCookie || isPreviewParam
-			}
+			post: await getPost()
 		}
 	} catch (err) {
 		console.error('Error fetching post:', err)

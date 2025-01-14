@@ -1,34 +1,11 @@
 import { redirect } from '@sveltejs/kit'
-import { DeliveryClient } from '$lib/utils/contensis/_clients'
 
 export async function load({ parent }) {
 	const parentData = await parent()
 
 	if (!parentData.personalWebsite) redirect(302, '/')
 
-	// Get blog posts from the user
-	const query = {
-		where: [
-			{ field: 'sys.contentTypeId', equalTo: 'personalWebsitesBlogPost' },
-			{ field: 'sys.versionStatus', equalTo: 'published' },
-			{ field: 'personalWebsite.sys.id', equalTo: parentData.personalWebsite.sys.id }
-		]
-	}
-
-	// Check if personal website already exists for this email by delivery search
-	const blogPosts = await DeliveryClient.entries.search(query)
-
-	// For each blog post, generate the url based on personalWebsite slug and blog post slug
-	blogPosts.items = blogPosts.items.map((blogPost) => {
-		const userSlug = parentData.personalWebsite.websiteSlug
-		const blogPostSlug = blogPost.sys.slug
-
-		blogPost.url = `/${userSlug}/blog/${blogPostSlug}`
-
-		return blogPost
-	})
-
 	return {
-		blogPosts: blogPosts.items
+		blogPosts: parentData.personalWebsite.blogPosts
 	}
 }

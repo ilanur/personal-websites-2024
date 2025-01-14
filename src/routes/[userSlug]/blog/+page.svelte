@@ -34,7 +34,12 @@
 					</div>
 
 					<div>
-						<AppLink href={`${post.url}`} class="mt-4 text-tiny font-medium text-eui-light-blue-600/85" showArrow title={post.entryTitle}>
+						<AppLink
+							href={`blog/${post.sys.slug}`}
+							class="mt-4 text-tiny font-medium text-eui-light-blue-600/85"
+							showArrow
+							title={post.entryTitle}
+						>
 							Read more
 							<span class="sr-only"> about {post.entryTitle}</span>
 							<span class="absolute inset-x-0 -top-px bottom-0"></span>
@@ -43,6 +48,12 @@
 				</div>
 			</article>
 		{/each}
+	</div>
+
+	<div class="mt-16 flex justify-center">
+		<a href="blog/create">
+			<Button>Create new blogpost</Button>
+		</a>
 	</div>
 {:else}
 	<div class="text-center">

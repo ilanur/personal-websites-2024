@@ -4,6 +4,7 @@
 	import Button from '$lib/components/Button.svelte'
 	import InputField from '$lib/components/form-elements/InputField.svelte'
 	import TextArea from '$lib/components/form-elements/TextArea.svelte'
+	import PhotoUploader from '$lib/components/PhotoUploader.svelte'
 	import TextEditor from '$lib/components/TextEditor.svelte'
 
 	const { data } = $props()
@@ -13,6 +14,7 @@
 
 <form
 	method="POST"
+	enctype="multipart/form-data"
 	class="flex flex-col gap-4"
 	use:enhance={() => {
 		loading = true
@@ -23,6 +25,8 @@
 		}
 	}}
 >
+	<PhotoUploader class="mb-10" name="mainImage" imgContainerClass="w-full h-72" />
+
 	<InputField type="text" name="title" label="Title of blogpost" />
 	<TextArea name="description" label="Description" />
 	<TextEditor label="Content" name="content" htmlContent={''} />

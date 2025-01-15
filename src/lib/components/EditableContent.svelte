@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte'
 	import { parseHtml } from '@contensis/html-canvas'
 	import { PUBLIC_EUI_WEB } from '$env/static/public'
-	import { getCanvasHTML } from '$lib/utils/contensis/client'
+	import { canvasToText, getCanvasHTML } from '$lib/utils/contensis/client'
 	import clsx from 'clsx'
 	import Button from '$lib/components/Button.svelte'
 	import 'quill/dist/quill.snow.css'
@@ -12,6 +12,7 @@
 		htmlContent,
 		enabled = false,
 		toolbar = ['bold', 'italic', 'underline', 'link', 'image', 'code-block', { list: 'ordered' }, { list: 'bullet' }],
+		returnType = 'canvas', // canvas, html, text
 		onSave,
 		...rest
 	} = $props()
@@ -77,7 +78,17 @@
 			const updatedHtml = quillInstance.getSemanticHTML()
 			const canvas = await parseHtml(updatedHtml)
 
-			await onSave(canvas)
+			if (returnType === 'canvas') {
+				await onSave(canvas)
+			}
+
+			if (returnType === 'html') {
+				await onSave(updatedHtml)
+			}
+
+			if (returnType === 'text') {
+				await onSave(canvasToText(canvas))
+			}
 
 			htmlToRender = updatedHtml
 		} catch (error) {

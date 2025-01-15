@@ -7,11 +7,20 @@ export const PUT = async ({ request }) => {
 	try {
 		const latestEntry = await ManagementClient.entries.get(body.sys.id)
 
-		for (const [field, value] of Object.entries(body)) {
-			if (value?.sys && value.sys.dataFormat === 'entry') {
+		for (let [field, value] of Object.entries(body)) {
+			if (Array.isArray(value) && value.every((item) => item?.sys?.dataFormat === 'entry')) {
+				latestEntry[field] = value.map((item) => ({
+					sys: {
+						id: item.sys.id,
+						dataFormat: 'entry',
+						contentTypeId: item.sys.contentTypeId
+					}
+				}))
+			} else if (value?.sys?.dataFormat === 'entry') {
 				latestEntry[field] = {
 					sys: {
 						id: value.sys.id,
+						dataFormat: 'entry',
 						contentTypeId: value.sys.contentTypeId
 					}
 				}

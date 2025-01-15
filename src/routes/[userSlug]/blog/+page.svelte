@@ -9,8 +9,6 @@
 	const smallHeroBanner = getContext('smallHeroBanner')
 
 	$smallHeroBanner = true
-
-	console.log('data', data)
 </script>
 
 {#if data.blogPosts.length > 0}
@@ -22,7 +20,13 @@
 				class="group relative flex h-full flex-col overflow-hidden rounded-lg border bg-white transition-all hover:scale-[1.02] hover:shadow-lg"
 			>
 				<figure class="aspect-16-9 w-full shrink-0 overflow-hidden">
-					<img class="h-full w-full object-cover" src={getThumbnail(post.entryThumbnail)} alt={post.entryTitle} />
+					{#if post.mainImage}
+						<img class="size-full object-cover" src={getThumbnail(post.mainImage)} alt={post.mainImage.altText} />
+					{:else}
+						<div class="flex size-full items-center justify-center bg-intranet-gray-100">
+							<i class="fa-solid fa-image fa-xl text-eui-dark-blue-600"></i>
+						</div>
+					{/if}
 				</figure>
 
 				<div class="h-full p-4 sm:flex sm:flex-col sm:justify-between">

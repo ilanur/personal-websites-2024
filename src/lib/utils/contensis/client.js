@@ -16,6 +16,13 @@ export function getCanvasHTML(canvas) {
 	return getCanvasHtml(mapped)
 }
 
+export function canvasToText(canvas) {
+	const html = getCanvasHTML(canvas)
+	var tempDivElement = document.createElement('div')
+	tempDivElement.innerHTML = html
+	return tempDivElement.textContent || tempDivElement.innerText || ''
+}
+
 export function getCorrectEntryPhoto(personalWebsiteEntry, userEntry) {
 	if (personalWebsiteEntry.usePeopleProfilePicture && userEntry.photo) {
 		return `${PUBLIC_EUI_WEB}${userEntry.photo.asset.sys.uri}`

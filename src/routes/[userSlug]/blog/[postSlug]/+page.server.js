@@ -1,7 +1,4 @@
 import { error } from '@sveltejs/kit'
-import { DeliveryClient } from '$lib/utils/contensis/_clients'
-import { PUBLIC_PREVIEW_COOKIE_NAME, PUBLIC_PREVIEW_PARAM } from '$env/static/public'
-import { getCanvasHTML } from '$lib/utils/contensis/client.js'
 
 export async function load({ params, parent }) {
 	const parentData = await parent()
@@ -16,16 +13,12 @@ export async function load({ params, parent }) {
 				})
 			}
 
-			// Only try to render canvas if it exists
-			if (post.canvas) {
-				post['canvasHtml'] = getCanvasHTML(post.canvas)
-			}
-
 			return post
 		}
 
 		return {
-			post: await getPost()
+			post: await getPost(),
+			editAllowed: parentData.authUser?.email === parentData.personalWebsite.people.email
 		}
 	} catch (err) {
 		console.error('Error fetching post:', err)

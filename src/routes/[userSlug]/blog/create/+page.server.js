@@ -1,6 +1,7 @@
 import { ManagementClient } from '$lib/utils/contensis/_clients.js'
-import { getPersonalWebsiteByEmail } from '$lib/utils/contensis/server.js'
+import { FileToFileBuffer, getPersonalWebsiteByEmail, uploadAsset } from '$lib/utils/contensis/server.js'
 import { parseHtml } from '@contensis/html-canvas'
+import dayjs from 'dayjs'
 
 export const actions = {
 	default: async ({ request, locals, fetch }) => {
@@ -15,6 +16,7 @@ export const actions = {
 				title: formData.title,
 				description: formData.description,
 				canvas: await parseHtml(formData.content),
+				publishingDate: dayjs().format(),
 				personalWebsite: {
 					sys: {
 						id: personalWebsite.sys.id,
@@ -34,9 +36,49 @@ export const actions = {
 		}
 
 		if (createdBlogPost) {
-			// Publish blog post
+			// Upload image (only if blogpost has created successfully)
+			if (formData.mainImage.size) {
+				const { fileBuffer, filename } = await FileToFileBuffer(formData.mainImage)
+
+				try {
+					const uploadedImage = await uploadAsset(fileBuffer, filename, {
+						title: filename,
+						description: formData.description,
+						folderId: '/Content-Types-Assets/PersonalWebsites/Blogs',
+						contentType: formData.mainImage.type
+					})
+
+					createdBlogPost.mainImage = {
+						altText: `Uploader blog cover for ${formData.title}`,
+						asset: {
+							sys: {
+								id: uploadedImage.sys.id,
+								language: 'en-GB',
+								dataFormat: 'asset'
+							}
+						}
+					}
+				} catch (e) {
+					console.log('Error while uploading image:', e.data ?? e)
+				}
+			}
+
+			// Add people entry as author to blogpost
+			createdBlogPost.authors = [
+				{
+					sys: {
+						id: personalWebsite.people.sys.id,
+						contentTypeId: 'people'
+					}
+				}
+			]
+
+			// Update & publish blog post
 			try {
-				await ManagementClient.entries.invokeWorkflow(createdBlogPost, 'draft.publish')
+				await fetch('/api/contensis/entries/update', {
+					method: 'PUT',
+					body: JSON.stringify(createdBlogPost)
+				})
 			} catch (e) {
 				console.log('Error while publishing blog post and personal website:', e.data ?? e)
 			}

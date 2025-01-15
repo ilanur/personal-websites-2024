@@ -66,6 +66,14 @@ export async function authenticateContensis() {
 	}
 }
 
+export async function FileToFileBuffer(file) {
+	const arrayBuffer = await file.arrayBuffer()
+	const fileBuffer = Buffer.from(arrayBuffer)
+	const filename = file.name
+
+	return { fileBuffer, filename }
+}
+
 export async function uploadAsset(fileBuffer, filename, options = {}) {
 	try {
 		const { language = 'en-GB', description = '', folderId = '', title = filename, contentType = 'audio/mpeg' } = options

@@ -1,8 +1,11 @@
 <script>
+	import dayjs from 'dayjs'
+	import EditableContent from '$lib/components/EditableContent.svelte'
 	import { PUBLIC_CONTENSIS_URL } from '$env/static/public'
 	import { page } from '$app/stores'
 	import { getThumbnail } from '$lib/utils/utils'
-	import dayjs from 'dayjs'
+	import { getCanvasHTML } from '$lib/utils/contensis/client'
+	import { ofetch } from 'ofetch'
 
 	let { data } = $props()
 
@@ -27,6 +30,22 @@
 
 	if (data.post.audioTranscription && data.post.audioTranscription.file?.sys.uri) {
 		audioUrl = `${PUBLIC_EUI_BASE_URL}/${data.post.audioTranscription.file.sys.uri}`
+	}
+
+	async function changePostContent(field, value) {
+		console.log('field', field, value)
+		try {
+			const post = data.post
+
+			post[field] = value
+
+			await ofetch('/api/contensis/entries/update', {
+				method: 'PUT',
+				body: post
+			})
+		} catch (e) {
+			console.error('Error updating description', e)
+		}
 	}
 </script>
 
@@ -68,7 +87,14 @@
 				{/if}
 			</p>
 
-			<h1 class="mb-4 text-3xl">{data.post.entryTitle}</h1>
+			<EditableContent
+				editorId="title"
+				class={data.editAllowed ? 'mb-10' : 'mb-4'}
+				htmlContent={data.post ? `<h1 class="text-3xl">${data.post.title}</h1>` : ''}
+				enabled={data.editAllowed}
+				returnType="text"
+				onSave={(value) => changePostContent('title', value)}
+			/>
 
 			{#if audioUrl}
 				<audio controls class="mb-4">
@@ -77,7 +103,13 @@
 				</audio>
 			{/if}
 
-			<p>{@html data.post.entryDescription}</p>
+			<EditableContent
+				editorId="description"
+				htmlContent={data.post?.description ?? ''}
+				enabled={data.editAllowed}
+				returnType="html"
+				onSave={(value) => changePostContent('description', value)}
+			/>
 
 			<div class="relative mb-6 border-b border-slate-200 text-right">
 				<div class="flex justify-end">
@@ -154,8 +186,13 @@
 			</div>
 		{/if}
 
-		<div class="canvas-content mt-6 max-w-prose">
-			{@html data.post.canvasHtml}
+		<div class="canvas-content mt-6">
+			<EditableContent
+				editorId="canvas"
+				htmlContent={data.post?.canvas ? getCanvasHTML(data.post.canvas) : ''}
+				enabled={data.editAllowed}
+				onSave={(value) => changePostContent('canvas', value)}
+			/>
 		</div>
 	</div>
 </article>

@@ -1,9 +1,12 @@
 <script>
 	import clsx from 'clsx'
+	import Cropper from 'cropperjs'
+	import BaseModal from './BaseModal.svelte'
 
-	let { imgContainerClass = '', photo = null, onPhotoSelect = () => {}, ...rest } = $props()
+	let { imgContainerClass = '', photo = null, crop, onPhotoSelect = () => {}, ...rest } = $props()
 
-	let fileUploadRef = null
+	let fileUploadRef = $state()
+	let cropModalRef = $state()
 	let previewPhoto = $state(photo)
 
 	function onPhotoActionClick() {
@@ -19,7 +22,11 @@
 		const selectedPhoto = e.target.files[0]
 		const reader = new FileReader()
 
-		onPhotoSelect(selectedPhoto)
+		if (!crop) {
+			onPhotoSelect(selectedPhoto)
+		} else {
+			cropModalRef.openModal()
+		}
 
 		reader.readAsDataURL(selectedPhoto)
 		reader.onload = (e) => {
@@ -46,7 +53,7 @@
 		{/if}
 
 		{#if previewPhoto}
-			<img src={previewPhoto} class="size-full object-contain" alt="Preview" />
+			<img id="preview-img" src={previewPhoto} class="size-full object-contain" alt="Preview" />
 		{/if}
 
 		<div class="absolute bottom-0 right-0 z-10 flex gap-3 rounded-tl bg-eui-dark-blue-600 p-3 text-white">
@@ -61,6 +68,18 @@
 		</div>
 	</div>
 </div>
+
+<BaseModal bind:this={cropModalRef}>
+	{#snippet headerSlot()}
+		Crop image
+	{/snippet}
+
+	<img src={previewPhoto} class="size-full object-contain" alt="Preview" />
+
+	{#snippet footerSlot()}
+		This is the footer
+	{/snippet}
+</BaseModal>
 
 {#snippet imgActionButton(ariaLabel, icon, callback)}
 	<button

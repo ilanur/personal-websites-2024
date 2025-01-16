@@ -25,7 +25,7 @@
 		}
 	}}
 >
-	<PhotoUploader class="mb-10" name="mainImage" imgContainerClass="w-full h-72" />
+	<PhotoUploader class="mb-10" name="mainImage" imgContainerClass="w-full h-72" crop={'1200x675'} />
 
 	<InputField type="text" name="title" label="Title of blogpost" />
 	<TextArea name="description" label="Description" />

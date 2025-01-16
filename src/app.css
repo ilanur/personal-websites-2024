@@ -40,6 +40,10 @@
 		@apply mb-4 text-base font-bold;
 	}
 
+	dialog::backdrop {
+		background-color: hsla(0, 0%, 7%, 0.4);
+	}
+
 	.markdown ul,
 	.markdown ol {
 		margin: 1rem 0;

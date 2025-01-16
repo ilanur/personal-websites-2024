@@ -66,7 +66,7 @@ export async function authenticateContensis() {
 	}
 }
 
-export async function FileToFileBuffer(file) {
+export async function fileToFileBuffer(file) {
 	const arrayBuffer = await file.arrayBuffer()
 	const fileBuffer = Buffer.from(arrayBuffer)
 	const filename = file.name
@@ -117,7 +117,7 @@ export async function uploadAsset(fileBuffer, filename, options = {}) {
 
 		return createdEntry
 	} catch (e) {
-		console.error('Error uploading asset to Contensis:', e)
+		console.error('Error uploading asset to Contensis:', e.data ?? e)
 		throw error(400, `Failed to upload asset: ${e.message}`)
 	}
 }

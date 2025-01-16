@@ -4,7 +4,7 @@
 	let { imgContainerClass = '', photo = null, onPhotoSelect = () => {}, ...rest } = $props()
 
 	let fileUploadRef = null
-	let previewPhoto = $state()
+	let previewPhoto = $state(photo)
 
 	function onPhotoActionClick() {
 		fileUploadRef.click()
@@ -16,12 +16,12 @@
 	}
 
 	function photoSelected(e) {
-		const photo = e.target.files[0]
+		const selectedPhoto = e.target.files[0]
 		const reader = new FileReader()
 
-		onPhotoSelect(photo)
+		onPhotoSelect(selectedPhoto)
 
-		reader.readAsDataURL(photo)
+		reader.readAsDataURL(selectedPhoto)
 		reader.onload = (e) => {
 			previewPhoto = e.target.result
 		}

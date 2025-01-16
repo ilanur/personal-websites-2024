@@ -2,7 +2,7 @@ import slugify from 'slugify'
 import formatZodError from '$lib/utils/format-zod-error.js'
 import { error, fail, redirect } from '@sveltejs/kit'
 import { ManagementClient, DeliveryClient } from '$lib/utils/contensis/_clients'
-import { FileToFileBuffer, getPeopleEntryByEmail, uploadAsset } from '$lib/utils/contensis/server'
+import { fileToFileBuffer, getPeopleEntryByEmail, uploadAsset } from '$lib/utils/contensis/server'
 import { parseHtml } from '@contensis/html-canvas'
 import { pwFormSchema } from '$lib/zod-schemas/personal-website-form.js'
 
@@ -55,7 +55,7 @@ export const actions = {
 			let createdPersonalWebsite = null
 
 			if (formData.photoUpload.size !== 0 && formData.useEuiPhoto !== 'true') {
-				const { fileBuffer, filename } = await FileToFileBuffer(formData.photoUpload)
+				const { fileBuffer, filename } = await fileToFileBuffer(formData.photoUpload)
 
 				try {
 					uploadedPhoto = await uploadAsset(fileBuffer, filename, {

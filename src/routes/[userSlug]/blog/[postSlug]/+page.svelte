@@ -3,13 +3,18 @@
 	import EditableContent from '$lib/components/EditableContent.svelte'
 	import { PUBLIC_CONTENSIS_URL } from '$env/static/public'
 	import { page } from '$app/stores'
-	import { getThumbnail } from '$lib/utils/utils'
+	import { fileToBase64, getThumbnail } from '$lib/utils/utils'
 	import { getCanvasHTML } from '$lib/utils/contensis/client'
 	import { ofetch } from 'ofetch'
+	import PhotoUploader from '$lib/components/PhotoUploader.svelte'
+	import { base } from '$app/paths'
 
 	let { data } = $props()
 
+	console.log('data', data)
+
 	let audioUrl = $state(null)
+	let photoFormRef
 
 	const user = $derived.by(() => $page.data.session?.user)
 	const currentUrl = $derived.by(() => $page.url.href)
@@ -33,7 +38,6 @@
 	}
 
 	async function changePostContent(field, value) {
-		console.log('field', field, value)
 		try {
 			const post = data.post
 
@@ -46,6 +50,28 @@
 		} catch (e) {
 			console.error('Error updating description', e)
 		}
+	}
+
+	async function onPhotoSelect(photo) {
+		console.log(photo)
+
+		const folderId = 'Content-Types-Assets/PersonalWebsites/Blogs'
+		const altText = `Cover for blogpost "${data.post.title}"`
+		const base64 = await fileToBase64(photo)
+		const metadata = {
+			folderId,
+			altText,
+			filename: photo.name
+		}
+
+		const updatedPhoto = {
+			base64,
+			metadata
+		}
+
+		console.log('fullBase64', updatedPhoto)
+
+		changePostContent('mainImage', JSON.stringify(updatedPhoto))
 	}
 </script>
 
@@ -162,12 +188,18 @@
 	</header>
 
 	<div class="max-w-2xl 2xl:mx-auto">
-		{#if data.post.entryThumbnail}
-			<figure>
+		<figure>
+			{#if data.editAllowed}
+				<PhotoUploader imgContainerClass="w-full" photo={getThumbnail(data.post.entryThumbnail)} {onPhotoSelect} />
+			{:else if data.post.entryThumbnail}
 				<img class="h-auto w-full" src={getThumbnail(data.post.entryThumbnail)} alt={data.post.entryThumbnail.altText} />
-				<figcaption></figcaption>
-			</figure>
-		{/if}
+			{:else}
+				<div class="flex size-full min-h-60 items-center justify-center bg-intranet-gray-100 object-cover">
+					<i class="fa-solid fa-image fa-xl text-eui-dark-blue-600"></i>
+				</div>
+			{/if}
+			<figcaption></figcaption>
+		</figure>
 
 		<p class="my-6 text-sm">
 			Published on: {dayjs(data.post.publishingDate).format('DD/MM/YYYY')}

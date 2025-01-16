@@ -1,5 +1,5 @@
 import { ManagementClient } from '$lib/utils/contensis/_clients.js'
-import { FileToFileBuffer, getPersonalWebsiteByEmail, uploadAsset } from '$lib/utils/contensis/server.js'
+import { fileToFileBuffer, getPersonalWebsiteByEmail, uploadAsset } from '$lib/utils/contensis/server.js'
 import { parseHtml } from '@contensis/html-canvas'
 import dayjs from 'dayjs'
 
@@ -38,7 +38,7 @@ export const actions = {
 		if (createdBlogPost) {
 			// Upload image (only if blogpost has created successfully)
 			if (formData.mainImage.size) {
-				const { fileBuffer, filename } = await FileToFileBuffer(formData.mainImage)
+				const { fileBuffer, filename } = await fileToFileBuffer(formData.mainImage)
 
 				try {
 					const uploadedImage = await uploadAsset(fileBuffer, filename, {

@@ -1,7 +1,9 @@
 <script>
 	import { getContext } from 'svelte'
-	import AppLink from '$lib/components/AppLink.svelte'
 	import { getThumbnail, truncateString } from '$lib/utils/utils'
+	import { loadImage } from '$lib/directives/image-directives'
+	import { PUBLIC_EUI_WEB } from '$env/static/public'
+	import AppLink from '$lib/components/AppLink.svelte'
 	import Button from '$lib/components/Button.svelte'
 
 	let { data } = $props()
@@ -21,7 +23,14 @@
 			>
 				<figure class="aspect-16-9 w-full shrink-0 overflow-hidden">
 					{#if post.mainImage}
-						<img class="size-full object-cover" src={getThumbnail(post.mainImage)} alt={post.mainImage.altText} />
+						<img
+							class="size-full object-cover"
+							src={getThumbnail(post.mainImage)}
+							alt={post.mainImage.altText}
+							use:loadImage={{
+								placeholder: `${PUBLIC_EUI_WEB}/web-production/code/assets/img/image-processing.jpg`
+							}}
+						/>
 					{:else}
 						<div class="flex size-full items-center justify-center bg-intranet-gray-100">
 							<i class="fa-solid fa-image fa-xl text-eui-dark-blue-600"></i>

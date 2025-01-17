@@ -23,7 +23,7 @@ export function truncateString(str, maxLength) {
 
 /*
 ##################################################################################################
-    BASE64 TO FILE
+    FILE TO BASE64
 ##################################################################################################    
 */
 export function fileToBase64(file) {
@@ -35,6 +35,11 @@ export function fileToBase64(file) {
 	})
 }
 
+/*
+##################################################################################################
+    BASE64 TO FILE
+##################################################################################################    
+*/
 export function base64toFile(base64String) {
 	const [mime, base64Content] = base64String.split(';base64,')
 	const mimeType = mime.split(':')[1]
@@ -52,6 +57,11 @@ export function base64toFile(base64String) {
 	return new File([blob], filename, { type: mimeType })
 }
 
+/*
+##################################################################################################
+    GENERATE UNIQUE FILENAME
+##################################################################################################    
+*/
 function generateUniqueFilename(mimeType) {
 	const timestamp = new Date().getTime()
 	const random = Math.floor(Math.random() * 1000000)

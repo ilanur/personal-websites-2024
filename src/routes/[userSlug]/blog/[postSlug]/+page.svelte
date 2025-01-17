@@ -4,17 +4,14 @@
 	import { PUBLIC_CONTENSIS_URL } from '$env/static/public'
 	import { page } from '$app/stores'
 	import { fileToBase64, getThumbnail } from '$lib/utils/utils'
-	import { getCanvasHTML } from '$lib/utils/contensis/client'
-	import { ofetch } from 'ofetch'
+	import { getCanvasHTML, updateEntryByField } from '$lib/utils/contensis/client'
 	import PhotoUploader from '$lib/components/PhotoUploader.svelte'
-	import { base } from '$app/paths'
 
 	let { data } = $props()
 
 	console.log('data', data)
 
 	let audioUrl = $state(null)
-	let photoFormRef
 
 	const user = $derived.by(() => $page.data.session?.user)
 	const currentUrl = $derived.by(() => $page.url.href)
@@ -37,24 +34,7 @@
 		audioUrl = `${PUBLIC_EUI_BASE_URL}/${data.post.audioTranscription.file.sys.uri}`
 	}
 
-	async function changePostContent(field, value) {
-		try {
-			const post = data.post
-
-			post[field] = value
-
-			await ofetch('/api/contensis/entries/update', {
-				method: 'PUT',
-				body: post
-			})
-		} catch (e) {
-			console.error('Error updating description', e)
-		}
-	}
-
 	async function onPhotoSelect(photo) {
-		console.log(photo)
-
 		const folderId = 'Content-Types-Assets/PersonalWebsites/Blogs'
 		const altText = `Cover for blogpost "${data.post.title}"`
 		const base64 = await fileToBase64(photo)
@@ -71,7 +51,7 @@
 
 		console.log('fullBase64', updatedPhoto)
 
-		changePostContent('mainImage', JSON.stringify(updatedPhoto))
+		await updateEntryByField(data.post, 'mainImage', JSON.stringify(updatedPhoto))
 	}
 </script>
 
@@ -119,7 +99,7 @@
 				htmlContent={data.post ? `<h1 class="text-3xl">${data.post.title}</h1>` : ''}
 				enabled={data.editAllowed}
 				returnType="text"
-				onSave={(value) => changePostContent('title', value)}
+				onSave={(value) => updateEntryByField(data.post, 'title', value)}
 			/>
 
 			{#if audioUrl}
@@ -134,7 +114,7 @@
 				htmlContent={data.post?.description ?? ''}
 				enabled={data.editAllowed}
 				returnType="html"
-				onSave={(value) => changePostContent('description', value)}
+				onSave={(value) => updateEntryByField(data.post, 'description', value)}
 			/>
 
 			<div class="relative mb-6 border-b border-slate-200 text-right">
@@ -223,7 +203,7 @@
 				editorId="canvas"
 				htmlContent={data.post?.canvas ? getCanvasHTML(data.post.canvas) : ''}
 				enabled={data.editAllowed}
-				onSave={(value) => changePostContent('canvas', value)}
+				onSave={(value) => updateEntryByField(data.post, 'canvas', value)}
 			/>
 		</div>
 	</div>

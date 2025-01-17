@@ -35,7 +35,8 @@
 			theme: 'snow'
 		})
 		quillInstance.root.innerHTML = htmlToRender
-		imageLoader()
+
+		await imageLoader()
 	})
 
 	async function imageLoader() {
@@ -115,7 +116,7 @@
 
 		{#if enabled}
 			<button
-				class={clsx('absolute -right-2 -top-2 size-10 bg-gray-200 text-gray-500 hover:bg-gray-300')}
+				class={clsx('absolute -right-10 -top-2 size-8 bg-gray-200 text-gray-500 hover:bg-gray-300')}
 				aria-label="Edit section"
 				onclick={onEditClick}
 			>

@@ -1,6 +1,5 @@
 <script>
-	import { getCanvasHTML, getCorrectEntryPhoto } from '$lib/utils/contensis/client'
-	import { ofetch } from 'ofetch'
+	import { getCorrectEntryPhoto, updateEntryByField } from '$lib/utils/contensis/client'
 	import clsx from 'clsx'
 	import UserHeroBannerSocials from '$lib/components/UserHeroBannerSocials.svelte'
 	import HeroBannerGraphic from '$lib/components/graphics/HeroBannerGraphic.svelte'
@@ -10,22 +9,6 @@
 
 	let isAuthUserWebsite = $derived(personalWebsite.people.email === authUser?.email)
 	let isAdmin = $derived(authUser?.role?.includes('admin'))
-
-	async function updateDescription(canvas) {
-		try {
-			const html = getCanvasHTML(canvas)
-			const personalWebsiteEntry = { ...personalWebsite }
-
-			personalWebsiteEntry.description = html
-
-			await ofetch('/api/contensis/entries/update', {
-				method: 'PUT',
-				body: personalWebsiteEntry
-			})
-		} catch (e) {
-			console.error('Error updating description', e)
-		}
-	}
 </script>
 
 <div class={clsx('relative overflow-hidden bg-eui-dark-blue-500 pt-0 md:bg-[transparent]', { 'md:py-8': isSmall, 'md:py-12': !isSmall })}>
@@ -51,7 +34,8 @@
 				htmlContent={personalWebsite.description ?? ''}
 				enabled={isAuthUserWebsite || isAdmin}
 				toolbar={['bold', 'italic', 'link']}
-				onSave={updateDescription}
+				returnType="text"
+				onSave={(text) => updateEntryByField(personalWebsite, 'description', text)}
 			/>
 		</div>
 	</div>

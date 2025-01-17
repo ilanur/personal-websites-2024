@@ -61,3 +61,16 @@ export async function savePageContent(page, canvas, assetsUploadFolder) {
 		body: updatedPage
 	})
 }
+
+export async function updateEntryByField(entry, field, value) {
+	try {
+		entry[field] = value
+
+		await ofetch('/api/contensis/entries/update', {
+			method: 'PUT',
+			body: entry
+		})
+	} catch (e) {
+		console.error('Error updating description', e)
+	}
+}

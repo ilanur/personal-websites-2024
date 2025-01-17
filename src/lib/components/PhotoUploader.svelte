@@ -2,36 +2,114 @@
 	import clsx from 'clsx'
 	import Cropper from 'cropperjs'
 	import BaseModal from './BaseModal.svelte'
+	import 'cropperjs/dist/cropper.css'
 
 	let { imgContainerClass = '', photo = null, crop, onPhotoSelect = () => {}, ...rest } = $props()
 
+	let cropperInstance = $state()
 	let fileUploadRef = $state()
 	let cropModalRef = $state()
 	let previewPhoto = $state(photo)
+	let previewPhotoCrop = $state()
+	let croppedFile = $state(null)
+
+	$effect(() => {
+		console.log('cropModalRef', cropModalRef)
+		if (cropModalRef && cropModalRef.isOpen) {
+			setTimeout(initCropper, 0)
+		} else {
+			destroyCropper()
+		}
+	})
+
+	let aspectRatio = $derived.by(() => {
+		if (typeof crop === 'string' && crop.includes('x')) {
+			const [width, height] = crop.split('x').map(Number)
+			return width && height ? width / height : undefined
+		}
+
+		return undefined
+	})
+
+	function initCropper() {
+		if (previewPhotoCrop && !cropperInstance) {
+			cropperInstance = new Cropper(previewPhotoCrop, {
+				aspectRatio
+			})
+		}
+	}
+
+	function destroyCropper() {
+		if (cropperInstance) {
+			cropperInstance.destroy()
+			cropperInstance = null
+		}
+	}
+
+	function resetCroppedState() {
+		croppedFile = null
+	}
 
 	function onPhotoActionClick() {
+		resetCroppedState()
 		fileUploadRef.click()
 	}
 
 	function onPhotoDeleteClick() {
 		previewPhoto = null
 		fileUploadRef.value = null
+		resetCroppedState()
 	}
 
 	function photoSelected(e) {
 		const selectedPhoto = e.target.files[0]
+		if (!selectedPhoto) return
+
 		const reader = new FileReader()
 
-		if (!crop) {
-			onPhotoSelect(selectedPhoto)
-		} else {
-			cropModalRef.openModal()
+		reader.onload = (e) => {
+			previewPhoto = e.target.result
+			if (crop) {
+				cropModalRef.openModal()
+			} else {
+				// Directly update the preview and call onPhotoSelect
+				onPhotoSelect(selectedPhoto)
+			}
 		}
 
 		reader.readAsDataURL(selectedPhoto)
-		reader.onload = (e) => {
-			previewPhoto = e.target.result
+	}
+
+	function applyCrop() {
+		if (cropperInstance) {
+			let targetWidth, targetHeight
+
+			if (typeof crop === 'string' && crop.includes('x')) {
+				;[targetWidth, targetHeight] = crop.split('x').map(Number)
+			}
+
+			const croppedCanvas = cropperInstance.getCroppedCanvas({
+				width: targetWidth,
+				height: targetHeight
+			})
+
+			if (croppedCanvas) {
+				croppedCanvas.toBlob((blob) => {
+					const file = new File([blob], 'cropped_image.png', { type: 'image/png' })
+					croppedFile = file
+					previewPhoto = URL.createObjectURL(blob)
+					cropModalRef.closeModal()
+					onPhotoSelect(file)
+					updateFileInput(file)
+				}, 'image/png')
+			}
 		}
+	}
+
+	function updateFileInput(file) {
+		const dataTransfer = new DataTransfer()
+		dataTransfer.items.add(file)
+		fileUploadRef.files = dataTransfer.files
 	}
 </script>
 
@@ -74,10 +152,15 @@
 		Crop image
 	{/snippet}
 
-	<img src={previewPhoto} class="size-full object-contain" alt="Preview" />
+	<div>
+		<img bind:this={previewPhotoCrop} src={previewPhoto} class="size-full object-contain" alt="Preview" />
+	</div>
 
 	{#snippet footerSlot()}
-		This is the footer
+		<div class="flex justify-end gap-3">
+			<button type="button" onclick={() => cropModalRef.closeModal()}>Cancel</button>
+			<button type="button" onclick={applyCrop}>Apply</button>
+		</div>
 	{/snippet}
 </BaseModal>
 

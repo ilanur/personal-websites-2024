@@ -2,14 +2,19 @@
 	let { headerSlot, footerSlot, children } = $props()
 
 	let dialogRef
+	let isOpen = $state(false)
 
 	export function openModal() {
+		isOpen = true
 		dialogRef.showModal()
 	}
 
 	export function closeModal() {
+		isOpen = false
 		dialogRef.close()
 	}
+
+	export { isOpen }
 </script>
 
 <dialog bind:this={dialogRef} class="w-full rounded md:max-w-[700px] lg:max-w-[900px]">

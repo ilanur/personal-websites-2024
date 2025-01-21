@@ -1,5 +1,6 @@
 <script>
 	import { getCorrectEntryPhoto, updateEntryByField } from '$lib/utils/contensis/client'
+	import { imageProcessing } from '$lib/directives/image-directives'
 	import clsx from 'clsx'
 	import UserHeroBannerSocials from '$lib/components/UserHeroBannerSocials.svelte'
 	import HeroBannerGraphic from '$lib/components/graphics/HeroBannerGraphic.svelte'
@@ -15,6 +16,7 @@
 	{#if !isSmall}
 		<HeroBannerGraphic class="absolute bottom-0 left-0 top-0 z-10 m-auto ml-5 hidden w-fit text-white opacity-10 xl:block" />
 	{/if}
+
 	<div
 		class={clsx('container relative z-10 grid grid-cols-12 pt-8', {
 			'pb-[calc(62.5px_+_2rem)] md:py-0': isSmall,
@@ -39,6 +41,7 @@
 			/>
 		</div>
 	</div>
+
 	<div class="bottom-0 left-0 right-0 top-0 grid grid-cols-12 md:absolute">
 		<div class="col-span-12 hidden bg-eui-dark-blue-500 md:col-span-8 md:block"></div>
 		<div
@@ -50,13 +53,18 @@
 					'-mt-[100px] size-[200px] min-w-[200px] ring-8 md:-ml-[100px] xl:-ml-[150px] xl:size-[300px] xl:min-w-[300px] ': !isSmall
 				})}
 			>
-				<img alt="user" class="size-full object-cover" src={getCorrectEntryPhoto(personalWebsite, personalWebsite.people)} />
+				<img
+					alt="user"
+					class="size-full object-cover"
+					src={getCorrectEntryPhoto(personalWebsite, personalWebsite.people)}
+					use:imageProcessing
+				/>
 			</div>
+
 			{#if personalWebsite.socialMedia.length}
 				<UserHeroBannerSocials
 					socials={personalWebsite.socialMedia}
 					class={clsx('z-20 mt-4 flex max-h-[300px] gap-4 border-t border-slate-400 pt-4 md:mt-0 md:flex-wrap md:border-t-0 md:pt-0', {
-						'': isSmall,
 						'md:flex-col md:border-s md:ps-3': !isSmall
 					})}
 				/>

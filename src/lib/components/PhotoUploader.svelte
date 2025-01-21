@@ -4,7 +4,7 @@
 	import BaseModal from './BaseModal.svelte'
 	import 'cropperjs/dist/cropper.css'
 
-	let { imgContainerClass = '', photo = null, crop, onPhotoSelect = () => {}, ...rest } = $props()
+	let { imgContainerClass = '', photo = null, crop, onPhotoSelect = () => {}, onPhotoDeleteClick = () => {}, ...rest } = $props()
 
 	let cropperInstance = $state()
 	let fileUploadRef = $state()
@@ -14,7 +14,6 @@
 	let croppedFile = $state(null)
 
 	$effect(() => {
-		console.log('cropModalRef', cropModalRef)
 		if (cropModalRef && cropModalRef.isOpen) {
 			setTimeout(initCropper, 0)
 		} else {
@@ -34,7 +33,8 @@
 	function initCropper() {
 		if (previewPhotoCrop && !cropperInstance) {
 			cropperInstance = new Cropper(previewPhotoCrop, {
-				aspectRatio
+				aspectRatio,
+				viewMode: 1
 			})
 		}
 	}
@@ -55,10 +55,11 @@
 		fileUploadRef.click()
 	}
 
-	function onPhotoDeleteClick() {
+	function deletePhoto() {
 		previewPhoto = null
 		fileUploadRef.value = null
 		resetCroppedState()
+		onPhotoDeleteClick()
 	}
 
 	function photoSelected(e) {
@@ -111,6 +112,10 @@
 		dataTransfer.items.add(file)
 		fileUploadRef.files = dataTransfer.files
 	}
+
+	export function setPreviewPhoto(photo) {
+		previewPhoto = photo
+	}
 </script>
 
 <div class={clsx('flex', rest.class)}>
@@ -141,7 +146,7 @@
 
 			{#if previewPhoto}
 				{@render imgActionButton('Change photo', 'fa-arrows-rotate', onPhotoActionClick)}
-				{@render imgActionButton('Delete photo', 'fa-trash', onPhotoDeleteClick)}
+				{@render imgActionButton('Delete photo', 'fa-trash', deletePhoto)}
 			{/if}
 		</div>
 	</div>
@@ -152,8 +157,8 @@
 		Crop image
 	{/snippet}
 
-	<div>
-		<img bind:this={previewPhotoCrop} src={previewPhoto} class="size-full object-contain" alt="Preview" />
+	<div class="">
+		<img bind:this={previewPhotoCrop} src={previewPhoto} class="size-full max-h-[50vh] object-contain" alt="Preview" />
 	</div>
 
 	{#snippet footerSlot()}

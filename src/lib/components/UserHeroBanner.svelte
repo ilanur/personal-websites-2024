@@ -47,7 +47,7 @@
 			<div
 				class={clsx('overflow-hidden rounded-full bg-white ring-white md:mr-6 md:mt-0', {
 					'-mt-[62.5px] size-[125px] min-w-[125px] border-4 md:-ml-[62.5px]': isSmall,
-					'-mt-[100px] size-[200px] min-w-[200px] ring-8 md:-ml-[125px] xl:-ml-[150px] xl:size-[300px] xl:min-w-[300px] ': !isSmall
+					'-mt-[100px] size-[200px] min-w-[200px] ring-8 md:-ml-[100px] xl:-ml-[150px] xl:size-[300px] xl:min-w-[300px] ': !isSmall
 				})}
 			>
 				<img alt="user" class="size-full object-cover" src={getCorrectEntryPhoto(personalWebsite, personalWebsite.people)} />

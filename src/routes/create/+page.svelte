@@ -1,9 +1,9 @@
 <script>
-	import PwForm from '$lib/components/personal-website-form/PwForm.svelte'
+	import PwCreateForm from '$lib/components/personal-website-form/PwCreateForm.svelte'
 
 	let { data } = $props()
 </script>
 
 <div class="container py-12 md:py-16">
-	<PwForm user={data.contensisUser} />
+	<PwCreateForm user={data.contensisUser} nationalities={data.nationalities} />
 </div>

@@ -1,26 +1,25 @@
 <script>
-	import { onMount } from 'svelte'
 	import { enhance } from '$app/forms'
 	import { goto } from '$app/navigation'
-	import { PUBLIC_EUI_PERSONAL_WEBSITE_URL, PUBLIC_GOOGLE_MAPS_API_KEY } from '$env/static/public'
-	import * as GoogleMapsApiLoader from '@googlemaps/js-api-loader'
+	import { PUBLIC_EUI_PERSONAL_WEBSITE_URL, PUBLIC_EUI_WEB } from '$env/static/public'
 	import InputField from '$lib/components/form-elements/InputField.svelte'
 	import SelectField from '$lib/components/form-elements/SelectField.svelte'
 	import Button from '$lib/components/Button.svelte'
 	import CheckboxField from '$lib/components/form-elements/CheckboxField.svelte'
 	import PwFormPhotoUpload from '$lib/components/personal-website-form/PwFormPhotoUpload.svelte'
+	import LocationSelect from '$lib/components/personal-website-form/LocationSelect.svelte'
+	import PhotoUploader from '../PhotoUploader.svelte'
 
-	let { user, personalWebsite } = $props()
+	let { user, personalWebsite, nationalities = [] } = $props()
 
 	let formLoading = $state(false)
 	let formErrors = $state()
-	let city = $state(personalWebsite?.city)
-	let lat = $state(personalWebsite?.lat)
-	let lng = $state(personalWebsite?.lng)
-	let nationalities = $state()
 	let cv = $state(personalWebsite?.cv)
 	let cvChanged = $state(false)
 	let publishedState = $state(personalWebsite?.sys.versionStatus ? true : false)
+	let useEuiPhoto = $state(false)
+	let photo = $state()
+	let photoUploader = $state()
 	let pagesToPublish = $state({
 		publications: checkIfPagePublished('publications'),
 		'publications-in-cadmus': personalWebsite?.enableCadmusPublications,
@@ -29,55 +28,20 @@
 		teaching: checkIfPagePublished('teaching')
 	})
 
-	onMount(async () => {
-		try {
-			const res = await fetch('/api/nationalities')
-			const data = await res.json()
-
-			if (data.nationalities) {
-				nationalities = data.nationalities
-			}
-		} catch (err) {
-			console.error('Error fetching nationalities:', err)
+	$effect(() => {
+		if (user.photo && useEuiPhoto) {
+			photo = `${PUBLIC_EUI_WEB}/${user.photo.asset.sys.uri}`
+			photoUploader.setPreviewPhoto(photo)
 		}
 
-		try {
-			const loader = new GoogleMapsApiLoader.Loader({
-				apiKey: PUBLIC_GOOGLE_MAPS_API_KEY,
-				version: 'weekly',
-				libraries: ['places']
-			})
-
-			const library = await loader.importLibrary('places')
-			const autoComplete = new library.Autocomplete(document.getElementById('autocomplete'), {
-				fields: ['geometry', 'name', 'formatted_address', 'address_components']
-			})
-
-			autoComplete.addListener('place_changed', (e) => {
-				const place = autoComplete.getPlace()
-
-				if (place.address_components) {
-					const address = place.address_components
-
-					city = address.filter((f) => JSON.stringify(f.types) === JSON.stringify(['locality', 'political']))[0].short_name
-					lat = place.geometry.location.lat()
-					lng = place.geometry.location.lng()
-				}
-			})
-		} catch (e) {
-			console.log(`Error loading map: ${e}`)
+		if (!useEuiPhoto) {
+			photo = null
 		}
 	})
 
 	function checkIfPagePublished(slug) {
 		const page = personalWebsite?.pages.find((el) => el.pageSlug === slug)
 		return page ? (page.sys.versionStatus === 'published' ? true : false) : false
-	}
-
-	function disableKeyPress(e) {
-		if (e.keyCode == '13') {
-			e.preventDefault()
-		}
 	}
 
 	function getSocialMedia(social) {
@@ -127,11 +91,12 @@
 
 			<div class="grid grid-cols-1 items-end gap-4 md:grid-cols-2 md:gap-2">
 				<InputField name="websiteURL" label="Your personal website URL" value={`${PUBLIC_EUI_PERSONAL_WEBSITE_URL}/`} readonly />
-				<InputField name="slug" label="Slug" value={user.sys.slug} placeholder="website slug" error={formErrors?.slug} />
+				<InputField name="slug" label="Slug" value={user.sys.slug} placeholder="website slug" error={formErrors?.slug} readonly />
 			</div>
 
 			<InputField name="email" type="email" label="E-mail" value={user.euiEmail} readonly />
 
+			<!-- NATIONALITY SELECT -->
 			<SelectField
 				name="nationality"
 				options={nationalities}
@@ -143,15 +108,8 @@
 				error={formErrors?.nationality}
 			/>
 
-			<div>
-				<input type="hidden" name="city" bind:value={city} />
-				<InputField value={city} name="autocomplete" label="Address" onkeypress={disableKeyPress} />
-
-				<div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-2">
-					<InputField name="lat" label="Latitude" value={lat} readonly />
-					<InputField name="lng" label="Longitude" value={lng} readonly />
-				</div>
-			</div>
+			<!-- SELECT LOCATION -->
+			<LocationSelect {personalWebsite} />
 
 			<!-- CV -->
 			<div>
@@ -170,9 +128,17 @@
 			</div>
 
 			<div class="mt-4 grid gap-x-2 md:grid-cols-2">
+				<PhotoUploader bind:this={photoUploader} {photo} />
+
 				<div>
 					<p class="mb-4 font-bold">Personal website photo</p>
 					<PwFormPhotoUpload {personalWebsite} {user} />
+
+					<CheckboxField bind:value={useEuiPhoto} class="mt-4" name="useEuiPhoto" label="Use your EUI profile photo" />
+
+					{#if useEuiPhoto && !user.photo}
+						<small>You currently have no EUI profile photo set. As a result, no photo will appear on your personal website.</small>
+					{/if}
 				</div>
 			</div>
 		</div>
@@ -197,6 +163,7 @@
 
 			<hr class="my-6" />
 
+			<!-- PUBLISH/UNPUBLISH PAGES -->
 			<div>
 				<p class="mb-4 font-bold">Publish/unpublish optional pages</p>
 

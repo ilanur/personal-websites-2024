@@ -6,9 +6,10 @@ import { fileToFileBuffer, getPeopleEntryByEmail, uploadAsset } from '$lib/utils
 import { parseHtml } from '@contensis/html-canvas'
 import { pwFormSchema } from '$lib/zod-schemas/personal-website-form.js'
 
-export async function load(event) {
+export async function load({ locals, fetch }) {
 	// Check if has session
-	const session = await event.locals.auth()
+	const session = await locals.auth()
+
 	if (!session) redirect(302, '/auth/login')
 
 	// Check if user exists in the people collection in Contensis
@@ -32,8 +33,20 @@ export async function load(event) {
 
 	if (personalWebsite) redirect(302, `/${personalWebsite.websiteSlug}`)
 
+	async function fetchNationalities() {
+		try {
+			const res = await fetch('/api/nationalities')
+			const data = await res.json()
+
+			if (data.nationalities) return data.nationalities
+		} catch (err) {
+			console.error('Error fetching nationalities:', err)
+		}
+	}
+
 	return {
-		contensisUser
+		contensisUser,
+		nationalities: await fetchNationalities()
 	}
 }
 

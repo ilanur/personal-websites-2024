@@ -5,12 +5,28 @@ import { error, fail, redirect } from '@sveltejs/kit'
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients.js'
 import { admins } from '$lib/utils/permissions'
 
-export async function load({ parent }) {
+export async function load({ parent, fetch }) {
 	const parentData = await parent()
+
+	if (!parentData.currentPersonalWebsite) {
+		throw redirect(302, '/')
+	}
+
+	async function fetchNationalities() {
+		try {
+			const res = await fetch('/api/nationalities')
+			const data = await res.json()
+
+			if (data.nationalities) return data.nationalities
+		} catch (err) {
+			console.error('Error fetching nationalities:', err)
+		}
+	}
 
 	const pageData = {
 		user: parentData.personalWebsite.people,
-		personalWebsite: parentData.personalWebsite
+		personalWebsite: parentData.personalWebsite,
+		nationalities: await fetchNationalities()
 	}
 
 	if (parentData.authUser?.role === 'admin') {

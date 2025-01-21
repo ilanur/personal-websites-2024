@@ -35,6 +35,7 @@ export async function load({ params }) {
 			{ field: 'personalWebsite.sys.id', equalTo: personalWebsiteId }
 		]
 	}
+
 	const blogPosts = await DeliveryClient.entries.search(query)
 	const hasBlog = blogPosts.items.length > 0
 

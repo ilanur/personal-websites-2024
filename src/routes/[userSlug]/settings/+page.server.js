@@ -8,9 +8,7 @@ import { admins } from '$lib/utils/permissions'
 export async function load({ parent, fetch }) {
 	const parentData = await parent()
 
-	if (!parentData.currentPersonalWebsite) {
-		throw redirect(302, '/')
-	}
+	if (!parentData.currentUserPersonalWebsite) throw redirect(302, '/')
 
 	async function fetchNationalities() {
 		try {
@@ -29,13 +27,8 @@ export async function load({ parent, fetch }) {
 		nationalities: await fetchNationalities()
 	}
 
-	if (parentData.authUser?.role === 'admin') {
-		return pageData
-	}
-
-	if (parentData.authUser.email != parentData.personalWebsite.people.euiEmail) {
-		redirect(301, '/')
-	}
+	if (parentData.authUser?.role === 'admin') return pageData
+	if (parentData.authUser.email != parentData.personalWebsite.people.euiEmail) redirect(301, '/')
 
 	return pageData
 }

@@ -78,43 +78,47 @@
 >
 	<div class="grid grid-cols-1 items-start gap-10 lg:grid-cols-2">
 		<!-- General settings -->
-		<div class="flex flex-col gap-4">
-			<p class="font-bold">General settings</p>
+		<div class="flex flex-col">
+			<p class="mb-4 font-bold">General settings</p>
 
-			<InputField
-				class="col-span-2 sm:col-span-1"
-				name="title"
-				label="Title of your personal website"
-				value={user.nameAndSurnameForTheWeb}
-				readonly
-			/>
+			<div class="flex flex-col gap-4">
+				<InputField
+					class="col-span-2 sm:col-span-1"
+					name="title"
+					label="Title of your personal website"
+					value={user.nameAndSurnameForTheWeb}
+					readonly
+				/>
 
-			<div class="grid grid-cols-1 items-end gap-4 md:grid-cols-2 md:gap-2">
-				<InputField name="websiteURL" label="Your personal website URL" value={`${PUBLIC_EUI_PERSONAL_WEBSITE_URL}/`} readonly />
-				<InputField name="slug" label="Slug" value={user.sys.slug} placeholder="website slug" error={formErrors?.slug} readonly />
+				<div class="grid grid-cols-1 items-end gap-4 md:grid-cols-2 md:gap-2">
+					<InputField name="websiteURL" label="Your personal website URL" value={`${PUBLIC_EUI_PERSONAL_WEBSITE_URL}/`} readonly />
+					<InputField name="slug" label="Slug" value={user.sys.slug} placeholder="website slug" error={formErrors?.slug} readonly />
+				</div>
+
+				<InputField name="email" type="email" label="E-mail" value={user.euiEmail} readonly />
+
+				<!-- NATIONALITY SELECT -->
+				<SelectField
+					name="nationality"
+					options={nationalities}
+					label="Nationality"
+					placeholder="Select your nationality"
+					valuePropertyName="en-GB"
+					textPropertyName="en-GB"
+					value={personalWebsite?.nationality.nationality[0]}
+					error={formErrors?.nationality}
+				/>
+
+				<!-- SELECT LOCATION -->
+				<LocationSelect {personalWebsite} />
 			</div>
 
-			<InputField name="email" type="email" label="E-mail" value={user.euiEmail} readonly />
-
-			<!-- NATIONALITY SELECT -->
-			<SelectField
-				name="nationality"
-				options={nationalities}
-				label="Nationality"
-				placeholder="Select your nationality"
-				valuePropertyName="en-GB"
-				textPropertyName="en-GB"
-				value={personalWebsite?.nationality.nationality[0]}
-				error={formErrors?.nationality}
-			/>
-
-			<!-- SELECT LOCATION -->
-			<LocationSelect {personalWebsite} />
+			<hr class="my-6" />
 
 			<!-- CV -->
 			<div>
 				<input type="hidden" name="cvChanged" bind:value={cvChanged} />
-				<p class="my-4 font-bold">Curriculum vitae</p>
+				<p class="mb-4 font-bold">Curriculum vitae</p>
 
 				{#if cv}
 					<div class="flex items-center gap-x-2">
@@ -127,19 +131,27 @@
 				{/if}
 			</div>
 
-			<div class="mt-4 grid gap-x-2 md:grid-cols-2">
-				<PhotoUploader bind:this={photoUploader} {photo} />
+			<hr class="my-6" />
 
+			<div class="grid gap-x-2 md:grid-cols-2">
 				<div>
 					<p class="mb-4 font-bold">Personal website photo</p>
-					<PwFormPhotoUpload {personalWebsite} {user} />
 
+					<PhotoUploader
+						bind:this={photoUploader}
+						{photo}
+						crop={'400x400'}
+						onPhotoSelect={() => (useEuiPhoto = false)}
+						onPhotoDeleteClick={() => (useEuiPhoto = false)}
+					/>
 					<CheckboxField bind:value={useEuiPhoto} class="mt-4" name="useEuiPhoto" label="Use your EUI profile photo" />
 
 					{#if useEuiPhoto && !user.photo}
 						<small>You currently have no EUI profile photo set. As a result, no photo will appear on your personal website.</small>
 					{/if}
 				</div>
+
+				<!-- <PwFormPhotoUpload {personalWebsite} {user} /> -->
 			</div>
 		</div>
 

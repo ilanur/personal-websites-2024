@@ -86,20 +86,18 @@
 	<div>
 		<p class="mb-4 font-bold">Personal website photo</p>
 
-		<div>
-			<PhotoUploader
-				bind:this={photoUploader}
-				{photo}
-				crop={'400x400'}
-				onPhotoSelect={() => (useEuiPhoto = false)}
-				onPhotoDeleteClick={() => (useEuiPhoto = false)}
-			/>
-			<CheckboxField bind:value={useEuiPhoto} class="mt-4" name="useEuiPhoto" label="Use your EUI profile photo" />
+		<PhotoUploader
+			bind:this={photoUploader}
+			{photo}
+			crop={'400x400'}
+			onPhotoSelect={() => (useEuiPhoto = false)}
+			onPhotoDeleteClick={() => (useEuiPhoto = false)}
+		/>
+		<CheckboxField bind:value={useEuiPhoto} class="mt-4" name="useEuiPhoto" label="Use your EUI profile photo" />
 
-			{#if useEuiPhoto && !user.photo}
-				<small>You currently have no EUI profile photo set. As a result, no photo will appear on your personal website.</small>
-			{/if}
-		</div>
+		{#if useEuiPhoto && !user.photo}
+			<small>You currently have no EUI profile photo set. As a result, no photo will appear on your personal website.</small>
+		{/if}
 	</div>
 
 	<div>

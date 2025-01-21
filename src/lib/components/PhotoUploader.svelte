@@ -70,10 +70,10 @@
 
 		reader.onload = (e) => {
 			previewPhoto = e.target.result
+
 			if (crop) {
 				cropModalRef.openModal()
 			} else {
-				// Directly update the preview and call onPhotoSelect
 				onPhotoSelect(selectedPhoto)
 			}
 		}
@@ -111,6 +111,11 @@
 		const dataTransfer = new DataTransfer()
 		dataTransfer.items.add(file)
 		fileUploadRef.files = dataTransfer.files
+	}
+
+	function onCancelClick() {
+		cropModalRef.closeModal()
+		previewPhoto = null
 	}
 
 	export function setPreviewPhoto(photo) {
@@ -157,13 +162,13 @@
 		Crop image
 	{/snippet}
 
-	<div class="">
+	<div>
 		<img bind:this={previewPhotoCrop} src={previewPhoto} class="size-full max-h-[50vh] object-contain" alt="Preview" />
 	</div>
 
 	{#snippet footerSlot()}
 		<div class="flex justify-end gap-3">
-			<button type="button" onclick={() => cropModalRef.closeModal()}>Cancel</button>
+			<button type="button" onclick={onCancelClick}>Cancel</button>
 			<button type="button" onclick={applyCrop}>Apply</button>
 		</div>
 	{/snippet}

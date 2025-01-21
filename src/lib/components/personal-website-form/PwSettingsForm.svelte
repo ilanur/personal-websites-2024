@@ -6,7 +6,6 @@
 	import SelectField from '$lib/components/form-elements/SelectField.svelte'
 	import Button from '$lib/components/Button.svelte'
 	import CheckboxField from '$lib/components/form-elements/CheckboxField.svelte'
-	import PwFormPhotoUpload from '$lib/components/personal-website-form/PwFormPhotoUpload.svelte'
 	import LocationSelect from '$lib/components/personal-website-form/LocationSelect.svelte'
 	import PhotoUploader from '../PhotoUploader.svelte'
 
@@ -150,8 +149,6 @@
 						<small>You currently have no EUI profile photo set. As a result, no photo will appear on your personal website.</small>
 					{/if}
 				</div>
-
-				<!-- <PwFormPhotoUpload {personalWebsite} {user} /> -->
 			</div>
 		</div>
 

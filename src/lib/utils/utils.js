@@ -15,6 +15,10 @@ export function getThumbnail(thumbnail, placeholder = '') {
 ##################################################################################################    
 */
 export function truncateString(str, maxLength) {
+	if (!str) {
+		return ''
+	}
+
 	if (str.length > maxLength) {
 		return str.substring(0, maxLength - 3) + '...'
 	}

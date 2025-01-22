@@ -11,7 +11,6 @@
 	let cropModalRef = $state()
 	let previewPhoto = $state(photo)
 	let previewPhotoCrop = $state()
-	let croppedFile = $state(null)
 
 	$effect(() => {
 		if (cropModalRef && cropModalRef.isOpen) {
@@ -46,19 +45,14 @@
 		}
 	}
 
-	function resetCroppedState() {
-		croppedFile = null
-	}
-
 	function onPhotoActionClick() {
-		resetCroppedState()
 		fileUploadRef.click()
 	}
 
-	function deletePhoto() {
+	export function deletePhoto() {
 		previewPhoto = null
 		fileUploadRef.value = null
-		resetCroppedState()
+
 		onPhotoDeleteClick()
 	}
 
@@ -97,7 +91,6 @@
 			if (croppedCanvas) {
 				croppedCanvas.toBlob((blob) => {
 					const file = new File([blob], 'cropped_image.png', { type: 'image/png' })
-					croppedFile = file
 					previewPhoto = URL.createObjectURL(blob)
 					cropModalRef.closeModal()
 					onPhotoSelect(file)

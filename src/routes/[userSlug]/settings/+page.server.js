@@ -1,9 +1,10 @@
 import formatZodError from '$lib/utils/format-zod-error.js'
-import { getPersonalWebsiteByEmail, uploadAsset } from '$lib/utils/contensis/server.js'
+import { fileToFileBuffer, getPersonalWebsiteByEmail, uploadAsset } from '$lib/utils/contensis/server.js'
 import { pwFormSchema } from '$lib/zod-schemas/personal-website-form.js'
 import { error, fail, redirect } from '@sveltejs/kit'
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients.js'
 import { admins } from '$lib/utils/permissions'
+import { fileToBase64 } from '$lib/utils/utils.js'
 
 export async function load({ parent, fetch }) {
 	const parentData = await parent()
@@ -40,6 +41,8 @@ export const actions = {
 		const formValidation = pwFormSchema.safeParse(formData)
 		const userIsAdmin = admins.includes(authUser?.user.email)
 
+		console.log('FORM DATA', formData)
+
 		if (!formValidation.success) {
 			return fail(400, { success: false, formErrors: formatZodError(formValidation.error) })
 		}
@@ -48,74 +51,112 @@ export const actions = {
 			let personalWebsite = await getPersonalWebsiteByEmail(userIsAdmin ? formData.email : authUser.user.email)
 
 			if (personalWebsite) {
+				// Delete existing image if the user hasn't uploaded one from the form.
+				if (formData.photoUpload.size === 0 && formData.useEuiPhoto !== 'true' && personalWebsite.image?.asset?.sys?.id) {
+					try {
+						await ManagementClient.entries.delete(personalWebsite.image.asset.sys.id)
+					} catch (e) {
+						console.error('Error while deleting existing photo:', e)
+					}
+				}
+
+				// Upload image
+				let uploadedPhoto = null
+
+				if (formData.photoUpload.size !== 0 && formData.useEuiPhoto !== 'true') {
+					const { fileBuffer, filename } = await fileToFileBuffer(formData.photoUpload)
+
+					try {
+						uploadedPhoto = await uploadAsset(fileBuffer, filename, {
+							description: 'Photo uploaded from Personal website settings page',
+							folderId: '/Content-Types-Assets/PersonalWebsites',
+							contentType: formData.photoUpload.type,
+							title: formData.slug
+						})
+					} catch (e) {
+						console.error('Error uploading photo: ', e)
+						return fail(500, {
+							error: 'Error uploading photo'
+						})
+					}
+				}
+
 				// Fetch pages because unpublished pages are not shown on the personal website record.
-				const personalWebsitePages = await DeliveryClient.entries.search({
-					where: [
-						{ field: 'sys.contentTypeId', equalTo: 'personalWebsitePage' },
-						{ field: 'sys.versionStatus', equalTo: 'latest' },
-						{ field: 'personalWebsite.sys.id', equalTo: personalWebsite.sys.id }
-					]
-				})
+				let personalWebsitePages = null
+
+				try {
+					personalWebsitePages = await DeliveryClient.entries.search({
+						where: [
+							{ field: 'sys.contentTypeId', equalTo: 'personalWebsitePage' },
+							{ field: 'sys.versionStatus', equalTo: 'latest' },
+							{ field: 'personalWebsite.sys.id', equalTo: personalWebsite.sys.id }
+						]
+					})
+				} catch (e) {
+					console.error('Error fetching pages:', e)
+				}
 
 				// PUBLISH/UNPUBLISH/CREATE pages
-				try {
-					for (const [key, value] of Object.entries(JSON.parse(formData.pagesToPublish))) {
-						const pageEntry = personalWebsitePages.items.find((el) => el.pageSlug === key)
+				if (personalWebsitePages?.items?.length) {
+					try {
+						for (const [key, value] of Object.entries(JSON.parse(formData.pagesToPublish))) {
+							const pageEntry = personalWebsitePages.items.find((el) => el.pageSlug === key)
 
-						// Enable/disable publications-in-cadmus page.
-						if (key === 'publications-in-cadmus' && personalWebsite.enableCadmusPublications !== value) {
-							personalWebsite.enableCadmusPublications = value
-							continue
-						}
+							// Enable/disable publications-in-cadmus page.
+							if (key === 'publications-in-cadmus' && personalWebsite.enableCadmusPublications !== value) {
+								personalWebsite.enableCadmusPublications = value
+								continue
+							}
 
-						// If page exists, and value === false; unpublish the page.
-						if (pageEntry && pageEntry.sys.workflow.state === 'versionComplete' && !value) {
-							await ManagementClient.entries.invokeWorkflow(pageEntry, 'versionComplete.sysUnpublish')
-						}
-						// If page exists, and value === true; publish the page.
-						else if (pageEntry && pageEntry.sys.workflow.state === 'draft' && value) {
-							await ManagementClient.entries.invokeWorkflow(pageEntry, 'draft.publish')
-						}
-						// If page doesn't exist, and value === true; create the page.
-						else if (!pageEntry && value && key !== 'publications-in-cadmus') {
-							console.log('CREATE PAGE', key)
-							const titleSpaced = key.replace(/-/g, ' ')
-							const createdPage = await ManagementClient.entries.create({
-								title: titleSpaced.charAt(0).toUpperCase() + titleSpaced.slice(1).toLowerCase(),
-								canvas: null,
-								pageSlug: key,
-								personalWebsite: {
+							// If page exists, and value === false; unpublish the page.
+							if (pageEntry && pageEntry.sys.workflow.state === 'versionComplete' && !value) {
+								await ManagementClient.entries.invokeWorkflow(pageEntry, 'versionComplete.sysUnpublish')
+							}
+							// If page exists, and value === true; publish the page.
+							else if (pageEntry && pageEntry.sys.workflow.state === 'draft' && value) {
+								await ManagementClient.entries.invokeWorkflow(pageEntry, 'draft.publish')
+							}
+							// If page doesn't exist, and value === true; create the page.
+							else if (!pageEntry && value && key !== 'publications-in-cadmus') {
+								console.log('CREATE PAGE', key)
+								const titleSpaced = key.replace(/-/g, ' ')
+								const createdPage = await ManagementClient.entries.create({
+									title: titleSpaced.charAt(0).toUpperCase() + titleSpaced.slice(1).toLowerCase(),
+									canvas: null,
+									pageSlug: key,
+									personalWebsite: {
+										sys: {
+											id: personalWebsite.sys.id,
+											contentType: 'personalWebsites'
+										}
+									},
 									sys: {
-										id: personalWebsite.sys.id,
-										contentType: 'personalWebsites'
+										contentTypeId: 'personalWebsitePage',
+										language: 'en-GB',
+										dataFormat: 'entry'
 									}
-								},
-								sys: {
-									contentTypeId: 'personalWebsitePage',
-									language: 'en-GB',
-									dataFormat: 'entry'
-								}
-							})
+								})
 
-							await ManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
+								await ManagementClient.entries.invokeWorkflow(createdPage, 'draft.publish')
 
-							// Link new page to existing personal website.
-							const totalPages = [
-								...personalWebsite.pages,
-								{
-									sys: { id: createdPage.sys.id, contentTypeId: 'personalWebsitePage' }
-								}
-							]
+								// Link new page to existing personal website.
+								const totalPages = [
+									...personalWebsite.pages,
+									{
+										sys: { id: createdPage.sys.id, contentTypeId: 'personalWebsitePage' }
+									}
+								]
 
-							personalWebsite.pages = totalPages
+								personalWebsite.pages = totalPages
+							}
 						}
+					} catch (e) {
+						console.error('Error while publishing/unpublishing pages:', e.data)
 					}
-				} catch (e) {
-					console.error('Error while publishing/unpublishing pages:', e.data)
 				}
 
 				// Delete old cv when changed cv is uploaded
-				if (formData.cvChanged === 'true') {
+				if (formData.cvChanged === 'true' && personalWebsite.cv?.sys?.id) {
 					try {
 						await ManagementClient.entries.delete(personalWebsite.cv.sys.id)
 					} catch (e) {
@@ -124,7 +165,7 @@ export const actions = {
 				}
 
 				// Upload and link cv
-				if (formData.cvUpload) {
+				if (formData.cvUpload.size !== 0) {
 					let uploadedCv = null
 
 					try {
@@ -147,6 +188,19 @@ export const actions = {
 							sys: {
 								id: uploadedCv.sys.id,
 								contentTypeId: 'asset',
+								language: 'en-GB',
+								dataFormat: 'asset'
+							}
+						}
+					}
+				}
+
+				if (uploadedPhoto) {
+					personalWebsite['image'] = {
+						altText: `Avatar of ${personalWebsite.title}`,
+						asset: {
+							sys: {
+								id: uploadedPhoto.sys.id,
 								language: 'en-GB',
 								dataFormat: 'asset'
 							}
@@ -227,13 +281,12 @@ export const actions = {
 				}))
 			}
 
-			console.log('personalWebsite before publish', personalWebsite)
-
 			await fetch('/api/contensis/entries/update', {
 				method: 'PUT',
 				body: JSON.stringify(personalWebsite)
 			})
 
+			// TODO: Check with Emanuele
 			// PUBLISH/UNPUBLISH personal website
 			// const pwSys = personalWebsite.sys
 			// if (pwSys.versionStatus === 'published' && pwSys.workflow.state === 'versionComplete' && formData.pwPublishState === 'false') {

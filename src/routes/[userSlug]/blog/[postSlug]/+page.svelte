@@ -49,8 +49,6 @@
 			metadata
 		}
 
-		console.log('fullBase64', updatedPhoto)
-
 		await updateEntryByField(data.post, 'mainImage', JSON.stringify(updatedPhoto))
 	}
 </script>

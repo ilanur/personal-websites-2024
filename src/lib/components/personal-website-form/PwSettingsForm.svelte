@@ -1,13 +1,13 @@
 <script>
 	import { enhance } from '$app/forms'
 	import { goto } from '$app/navigation'
-	import { PUBLIC_EUI_PERSONAL_WEBSITE_URL, PUBLIC_EUI_WEB } from '$env/static/public'
+	import { PUBLIC_EUI_PERSONAL_WEBSITE_URL } from '$env/static/public'
 	import InputField from '$lib/components/form-elements/InputField.svelte'
 	import SelectField from '$lib/components/form-elements/SelectField.svelte'
 	import Button from '$lib/components/Button.svelte'
 	import CheckboxField from '$lib/components/form-elements/CheckboxField.svelte'
 	import LocationSelect from '$lib/components/personal-website-form/LocationSelect.svelte'
-	import PhotoUploader from '../PhotoUploader.svelte'
+	import PwFormPhotoUpload from './PwFormPhotoUpload.svelte'
 
 	let { user, personalWebsite, nationalities = [] } = $props()
 
@@ -16,26 +16,12 @@
 	let cv = $state(personalWebsite?.cv)
 	let cvChanged = $state(false)
 	let publishedState = $state(personalWebsite?.sys.versionStatus ? true : false)
-	let useEuiPhoto = $state(false)
-	let photo = $state()
-	let photoUploader = $state()
 	let pagesToPublish = $state({
 		publications: checkIfPagePublished('publications'),
 		'publications-in-cadmus': personalWebsite?.enableCadmusPublications,
 		research: checkIfPagePublished('research'),
 		'work-in-progress': checkIfPagePublished('work-in-progress'),
 		teaching: checkIfPagePublished('teaching')
-	})
-
-	$effect(() => {
-		if (user.photo && useEuiPhoto) {
-			photo = `${PUBLIC_EUI_WEB}/${user.photo.asset.sys.uri}`
-			photoUploader.setPreviewPhoto(photo)
-		}
-
-		if (!useEuiPhoto) {
-			photo = null
-		}
 	})
 
 	function checkIfPagePublished(slug) {
@@ -126,7 +112,7 @@
 						<Button class="ml-4 !text-tiny" type="button" onclick={onCvChange}>Change CV</Button>
 					</div>
 				{:else}
-					<input title="Choose CV" type="file" name="cvUpload" accept="application/pdf" required />
+					<input title="Choose CV" type="file" name="cvUpload" accept="application/pdf" />
 				{/if}
 			</div>
 
@@ -135,19 +121,7 @@
 			<div class="grid gap-x-2 md:grid-cols-2">
 				<div>
 					<p class="mb-4 font-bold">Personal website photo</p>
-
-					<PhotoUploader
-						bind:this={photoUploader}
-						{photo}
-						crop={'400x400'}
-						onPhotoSelect={() => (useEuiPhoto = false)}
-						onPhotoDeleteClick={() => (useEuiPhoto = false)}
-					/>
-					<CheckboxField bind:value={useEuiPhoto} class="mt-4" name="useEuiPhoto" label="Use your EUI profile photo" />
-
-					{#if useEuiPhoto && !user.photo}
-						<small>You currently have no EUI profile photo set. As a result, no photo will appear on your personal website.</small>
-					{/if}
+					<PwFormPhotoUpload {personalWebsite} {user} />
 				</div>
 			</div>
 		</div>

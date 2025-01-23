@@ -1,8 +1,10 @@
 import { redirect } from '@sveltejs/kit'
 import { DeliveryClient } from '$lib/utils/contensis/_clients'
 
-export async function load({ params }) {
+export async function load({ params, locals }) {
 	if (!params.userSlug) throw redirect(302, '/')
+
+	const session = await locals.auth()
 
 	const results = await DeliveryClient.entries.search(
 		{
@@ -36,12 +38,14 @@ export async function load({ params }) {
 		]
 	}
 
+	const personalWebsite = results.items.length ? results.items[0] : null
 	const blogPosts = await DeliveryClient.entries.search(query)
 	const hasBlog = blogPosts.items.length > 0
 
 	return {
-		personalWebsite: results.items.length ? results.items[0] : null,
+		personalWebsite,
 		personalWebsitePages: personalWebsitePages.items,
+		personalWebsiteBelongsToAuthUser: session.user.email.toLowerCase() === personalWebsite?.people.euiEmail.toLowerCase(),
 		hasBlog: hasBlog
 	}
 }

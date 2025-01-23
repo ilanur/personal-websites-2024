@@ -11,6 +11,7 @@ export async function load({ parent }) {
 	if (!page) redirect((301, '/'))
 
 	return {
-		page
+		page,
+		smallHeroBanner: true
 	}
 }

@@ -54,17 +54,16 @@
 			</article>
 		{/each}
 	</div>
+{:else}
+	<div class="text-center text-intranet-black-800">
+		<h3>You currently don't have any blogposts</h3>
+	</div>
+{/if}
 
-	<div class="mt-16 flex justify-center">
+{#if data.personalWebsiteBelongsToAuthUser}
+	<div class="mt-8 flex justify-center">
 		<a href="blog/create">
 			<Button>Create new blogpost</Button>
-		</a>
-	</div>
-{:else}
-	<div class="text-center">
-		<h2>You currently don't have any blogposts</h2>
-		<a href="blog/create">
-			<Button>Create blogpost</Button>
 		</a>
 	</div>
 {/if}

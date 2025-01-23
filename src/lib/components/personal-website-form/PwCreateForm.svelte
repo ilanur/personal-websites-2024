@@ -19,7 +19,7 @@
 
 	$effect(() => {
 		if (user.photo && useEuiPhoto) {
-			photo = `${PUBLIC_EUI_WEB}/${user.photo.asset.sys.uri}`
+			photo = `${PUBLIC_EUI_WEB}${user.photo.asset.sys.uri}`
 			photoUploader.setPreviewPhoto(photo)
 		}
 

@@ -29,7 +29,9 @@ export function getCorrectEntryPhoto(personalWebsiteEntry, userEntry) {
 	}
 
 	if (!personalWebsiteEntry.usePeopleProfilePicture && personalWebsiteEntry.image) {
-		return `${PUBLIC_EUI_WEB}${personalWebsiteEntry.image.asset.sys.uri}`
+		const { filePath, filename } = personalWebsiteEntry.image.asset.sys.properties
+		console.log('This', `${PUBLIC_EUI_WEB}${filePath}${filename}`)
+		return `${PUBLIC_EUI_WEB}${filePath}${filename}`
 	}
 
 	return `${PUBLIC_EUI_WEB}/web-production/code/assets/img/default-avatar.svg`

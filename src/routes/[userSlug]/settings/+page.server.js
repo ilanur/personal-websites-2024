@@ -4,7 +4,6 @@ import { pwFormSchema } from '$lib/zod-schemas/personal-website-form.js'
 import { error, fail, redirect } from '@sveltejs/kit'
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients.js'
 import { admins } from '$lib/utils/permissions'
-import { fileToBase64 } from '$lib/utils/utils.js'
 
 export async function load({ parent, fetch }) {
 	const parentData = await parent()
@@ -52,7 +51,7 @@ export const actions = {
 
 			if (personalWebsite) {
 				// Delete existing image if the user hasn't uploaded one from the form.
-				if (formData.photoUpload.size === 0 && formData.useEuiPhoto !== 'true' && personalWebsite.image?.asset?.sys?.id) {
+				if (formData.useEuiPhoto !== 'true' && personalWebsite.image?.asset?.sys?.id) {
 					try {
 						await ManagementClient.entries.delete(personalWebsite.image.asset.sys.id)
 					} catch (e) {

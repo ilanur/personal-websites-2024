@@ -10,9 +10,17 @@
 	let newUploaded = $state(false)
 	let useEuiPhoto = $state(personalWebsite?.usePeopleProfilePicture)
 
+	console.log('personalWebsite pw form', personalWebsite)
+
 	onMount(() => {
+		console.log('PW FORM', `${PUBLIC_EUI_WEB}${personalWebsite.image?.asset.sys.uri}`)
+
 		if (personalWebsite?.usePeopleProfilePicture) {
 			setEuiProfilePhoto()
+		}
+
+		if (personalWebsite?.image?.asset?.sys.uri) {
+			fileUploadRef.setPreviewPhoto(`${PUBLIC_EUI_WEB}${personalWebsite.image.asset.sys.uri}`)
 		}
 	})
 
@@ -20,6 +28,8 @@
 		if (user?.photo && useEuiPhoto) {
 			setEuiProfilePhoto()
 			newUploaded = false
+		} else if (personalWebsite?.image?.asset?.sys.uri && !personalWebsite?.usePeopleProfilePicture) {
+			fileUploadRef.setPreviewPhoto(`${PUBLIC_EUI_WEB}${personalWebsite.image.asset.sys.uri}`)
 		} else if (!useEuiPhoto && !newUploaded) {
 			fileUploadRef.setPreviewPhoto(null)
 			newUploaded = false
@@ -30,7 +40,7 @@
 	})
 
 	function setEuiProfilePhoto() {
-		fileUploadRef.setPreviewPhoto(`${PUBLIC_EUI_WEB}/${user.photo.asset.sys.uri}`)
+		fileUploadRef.setPreviewPhoto(`${PUBLIC_EUI_WEB}${user.photo.asset.sys.uri}`)
 	}
 
 	async function onPhotoSelect() {

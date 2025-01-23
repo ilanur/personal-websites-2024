@@ -45,7 +45,7 @@ export async function load({ params, locals }) {
 	return {
 		personalWebsite,
 		personalWebsitePages: personalWebsitePages.items,
-		personalWebsiteBelongsToAuthUser: session.user.email.toLowerCase() === personalWebsite?.people.euiEmail.toLowerCase(),
+		personalWebsiteBelongsToAuthUser: session?.user.email.toLowerCase() === personalWebsite?.people.euiEmail.toLowerCase(),
 		hasBlog: hasBlog
 	}
 }

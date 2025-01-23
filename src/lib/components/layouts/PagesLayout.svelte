@@ -2,22 +2,17 @@
 	import UserHeroBanner from '$lib/components/UserHeroBanner.svelte'
 	import PersonalWebsiteNavigation from '$lib/components/PersonalWebsiteNavigation.svelte'
 	import UserContactInfo from '$lib/components/UserContactInfo.svelte'
-	import { setContext } from 'svelte'
-	import { writable } from 'svelte/store'
+	import { smallUserBanner } from '$lib/stores/hero-banner-store'
 
 	let { data, children, hasSidebar } = $props()
-
-	let smallHeroBanner = writable(false)
 
 	const personalWebsite = $derived(data.personalWebsite)
 	const personalWebsitePages = $derived(data.personalWebsitePages)
 	const hasBlog = $derived(data.hasBlog)
 	const authUser = $derived(data.authUser)
-
-	setContext('smallHeroBanner', smallHeroBanner)
 </script>
 
-<UserHeroBanner {personalWebsite} {authUser} isSmall={$smallHeroBanner} />
+<UserHeroBanner {personalWebsite} {authUser} isSmall={$smallUserBanner} />
 
 <div class="border-b bg-slate-800">
 	<nav>

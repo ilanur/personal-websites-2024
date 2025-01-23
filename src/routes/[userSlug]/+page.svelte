@@ -1,17 +1,15 @@
 <script>
-	import { getContext } from 'svelte'
 	import { getCanvasHTML, savePageContent } from '$lib/utils/contensis/client.js'
 	import { PUBLIC_CONTENSIS_PAGES_ASSETS_FOLDER } from '$env/static/public'
+	import { smallUserBanner } from '$lib/stores/hero-banner-store'
 	import EditableContent from '$lib/components/EditableContent.svelte'
 
 	let { data } = $props()
 
-	const smallHeroBanner = getContext('smallHeroBanner')
-
 	let isAuthUserWebsite = $derived(data.personalWebsite.people.email === data.authUser?.email)
 	let isAdmin = $derived(data.authUser?.role?.includes('admin'))
 
-	$smallHeroBanner = false
+	smallUserBanner.set(false)
 </script>
 
 <h1>{data.page?.title}</h1>

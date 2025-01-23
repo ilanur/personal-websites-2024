@@ -1,11 +1,9 @@
 <script>
-	import { getContext } from 'svelte'
+	import { smallUserBanner } from '$lib/stores/hero-banner-store'
 
 	let { data } = $props()
 
-	const smallHeroBanner = getContext('smallHeroBanner')
-
-	$smallHeroBanner = true
+	smallUserBanner.set(true)
 </script>
 
 <h1 class="mb-4 text-3xl">Publications in Cadmus</h1>

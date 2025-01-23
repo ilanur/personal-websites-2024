@@ -1,15 +1,14 @@
 <script>
-	import { getContext } from 'svelte'
 	import { getThumbnail, truncateString } from '$lib/utils/utils'
 	import { imageProcessing } from '$lib/directives/image-directives'
+	import { smallUserBanner } from '$lib/stores/hero-banner-store'
+
 	import AppLink from '$lib/components/AppLink.svelte'
 	import Button from '$lib/components/Button.svelte'
 
 	let { data } = $props()
 
-	const smallHeroBanner = getContext('smallHeroBanner')
-
-	$smallHeroBanner = true
+	smallUserBanner.set(true)
 </script>
 
 {#if data.blogPosts.length > 0}

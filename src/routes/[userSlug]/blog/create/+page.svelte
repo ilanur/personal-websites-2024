@@ -10,6 +10,7 @@
 	const { data } = $props()
 
 	let loading = $state(false)
+	let formErrors = $state()
 </script>
 
 <form
@@ -18,18 +19,28 @@
 	class="flex flex-col gap-4"
 	use:enhance={() => {
 		loading = true
+		formErrors = null
 
-		return async () => {
+		return async ({ update, result }) => {
+			await update({ reset: false })
 			loading = false
-			goto(`/${data.currentUserPersonalWebsite.websiteSlug}/blog`)
+
+			const fErrors = result.data?.formErrors ?? null
+
+			if (result.type === 'failure' && fErrors) {
+				formErrors = fErrors
+			}
+
+			if (result.status === 200) {
+				goto(`/${data.currentUserPersonalWebsite.websiteSlug}/blog`)
+			}
 		}
 	}}
 >
-	<PhotoUploader class="mb-10" name="mainImage" imgContainerClass="w-full h-72" crop={'1200x675'} />
-
-	<InputField type="text" name="title" label="Title of blogpost" />
-	<TextArea name="description" label="Description" />
-	<TextEditor label="Content" name="content" htmlContent={''} />
+	<PhotoUploader class="mb-10" name="mainImage" imgContainerClass="w-full h-72" crop={'1200x675'} error={formErrors?.mainImage} />
+	<InputField type="text" name="title" label="Title of blogpost" error={formErrors?.title} />
+	<TextArea name="description" label="Description" error={formErrors?.description} />
+	<TextEditor label="Content" name="content" htmlContent={''} error={formErrors?.content} />
 
 	<div>
 		<Button type="submit" {loading}>Submit</Button>

@@ -4,7 +4,7 @@
 	import BaseModal from './BaseModal.svelte'
 	import 'cropperjs/dist/cropper.css'
 
-	let { imgContainerClass = '', photo = null, crop, onPhotoSelect = () => {}, onPhotoDeleteClick = () => {}, ...rest } = $props()
+	let { imgContainerClass = '', photo = null, error = null, crop, onPhotoSelect = () => {}, onPhotoDeleteClick = () => {}, ...rest } = $props()
 
 	let cropperInstance = $state()
 	let fileUploadRef = $state()
@@ -116,8 +116,12 @@
 	}
 </script>
 
-<div class={clsx('flex', rest.class)}>
-	<div class={clsx('relative size-60 overflow-hidden rounded-md bg-intranet-gray-100', imgContainerClass)}>
+<div class={clsx('flex flex-col', rest.class)}>
+	<div
+		class={clsx('relative size-60 overflow-hidden rounded-md  bg-intranet-gray-100', imgContainerClass, {
+			'border border-red-600': error
+		})}
+	>
 		<input
 			bind:this={fileUploadRef}
 			accept="image/png,image/jpeg"
@@ -148,6 +152,10 @@
 			{/if}
 		</div>
 	</div>
+
+	{#if error}
+		<small class="pl-1 pt-1.5 text-xs text-red-600">{error}</small>
+	{/if}
 </div>
 
 <BaseModal bind:this={cropModalRef}>

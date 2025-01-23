@@ -6,6 +6,7 @@
 	let {
 		editorId = 'canvas-editor',
 		htmlContent,
+		error = null,
 		value = $bindable(),
 		label = '',
 		toolbar = ['bold', 'italic', 'underline', 'link', 'image', 'code-block', { list: 'ordered' }, { list: 'bullet' }],
@@ -34,8 +35,24 @@
 	})
 </script>
 
-<div class={clsx('flex h-40 flex-col', rest.class)}>
+<div class={clsx('flex flex-col', rest.class)}>
 	<label for={editorId} class="mb-1 text-sm" onclick={quillInstance.focus()}>{label}</label>
-	<div class="canvas-editor" id={editorId}></div>
+
+	<div
+		class={clsx(
+			'relative overflow-hidden rounded border  [&_.ql-container.ql-snow]:border-none [&_.ql-toolbar.ql-snow]:border-l-0 [&_.ql-toolbar.ql-snow]:border-r-0 [&_.ql-toolbar.ql-snow]:border-t-0 [&_.ql-toolbar.ql-snow]:border-intranet-black-300',
+			{
+				'border-red-600': error,
+				'border-intranet-black-300': !error
+			}
+		)}
+	>
+		<div class="canvas-editor shadow-none [&_.ql-editor]:min-h-40" id={editorId}></div>
+	</div>
+
 	<input type="hidden" name={rest.name} {value} />
+
+	{#if error}
+		<small class="pl-1 pt-1.5 text-xs text-red-600">{error}</small>
+	{/if}
 </div>

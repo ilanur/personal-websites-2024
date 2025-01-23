@@ -1,13 +1,21 @@
+import dayjs from 'dayjs'
+import formatZodError from '$lib/utils/format-zod-error.js'
 import { ManagementClient } from '$lib/utils/contensis/_clients.js'
 import { fileToFileBuffer, getPersonalWebsiteByEmail, uploadAsset } from '$lib/utils/contensis/server.js'
 import { parseHtml } from '@contensis/html-canvas'
-import dayjs from 'dayjs'
+import { createBlogFormSchema } from '$lib/zod-schemas/create-blog-form.js'
+import { fail } from '@sveltejs/kit'
 
 export const actions = {
 	default: async ({ request, locals, fetch }) => {
 		const session = await locals.auth()
 		const formData = Object.fromEntries(await request.formData())
 		const personalWebsite = await getPersonalWebsiteByEmail(session.user.email)
+		const formValidation = createBlogFormSchema.safeParse(formData)
+
+		if (!formValidation.success) {
+			return fail(400, { success: false, formErrors: formatZodError(formValidation.error) })
+		}
 
 		let createdBlogPost
 

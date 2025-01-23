@@ -11,14 +11,15 @@
 		id={rest.name}
 		bind:value
 		class={clsx(
-			'rounded read-only:cursor-not-allowed read-only:bg-intranet-gray-100 read-only:opacity-75 disabled:cursor-not-allowed disabled:bg-intranet-gray-100 disabled:opacity-75',
+			'rounded  read-only:cursor-not-allowed read-only:bg-intranet-gray-100 read-only:opacity-75 disabled:cursor-not-allowed disabled:bg-intranet-gray-100 disabled:opacity-75',
 			{
-				'border-red-600': error
+				'border-red-600': error,
+				'border-intranet-black-300': !error
 			}
 		)}
 	/>
 
 	{#if error}
-		<small class="absolute -bottom-px translate-y-full pl-1 text-xs text-red-600">{error}</small>
+		<small class="pl-1 pt-1.5 text-xs text-red-600">{error}</small>
 	{/if}
 </div>

@@ -1,15 +1,7 @@
 <script>
 	import clsx from 'clsx'
 
-	let {
-		label,
-		value,
-		options,
-		valuePropertyName = 'value',
-		textPropertyName = 'text',
-		error = null,
-		...rest
-	} = $props()
+	let { label, value, options, valuePropertyName = 'value', textPropertyName = 'text', error = null, ...rest } = $props()
 </script>
 
 <div class={clsx('relative flex flex-col', rest.class)}>
@@ -19,7 +11,7 @@
 		{...rest}
 		id={rest.name}
 		class={clsx(
-			'disabled:bg-intranet-gray-100 w-full cursor-pointer rounded disabled:cursor-not-allowed disabled:border-eui-gray-30 disabled:text-eui-gray-70',
+			'disabled:border-eui-gray-30 disabled:text-eui-gray-70 w-full cursor-pointer rounded disabled:cursor-not-allowed disabled:bg-intranet-gray-100',
 			{
 				'border-red-600': error
 			}
@@ -32,6 +24,6 @@
 	</select>
 
 	{#if error}
-		<small class="text-red-600 absolute -bottom-4 pl-1 text-xs">{error}</small>
+		<small class="pl-1 pt-1.5 text-xs text-red-600">{error}</small>
 	{/if}
 </div>

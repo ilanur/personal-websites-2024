@@ -13,7 +13,8 @@
 		class={clsx(
 			'disabled:border-eui-gray-30 disabled:text-eui-gray-70 w-full cursor-pointer rounded disabled:cursor-not-allowed disabled:bg-intranet-gray-100',
 			{
-				'border-red-600': error
+				'border-red-600': error,
+				'border-intranet-black-300': !error
 			}
 		)}
 	>

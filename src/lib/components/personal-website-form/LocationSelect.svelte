@@ -23,7 +23,7 @@
 				fields: ['geometry', 'name', 'formatted_address', 'address_components']
 			})
 
-			autoComplete.addListener('place_changed', (e) => {
+			autoComplete.addListener('place_changed', () => {
 				const place = autoComplete.getPlace()
 
 				if (place.address_components) {
@@ -48,7 +48,7 @@
 
 <div>
 	<input type="hidden" name="city" bind:value={city} />
-	<InputField value={city} name="autocomplete" label="Address" onkeypress={disableKeyPress} />
+	<InputField value={city} name="autocomplete" label="Current location" onkeypress={disableKeyPress} />
 
 	<div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-2">
 		<InputField name="lat" label="Latitude" value={lat} readonly />

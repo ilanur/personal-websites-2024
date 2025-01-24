@@ -1,18 +1,17 @@
 <script>
 	import { enhance } from '$app/forms'
 	import { goto } from '$app/navigation'
-	import { PUBLIC_EUI_PERSONAL_WEBSITE_URL, PUBLIC_EUI_WEB } from '$env/static/public'
+	import { PUBLIC_EUI_PERSONAL_WEBSITE_URL } from '$env/static/public'
 	import InputField from '$lib/components/form-elements/InputField.svelte'
 	import SelectField from '$lib/components/form-elements/SelectField.svelte'
 	import Button from '$lib/components/Button.svelte'
 	import CheckboxField from '$lib/components/form-elements/CheckboxField.svelte'
 	import LocationSelect from '$lib/components/personal-website-form/LocationSelect.svelte'
 	import PwFormPhotoUpload from './PwFormPhotoUpload.svelte'
-	// import PwFormImageUpload from './PwFormImageUpload.svelte'
 
 	let { user, personalWebsite, nationalities = [] } = $props()
 
-	console.log('pwww', personalWebsite)
+	console.log('PersonalWebsite', personalWebsite)
 
 	let formLoading = $state(false)
 	let formErrors = $state()
@@ -65,15 +64,6 @@
 	}}
 >
 	<div class="grid grid-cols-1 items-start gap-10 lg:grid-cols-2">
-		<!-- <div>
-			<p>TEST</p>
-			{`${PUBLIC_EUI_WEB}${personalWebsite?.image?.asset?.sys.properties.filePath}${personalWebsite?.image?.asset?.sys.properties.filename}`}
-
-			<PwFormImageUpload
-				image={`${PUBLIC_EUI_WEB}${personalWebsite?.image?.asset?.sys.properties.filePath}${personalWebsite?.image?.asset?.sys.properties.filename}`}
-			/>
-		</div> -->
-
 		<!-- General settings -->
 		<div class="flex flex-col">
 			<p class="mb-4 font-bold">General settings</p>

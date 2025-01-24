@@ -78,27 +78,52 @@
 			hits({
 				container: '#hits',
 				templates: {
-					item: (hit, { html }) => html`
-						<article class="group relative flex h-full items-center overflow-hidden rounded-lg border bg-white transition-all hover:scale-[1.02] hover:shadow-lg sm:flex-col sm:items-start">
-							<figure class="aspect-square w-full max-w-32 shrink-0 overflow-hidden sm:max-w-none">${hit.cleanEntryData.entryThumbnail ? html` <img class="h-full w-full object-cover" src="${getThumbnail(hit.cleanEntryData.entryThumbnail, 'https://www.eui.eu/Images/Web2021/card-placeholder.svg')}" alt="${hit.cleanEntryData.entryThumbnail.altText || 'Thumbnail'}" /> ` : html` <span class="text-sm text-gray-500">No Image</span> `}</figure>
-							<div class="h-full p-4 sm:flex sm:flex-col sm:justify-between">
-								<div>
-									<h4 class="text-base font-bold text-gray-800">${hit.title}</h4>
-									<p class="mt-1 text-xs text-gray-600">${truncateString(hit.cleanEntryData.entryDescription, 200)}</p>
+					item: (hit, { html }) => {
+						let thumb
+						let altText
+						if (hit.cleanEntryData.usePeopleProfilePicture === true && hit.cleanEntryData.people.entryThumbnail) {
+							thumb = getThumbnail(hit.cleanEntryData.people.entryThumbnail, 'https://www.eui.eu/Images/Web2021/card-placeholder.svg')
+							altText = hit.cleanEntryData.people.entryThumbnail.altText || 'Thumbnail'
+						} else {
+							thumb = getThumbnail(hit.cleanEntryData.entryThumbnail, 'https://www.eui.eu/Images/Web2021/card-placeholder.svg')
+							altText = hit.cleanEntryData.entryThumbnail.altText || 'Thumbnail'
+						}
+
+						return html`
+							<article
+								class="group relative flex h-full items-center overflow-hidden rounded-lg border bg-white transition-all hover:scale-[1.02] hover:shadow-lg sm:flex-col sm:items-start"
+							>
+								<figure class="aspect-square w-full max-w-32 shrink-0 overflow-hidden sm:max-w-none">
+									${thumb
+										? html` <img class="h-full w-full object-cover" src="${thumb}" alt="${altText || 'Thumbnail'}" /> `
+										: html` <span class="text-sm text-gray-500">No Image</span> `}
+								</figure>
+								<div class="h-full p-4 sm:flex sm:flex-col sm:justify-between">
+									<div>
+										<h4 class="text-base font-bold text-gray-800">${hit.title}</h4>
+										<p class="mt-1 text-xs text-gray-600">${truncateString(hit.cleanEntryData.entryDescription, 200)}</p>
+									</div>
+									<div>
+										<a
+											class="mt-4 inline-block text-sm text-eui-dark-blue-500 hover:underline"
+											href="${getPreviewUrl(hit.cleanEntryData.websiteSlug)}"
+											title="${hit.title} website"
+											aria-label="${hit.title} website"
+										>
+											Visit the Personal Website
+											<span class="absolute inset-x-0 -top-px bottom-0"></span>
+										</a>
+									</div>
 								</div>
-								<div>
-									<a class="mt-4 inline-block text-sm text-eui-dark-blue-500 hover:underline" href="${getPreviewUrl(hit.cleanEntryData.websiteSlug)}" title="${hit.title} website" aria-label="${hit.title} website">
-										Visit the Personal Website
-										<span class="absolute inset-x-0 -top-px bottom-0"></span>
-									</a>
-								</div>
-							</div>
-						</article>
-					`,
+							</article>
+						`
+					},
 					empty(results, { html }) {
 						return html`
 							<div class="flex flex-col items-center justify-center p-6 text-center text-gray-700">
-								<p class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gray-200 p-4 text-3xl text-gray-400">
+								<p
+									class="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gray-200 p-4 text-3xl text-gray-400"
+								>
 									<span class="fa-sharp fa-solid fa-magnifying-glass"></span>
 								</p>
 								<h3 class="text-lg font-semibold">
@@ -175,7 +200,8 @@
 					list: 'mt-6 flex flex-wrap items-center',
 					item: 'text-sm me-5',
 					label: 'sr-only',
-					category: 'inline-flex items-center flex-wrap gap-x-3 bg-eui-dark-blue-500 px-2 py-1 mb-3 me-2 rounded-sm text-xs font-medium text-white',
+					category:
+						'inline-flex items-center flex-wrap gap-x-3 bg-eui-dark-blue-500 px-2 py-1 mb-3 me-2 rounded-sm text-xs font-medium text-white',
 					categoryLabel: '',
 					delete: 'group relative -mr-1 h-3.5 w-3.5 rounded-sm hover:bg-eui-dark-blue-500'
 				},
@@ -190,7 +216,18 @@
 		item.filterForHorizontalSearch.forEach((filter) => {
 			const widgetType = mapFilterTypeToWidget(filter.type)
 			if (widgetType) {
-				widgetType(search, `#${filter.divIdValue}`, filter.attribute, filter.title, select_form_classes, filter.limit, filter.sortBy, filter.count_value, filter.showSearchBar, filter.show_more)
+				widgetType(
+					search,
+					`#${filter.divIdValue}`,
+					filter.attribute,
+					filter.title,
+					select_form_classes,
+					filter.limit,
+					filter.sortBy,
+					filter.count_value,
+					filter.showSearchBar,
+					filter.show_more
+				)
 			}
 		})
 		search.start()
@@ -261,7 +298,12 @@
 				<ul role="list" class="flex">
 					{#each quickFilters as filter}
 						<li class="mr-1">
-							<button class="rounded px-2 py-1 text-xs font-semibold {activeFilter === `${filter.algoliaFilter}` ? 'bg-eui-dark-blue-500 text-white' : 'bg-eui-dark-blue-100 text-eui-dark-blue-500'} hover:bg-eui-dark-blue-500 hover:text-white" on:click={() => toggleFilter(filter.algoliaFilter)}>
+							<button
+								class="rounded px-2 py-1 text-xs font-semibold {activeFilter === `${filter.algoliaFilter}`
+									? 'bg-eui-dark-blue-500 text-white'
+									: 'bg-eui-dark-blue-100 text-eui-dark-blue-500'} hover:bg-eui-dark-blue-500 hover:text-white"
+								on:click={() => toggleFilter(filter.algoliaFilter)}
+							>
 								{@html filter.label}
 							</button>
 						</li>

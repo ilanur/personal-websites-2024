@@ -16,7 +16,7 @@
 <form
 	method="POST"
 	enctype="multipart/form-data"
-	class="flex flex-col gap-4"
+	class="flex flex-col"
 	use:enhance={() => {
 		loading = true
 		formErrors = null

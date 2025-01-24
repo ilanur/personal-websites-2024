@@ -68,7 +68,7 @@
 		<div class="flex flex-col">
 			<p class="mb-4 font-bold">General settings</p>
 
-			<div class="flex flex-col gap-4">
+			<div class="flex flex-col">
 				<InputField
 					class="col-span-2 sm:col-span-1"
 					name="title"
@@ -101,7 +101,7 @@
 				<LocationSelect {personalWebsite} error={formErrors?.city} />
 			</div>
 
-			<hr class="my-6" />
+			<hr class="mb-6 mt-2" />
 
 			<!-- CV -->
 			<div>
@@ -133,7 +133,7 @@
 		<div>
 			<div>
 				<p class="mb-4 font-bold">Socials</p>
-				<div class="grid grid-cols-1 gap-x-2 gap-y-4 xl:grid-cols-2">
+				<div class="grid grid-cols-1 gap-x-2 xl:grid-cols-2">
 					<InputField name="Linkedin" type="text" label="LinkedIn" value={getSocialMedia('Linkedin')?.url} />
 					<InputField name="Facebook" type="text" label="Facebook" value={getSocialMedia('Facebook')?.url} />
 					<InputField name="Twitter" type="text" label="Twitter" value={getSocialMedia('Twitter')?.url} />

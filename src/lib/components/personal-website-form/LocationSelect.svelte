@@ -50,16 +50,16 @@
 	}
 </script>
 
-<div>
+<div class="pb-4">
 	<input type="hidden" {name} bind:value={city} />
 	<InputField value={city} name="autocomplete" label="Current location" onkeypress={disableKeyPress} {error} {oninput} showErrorLabel={false} />
 
-	<div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-2">
+	<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-2">
 		<InputField name="lat" label="Latitude" value={lat} readonly {error} showErrorLabel={false} />
 		<InputField name="lng" label="Longitude" value={lng} readonly {error} showErrorLabel={false} />
 	</div>
 
 	{#if error}
-		<small class="pl-1 pt-1.5 text-xs text-red-600">{error}</small>
+		<small class="absolute -bottom-0 pl-1 pt-1.5 text-xs text-red-600">{error}</small>
 	{/if}
 </div>

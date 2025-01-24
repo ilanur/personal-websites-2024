@@ -4,7 +4,7 @@
 	let { label, value = $bindable(), error = null, showErrorLabel = true, oninput = () => {}, ...rest } = $props()
 </script>
 
-<div class={clsx('relative flex flex-col', rest.class)}>
+<div class={clsx('relative flex flex-col pb-4', rest.class)}>
 	<label for={rest.name} class="mb-1 text-sm">{label}</label>
 	<input
 		{...rest}
@@ -21,6 +21,6 @@
 	/>
 
 	{#if error && showErrorLabel}
-		<small class="pl-1 pt-1.5 text-xs text-red-600">{error}</small>
+		<small class="absolute -bottom-0 pl-1 pt-1.5 text-xs text-red-600">{error}</small>
 	{/if}
 </div>

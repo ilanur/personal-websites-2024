@@ -52,8 +52,8 @@
 		}
 	}}
 >
-	<div class="flex flex-col gap-4">
-		<p class="font-bold">General settings</p>
+	<div class="flex flex-col">
+		<p class="mb-4 font-bold">General settings</p>
 
 		<InputField
 			class="col-span-2 sm:col-span-1"
@@ -61,6 +61,7 @@
 			label="Title of your personal website"
 			value={user.nameAndSurnameForTheWeb}
 			readonly
+			error={formErrors?.title}
 		/>
 
 		<div class="grid grid-cols-1 items-end gap-4 md:grid-cols-2 md:gap-2">
@@ -80,12 +81,10 @@
 			error={formErrors?.nationality}
 		/>
 
-		<LocationSelect />
+		<LocationSelect error={formErrors?.city} />
 	</div>
 
-	<div>
-		<p class="mb-4 font-bold">Personal website photo</p>
-
+	<div class="pt-[3.75rem]">
 		<PhotoUploader
 			bind:this={photoUploader}
 			{photo}

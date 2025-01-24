@@ -35,7 +35,7 @@
 	})
 </script>
 
-<div class={clsx('flex flex-col', rest.class)}>
+<div class={clsx('flex flex-col pb-4', rest.class)}>
 	<label for={editorId} class="mb-1 text-sm" onclick={quillInstance.focus()}>{label}</label>
 
 	<div
@@ -53,6 +53,6 @@
 	<input type="hidden" name={rest.name} {value} />
 
 	{#if error}
-		<small class="pl-1 pt-1.5 text-xs text-red-600">{error}</small>
+		<small class="absolute -bottom-0 pl-1 pt-1.5 text-xs text-red-600">{error}</small>
 	{/if}
 </div>

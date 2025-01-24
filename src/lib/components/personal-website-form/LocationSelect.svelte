@@ -4,7 +4,7 @@
 	import InputField from '$lib/components/form-elements/InputField.svelte'
 	import * as GoogleMapsApiLoader from '@googlemaps/js-api-loader'
 
-	let { personalWebsite = {} } = $props()
+	let { personalWebsite = {}, error = null, name = 'city' } = $props()
 
 	let city = $state(personalWebsite?.city)
 	let lat = $state(personalWebsite?.lat)
@@ -44,14 +44,22 @@
 			e.preventDefault()
 		}
 	}
+
+	function oninput(e) {
+		city = e.target.value
+	}
 </script>
 
 <div>
-	<input type="hidden" name="city" bind:value={city} />
-	<InputField value={city} name="autocomplete" label="Current location" onkeypress={disableKeyPress} />
+	<input type="hidden" {name} bind:value={city} />
+	<InputField value={city} name="autocomplete" label="Current location" onkeypress={disableKeyPress} {error} {oninput} showErrorLabel={false} />
 
 	<div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-2">
-		<InputField name="lat" label="Latitude" value={lat} readonly />
-		<InputField name="lng" label="Longitude" value={lng} readonly />
+		<InputField name="lat" label="Latitude" value={lat} readonly {error} showErrorLabel={false} />
+		<InputField name="lng" label="Longitude" value={lng} readonly {error} showErrorLabel={false} />
 	</div>
+
+	{#if error}
+		<small class="pl-1 pt-1.5 text-xs text-red-600">{error}</small>
+	{/if}
 </div>

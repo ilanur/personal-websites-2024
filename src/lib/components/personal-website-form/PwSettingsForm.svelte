@@ -75,6 +75,7 @@
 					label="Title of your personal website"
 					value={user.nameAndSurnameForTheWeb}
 					readonly
+					error={formErrors?.title}
 				/>
 
 				<div class="grid grid-cols-1 items-end gap-4 md:grid-cols-2 md:gap-2">
@@ -97,7 +98,7 @@
 				/>
 
 				<!-- SELECT LOCATION -->
-				<LocationSelect {personalWebsite} />
+				<LocationSelect {personalWebsite} error={formErrors?.city} />
 			</div>
 
 			<hr class="my-6" />

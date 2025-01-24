@@ -74,12 +74,19 @@ export const actions = {
 							title: formData.slug
 						})
 
-						const cacheClearResponse = await fetch(
-							`https://live-eui.cloud.contensis.com/NewGenerationSite/system/purge-cache-manually.aspx?url=${PUBLIC_EUI_WEB}/Content-Types-Assets/PersonalWebsites/${formData.slug}`
+						console.log('URL TO PURGE', `${PUBLIC_EUI_WEB}${uploadedPhoto.sys.uri}`)
+
+						const liveClear = await fetch(
+							`https://live-eui.cloud.contensis.com/NewGenerationSite/system/purge-cache-manually.aspx?url=${PUBLIC_EUI_WEB}${uploadedPhoto.sys.uri}`
+						)
+
+						const previewClear = await fetch(
+							`https://preview-eui.cloud.contensis.com/NewGenerationSite/system/purge-cache-manually.aspx?url=${PUBLIC_EUI_WEB}${uploadedPhoto.sys.uri}`
 						)
 
 						console.log('UPLOADED PHOTO', uploadedPhoto)
-						console.log('CACHE CLEAR RESPONSE', cacheClearResponse)
+						console.log('CACHE CLEAR RESPONSE', liveClear)
+						console.log('CACHE CLEAR RESPONSE', previewClear)
 					} catch (e) {
 						console.error('Error uploading photo: ', e)
 						return fail(500, {

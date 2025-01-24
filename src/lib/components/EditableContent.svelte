@@ -1,11 +1,12 @@
 <script>
-	import { onMount } from 'svelte'
+	import { onDestroy, onMount } from 'svelte'
 	import { parseHtml } from '@contensis/html-canvas'
 	import { PUBLIC_EUI_WEB } from '$env/static/public'
 	import { canvasToText, getCanvasHTML } from '$lib/utils/contensis/client'
 	import clsx from 'clsx'
 	import Button from '$lib/components/Button.svelte'
 	import 'quill/dist/quill.snow.css'
+	import { afterNavigate } from '$app/navigation'
 
 	let {
 		editorId = 'canvas-editor',
@@ -25,6 +26,22 @@
 	const hasNoContent = $derived(!htmlToRender || htmlToRender === '<p></p>')
 
 	onMount(async () => {
+		await initQuill()
+		await imageLoader()
+	})
+
+	// onDestroy(() => {
+	// 	console.log('destroy')
+	// 	quillInstance = null
+	// })
+
+	// afterNavigate(async () => {
+	// 	console.log('afterNavigate', htmlToRender)
+	// 	quillInstance = null
+	// 	await initQuill()
+	// })
+
+	async function initQuill() {
 		const Quill = (await import('quill')).default
 		quillInstance = new Quill(`#${editorId}`, {
 			modules: {
@@ -34,10 +51,14 @@
 			},
 			theme: 'snow'
 		})
-		quillInstance.root.innerHTML = htmlToRender
 
-		await imageLoader()
-	})
+		setInnerHTML(htmlToRender)
+	}
+
+	export function setInnerHTML(html) {
+		console.log('setInnerHTML', html)
+		quillInstance.root.innerHTML = html
+	}
 
 	async function imageLoader() {
 		const canvas = await parseHtml(htmlToRender)

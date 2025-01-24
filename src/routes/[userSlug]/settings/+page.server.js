@@ -1,4 +1,5 @@
 import formatZodError from '$lib/utils/format-zod-error.js'
+import { PUBLIC_EUI_WEB } from '$env/static/public'
 import { fileToFileBuffer, getPersonalWebsiteByEmail, uploadAsset } from '$lib/utils/contensis/server.js'
 import { pwFormSchema } from '$lib/zod-schemas/personal-website-form.js'
 import { error, fail, redirect } from '@sveltejs/kit'
@@ -72,6 +73,13 @@ export const actions = {
 							contentType: formData.photoUpload.type,
 							title: formData.slug
 						})
+
+						const cacheClearResponse = await fetch(
+							`https://live-eui.cloud.contensis.com/NewGenerationSite/system/purge-cache-manually.aspx?url=${PUBLIC_EUI_WEB}/Content-Types-Assets/PersonalWebsites/${formData.slug}`
+						)
+
+						console.log('UPLOADED PHOTO', uploadedPhoto)
+						console.log('CACHE CLEAR RESPONSE', cacheClearResponse)
 					} catch (e) {
 						console.error('Error uploading photo: ', e)
 						return fail(500, {

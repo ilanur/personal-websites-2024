@@ -8,8 +8,7 @@
 	import CheckboxField from '$lib/components/form-elements/CheckboxField.svelte'
 	import LocationSelect from '$lib/components/personal-website-form/LocationSelect.svelte'
 	import PwFormPhotoUpload from './PwFormPhotoUpload.svelte'
-	import PwFormImageUpload from './PwFormImageUpload.svelte'
-	import { assets } from '$app/paths'
+	// import PwFormImageUpload from './PwFormImageUpload.svelte'
 
 	let { user, personalWebsite, nationalities = [] } = $props()
 

@@ -5,11 +5,20 @@
 	import UserHeroBannerSocials from '$lib/components/UserHeroBannerSocials.svelte'
 	import HeroBannerGraphic from '$lib/components/graphics/HeroBannerGraphic.svelte'
 	import EditableContent from '$lib/components/EditableContent.svelte'
+	import { tick } from 'svelte'
+	import { afterNavigate } from '$app/navigation'
 
 	let { personalWebsite, isSmall, authUser } = $props()
 
+	console.log(personalWebsite)
+
+	let descriptionFieldRef = $state(null)
 	let isAuthUserWebsite = $derived(personalWebsite.people.email === authUser?.email)
 	let isAdmin = $derived(authUser?.role?.includes('admin'))
+
+	afterNavigate(() => {
+		// descriptionFieldRef.setInnerHTML(personalWebsite.description)
+	})
 </script>
 
 <div class={clsx('relative overflow-hidden bg-eui-dark-blue-500 pt-0 md:bg-[transparent]', { 'md:py-8': isSmall, 'md:py-12': !isSmall })}>
@@ -30,7 +39,12 @@
 			})}
 		>
 			<h1>{personalWebsite.title} <span class="sr-only">personal website</span></h1>
+			<p>
+				{personalWebsite.description}
+			</p>
+
 			<EditableContent
+				bind:this={descriptionFieldRef}
 				class="[&_a]:text-white"
 				editorId="description-editor"
 				htmlContent={personalWebsite.description ?? ''}

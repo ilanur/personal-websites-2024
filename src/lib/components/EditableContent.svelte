@@ -49,10 +49,6 @@
 		})
 
 		setInnerHTML(htmlToRender)
-
-		quillInstance.on('text-change', (e) => {
-			console.log('text changed', e)
-		})
 	}
 
 	function setInnerHTML(html) {

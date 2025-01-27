@@ -38,15 +38,17 @@
 	})
 
 	async function initQuill() {
-		const Quill = (await import('quill')).default
-		quillInstance = new Quill(`#${editorId}`, {
-			modules: {
-				toolbar: {
-					container: toolbar
-				}
-			},
-			theme: 'snow'
-		})
+		if (!quillInstance) {
+			const Quill = (await import('quill')).default
+			quillInstance = new Quill(`#${editorId}`, {
+				modules: {
+					toolbar: {
+						container: toolbar
+					}
+				},
+				theme: 'snow'
+			})
+		}
 
 		setInnerHTML(htmlToRender)
 	}

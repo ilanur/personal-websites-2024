@@ -5,6 +5,7 @@
 	import { canvasToText, getCanvasHTML } from '$lib/utils/contensis/client'
 	import clsx from 'clsx'
 	import Button from '$lib/components/Button.svelte'
+	import BaseModal from '$lib/components/BaseModal.svelte'
 	import 'quill/dist/quill.snow.css'
 
 	let {
@@ -21,12 +22,13 @@
 	let saveLoading = $state(false)
 	let quillInstance = $state(null)
 	let htmlToRender = $state(htmlContent)
+	let cancelModalRef = $state()
 
 	const hasNoContent = $derived(!htmlToRender || htmlToRender === '<p></p>')
 
 	$effect(() => {
 		if (htmlContent !== htmlToRender) {
-			updateContent(htmlContent)
+			setInnerHTML(htmlContent)
 		}
 	})
 
@@ -47,6 +49,10 @@
 		})
 
 		setInnerHTML(htmlToRender)
+
+		quillInstance.on('text-change', (e) => {
+			console.log('text changed', e)
+		})
 	}
 
 	function setInnerHTML(html) {
@@ -54,11 +60,6 @@
 			quillInstance.root.innerHTML = html
 		}
 		htmlToRender = html
-	}
-
-	function updateContent(newContent) {
-		setInnerHTML(newContent)
-		htmlToRender = newContent
 	}
 
 	async function imageLoader() {
@@ -113,13 +114,34 @@
 				await onSave(canvasToText(canvas))
 			}
 
-			htmlToRender = updatedHtml
+			setInnerHTML(updatedHtml)
 		} catch (error) {
 			console.error('Error updating page:', error)
 		} finally {
 			saveLoading = false
 			editMode = false
 		}
+	}
+
+	function onCancelClick() {
+		const text = quillInstance.getLength()
+
+		if (text === 1) {
+			console.log('Text is false')
+			editMode = false
+		} else {
+			console.log('Text is true')
+			cancelModalRef.openModal()
+		}
+	}
+
+	function onModalNoClick() {
+		cancelModalRef.closeModal()
+	}
+
+	function onModalYesClick() {
+		cancelModalRef.closeModal()
+		editMode = false
 	}
 </script>
 
@@ -150,7 +172,7 @@
 	<div class:hidden={!editMode} class="relative bg-white text-intranet-black-950">
 		<div id={editorId}></div>
 		<div class="absolute right-1 top-1 flex gap-x-1">
-			<Button class="flex size-8 items-center justify-center border-gray-200 bg-gray-200 !text-gray-500" onclick={() => (editMode = false)}>
+			<Button class="flex size-8 items-center justify-center border-gray-200 bg-gray-200 !text-gray-500" onclick={onCancelClick}>
 				<i class="fa-solid fa-xmark"></i>
 			</Button>
 			<Button class="flex size-8 items-center justify-center" loading={saveLoading} onclick={onSaveClick}>
@@ -159,3 +181,19 @@
 		</div>
 	</div>
 </div>
+
+<BaseModal bind:this={cancelModalRef}>
+	{#snippet headerSlot()}
+		Cancel editing
+	{/snippet}
+
+	<p>Are you sure you want to cancel editing?</p>
+	<p>All changes will be lost</p>
+
+	{#snippet footerSlot()}
+		<div class="flex justify-end gap-3">
+			<Button class="!px-3 !py-0.5" outlined onclick={onModalNoClick}>No</Button>
+			<Button class="!px-3 !py-0.5" onclick={onModalYesClick}>Yes</Button>
+		</div>
+	{/snippet}
+</BaseModal>

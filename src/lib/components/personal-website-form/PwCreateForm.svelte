@@ -65,7 +65,7 @@
 		/>
 
 		<div class="grid grid-cols-1 items-end gap-4 md:grid-cols-2 md:gap-2">
-			<InputField name="websiteURL" label="Your personal website URL" value={`${PUBLIC_EUI_PERSONAL_WEBSITE_URL}/`} readonly />
+			<InputField label="Your personal website URL" value={`${PUBLIC_EUI_PERSONAL_WEBSITE_URL}/`} readonly />
 			<InputField name="slug" label="Slug" value={user.sys.slug} placeholder="website slug" error={formErrors?.slug} />
 		</div>
 

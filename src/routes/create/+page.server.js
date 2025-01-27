@@ -75,7 +75,7 @@ export const actions = {
 						description: 'Photo uploaded from Personal website creation page',
 						folderId: '/Content-Types-Assets/PersonalWebsites',
 						contentType: formData.photoUpload.type,
-						title: formData.title
+						title: contensisUser?.nameAndSurnameForTheWeb ?? formData.title
 					})
 				} catch (e) {
 					console.error('Error uploading photo: ', e)

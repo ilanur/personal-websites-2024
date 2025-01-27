@@ -48,6 +48,7 @@ export const actions = {
 		}
 
 		try {
+			// Use title, websiteURL, slug and email from personalWebsite for security reasons.
 			let personalWebsite = await getPersonalWebsiteByEmail(userIsAdmin ? formData.email : authUser.user.email)
 
 			if (personalWebsite) {
@@ -71,7 +72,7 @@ export const actions = {
 							description: 'Photo uploaded from Personal website settings page',
 							folderId: '/Content-Types-Assets/PersonalWebsites',
 							contentType: formData.photoUpload.type,
-							title: formData.slug
+							title: personalWebsite.title
 						})
 
 						console.log('URL TO PURGE', `${PUBLIC_EUI_WEB}${uploadedPhoto.sys.uri}`)
@@ -191,7 +192,7 @@ export const actions = {
 							description: `CV of ${formData.title}`,
 							folderId: '/Content-Types-Assets/PersonalWebsites/CVs',
 							contentType: 'application/pdf',
-							title: `${formData.slug}-cv`
+							title: `${personalWebsite.websiteSlug}-cv`
 						})
 					} catch (e) {
 						console.log('Error uploading CV:', e)
@@ -222,7 +223,6 @@ export const actions = {
 					}
 				}
 
-				personalWebsite['websiteSlug'] = formData.slug
 				personalWebsite['nationality'] = { nationality: [formData.nationality] }
 				personalWebsite['city'] = formData.city
 				personalWebsite['lat'] = formData.lat

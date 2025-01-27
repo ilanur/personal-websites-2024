@@ -295,10 +295,12 @@ export const actions = {
 				}))
 			}
 
-			await fetch('/api/contensis/entries/update', {
+			const updatedPersonalWebsiteResponse = await fetch('/api/contensis/entries/update', {
 				method: 'PUT',
 				body: JSON.stringify(personalWebsite)
 			})
+
+			const updatedPersonalWebsite = await updatedPersonalWebsiteResponse.json()
 
 			// TODO: Check with Emanuele
 			// PUBLISH/UNPUBLISH personal website
@@ -307,7 +309,7 @@ export const actions = {
 			// 	await ManagementClient.entries.invokeWorkflow(personalWebsite, 'versionComplete.sysUnpublish')
 			// }
 
-			return { success: true }
+			return { success: true, updatedPersonalWebsite }
 		} catch (e) {
 			console.error('Error while updating personal website entry:', e.data)
 			error(e.status, 'Error while updating personal website entry')

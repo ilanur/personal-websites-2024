@@ -57,8 +57,8 @@
 				formErrors = fErrors
 			}
 
-			if (result.status === 200 && result.data.createdPersonalWebsite) {
-				goto(`/${result.data.createdPersonalWebsite.websiteSlug}`)
+			if (result.status === 200 && result.data.updatedPersonalWebsite) {
+				goto(`/${result.data.updatedPersonalWebsite.websiteSlug}`)
 			}
 		}
 	}}

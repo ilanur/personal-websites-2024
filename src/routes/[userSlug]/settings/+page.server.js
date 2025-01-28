@@ -35,13 +35,11 @@ export async function load({ parent, fetch }) {
 }
 
 export const actions = {
-	default: async ({ request, locals, fetch }) => {
+	default: async ({ request, locals, fetch, cookies }) => {
 		const authUser = await locals.auth()
 		const formData = Object.fromEntries(await request.formData())
 		const formValidation = pwFormSchema.safeParse(formData)
 		const userIsAdmin = admins.includes(authUser?.user.email)
-
-		console.log('FORM DATA', formData)
 
 		if (!formValidation.success) {
 			return fail(400, { success: false, formErrors: formatZodError(formValidation.error) })
@@ -75,19 +73,7 @@ export const actions = {
 							title: personalWebsite.title
 						})
 
-						console.log('URL TO PURGE', `${PUBLIC_EUI_WEB}${uploadedPhoto.sys.uri}`)
-
-						const liveClear = await fetch(
-							`https://live-eui.cloud.contensis.com/NewGenerationSite/system/purge-cache-manually.aspx?url=${PUBLIC_EUI_WEB}${uploadedPhoto.sys.uri}`
-						)
-
-						const previewClear = await fetch(
-							`https://preview-eui.cloud.contensis.com/NewGenerationSite/system/purge-cache-manually.aspx?url=${PUBLIC_EUI_WEB}${uploadedPhoto.sys.uri}`
-						)
-
-						console.log('UPLOADED PHOTO', uploadedPhoto)
-						console.log('CACHE CLEAR RESPONSE', liveClear)
-						console.log('CACHE CLEAR RESPONSE', previewClear)
+						cookies.set('newImageUploaded', uploadedPhoto.sys.uri, { path: '/' })
 					} catch (e) {
 						console.error('Error uploading photo: ', e)
 						return fail(500, {

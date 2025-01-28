@@ -320,5 +320,5 @@
 		<div id="hits-per-page"></div>
 	</div>
 	<div id="hits"></div>
-	<div id="pagination" class="px-8"></div>
+	<div id="pagination" class="mt-6"></div>
 </div>

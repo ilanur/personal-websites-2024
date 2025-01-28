@@ -24,7 +24,7 @@ export function canvasToText(canvas) {
 }
 
 export function getCorrectEntryPhoto(personalWebsiteEntry, userEntry) {
-	if (personalWebsiteEntry.usePeopleProfilePicture && userEntry.photo) {
+	if (personalWebsiteEntry.usePeopleProfilePicture && userEntry?.photo) {
 		return `${PUBLIC_EUI_WEB}${userEntry.photo.asset.sys.uri}`
 	}
 

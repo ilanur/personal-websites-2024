@@ -21,14 +21,16 @@
 	let editMode = $state(false)
 	let saveLoading = $state(false)
 	let quillInstance = $state(null)
-	let htmlToRender = $state(htmlContent)
+	let htmlToRender = $state(htmlContent.replace(/&nbsp;/g, ' '))
 	let cancelModalRef = $state()
+	let clickedSave = $state(false)
 
 	const hasNoContent = $derived(!htmlToRender || htmlToRender === '<p></p>')
 
 	$effect(() => {
-		if (htmlContent !== htmlToRender) {
+		if (htmlContent !== htmlToRender && !clickedSave) {
 			setInnerHTML(htmlContent)
+			clickedSave = false
 		}
 	})
 
@@ -55,9 +57,9 @@
 
 	function setInnerHTML(html) {
 		if (quillInstance) {
-			quillInstance.root.innerHTML = html
+			quillInstance.root.innerHTML = html.replace(/&nbsp;/g, ' ')
 		}
-		htmlToRender = html
+		htmlToRender = html.replace(/&nbsp;/g, ' ')
 	}
 
 	async function imageLoader() {
@@ -96,6 +98,7 @@
 	async function onSaveClick() {
 		try {
 			saveLoading = true
+			clickedSave = true
 
 			const updatedHtml = quillInstance.getSemanticHTML()
 			const canvas = await parseHtml(updatedHtml)

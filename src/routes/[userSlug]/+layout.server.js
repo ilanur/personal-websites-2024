@@ -43,8 +43,7 @@ export async function load({ params, locals, cookies }) {
 	const blogPosts = await DeliveryClient.entries.search(query)
 	const hasBlog = blogPosts.items.length > 0
 
-	if (personalWebsite.image && personalWebsite.image?.asset?.sys?.uri !== cookies.get('newImageUploaded')) {
-		console.log('URLS dont march', personalWebsite.image?.asset.sys.uri)
+	if (personalWebsite.image && cookies.get('newImageUploaded') && personalWebsite.image?.asset?.sys?.uri !== cookies.get('newImageUploaded')) {
 		await fetch(
 			`https://live-eui.cloud.contensis.com/NewGenerationSite/system/purge-cache-manually.aspx?url=${PUBLIC_EUI_WEB}${personalWebsite.image.asset.sys.uri}`
 		)

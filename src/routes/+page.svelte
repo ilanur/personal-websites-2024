@@ -10,7 +10,7 @@
 		hidePagination: false,
 		customSinglePagePath: '',
 		customHits: true,
-		additionalFilters: '',
+		additionalFilters: 'NOT cleanEntryData.isPublished: false',
 		entryTitle: 'Personal Websites',
 		placeholderText: 'Search personal websites...',
 		filterForHorizontalSearch: []

@@ -83,10 +83,10 @@
 						let altText
 						if (hit.cleanEntryData.usePeopleProfilePicture === true && hit.cleanEntryData.people.entryThumbnail) {
 							thumb = getThumbnail(hit.cleanEntryData.people.entryThumbnail, 'https://www.eui.eu/Images/Web2021/card-placeholder.svg')
-							altText = hit.cleanEntryData.people.entryThumbnail.altText || 'Thumbnail'
+							altText = hit.cleanEntryData.people.entryThumbnail?.altText || 'Thumbnail'
 						} else {
 							thumb = getThumbnail(hit.cleanEntryData.entryThumbnail, 'https://www.eui.eu/Images/Web2021/card-placeholder.svg')
-							altText = hit.cleanEntryData.entryThumbnail.altText || 'Thumbnail'
+							altText = hit.cleanEntryData.entryThumbnail?.altText || 'Thumbnail'
 						}
 
 						return html`

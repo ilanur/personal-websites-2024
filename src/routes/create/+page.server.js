@@ -93,6 +93,7 @@ export const actions = {
 				city: formData.city,
 				lat: formData.lat,
 				lng: formData.lng,
+				isPublished: false,
 				nationality: {
 					nationality: [formData.nationality]
 				},

@@ -21,7 +21,7 @@
 	}
 
 	$effect(() => {
-		if (!isPublished && authUser) {
+		if (!isPublished && authUser && currentUserPersonalWebsite) {
 			showPublishedWarning()
 		}
 	})

@@ -1,5 +1,4 @@
 import formatZodError from '$lib/utils/format-zod-error.js'
-import { PUBLIC_EUI_WEB } from '$env/static/public'
 import { fileToFileBuffer, getPersonalWebsiteByEmail, uploadAsset } from '$lib/utils/contensis/server.js'
 import { pwFormSchema } from '$lib/zod-schemas/personal-website-form.js'
 import { error, fail, redirect } from '@sveltejs/kit'
@@ -215,6 +214,7 @@ export const actions = {
 				personalWebsite['lng'] = formData.lng
 				personalWebsite['usePeopleProfilePicture'] = formData.useEuiPhoto === 'true'
 				personalWebsite['people'] = { sys: { id: personalWebsite.people.sys.id, contentType: 'people' } }
+				personalWebsite['isPublished'] = formData.isPublished
 
 				const possibleSocials = [
 					'Facebook',
@@ -287,13 +287,6 @@ export const actions = {
 			})
 
 			const updatedPersonalWebsite = await updatedPersonalWebsiteResponse.json()
-
-			// TODO: Check with Emanuele
-			// PUBLISH/UNPUBLISH personal website
-			// const pwSys = personalWebsite.sys
-			// if (pwSys.versionStatus === 'published' && pwSys.workflow.state === 'versionComplete' && formData.pwPublishState === 'false') {
-			// 	await ManagementClient.entries.invokeWorkflow(personalWebsite, 'versionComplete.sysUnpublish')
-			// }
 
 			return { success: true, updatedPersonalWebsite }
 		} catch (e) {

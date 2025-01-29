@@ -1,14 +1,17 @@
 <script>
 	import { page } from '$app/stores'
+	import { showPublishedWarning } from '$lib/stores/messages-store'
 	import clsx from 'clsx'
 	import IconLogoEui from '$lib/components/icons/IconLogoEui.svelte'
-	import AppSignIn from './auth/AppSignIn.svelte'
-	import AppSignOut from './auth/AppSignOut.svelte'
+	import AppSignIn from '$lib/components/auth/AppSignIn.svelte'
+	import AppSignOut from '$lib/components/auth/AppSignOut.svelte'
+	import InfoMessage from '$lib/components/InfoMessage.svelte'
 
 	let { ...rest } = $props()
 
 	const authUser = $derived($page.data.authUser)
 	const currentUserPersonalWebsite = $derived($page.data.currentUserPersonalWebsite)
+	const isPublished = $derived(currentUserPersonalWebsite?.isPublished)
 
 	// Placeholder function to check if the user's website exists
 	// This should be replaced with actual logic or API call
@@ -16,6 +19,12 @@
 		if (currentUserPersonalWebsite) return true
 		return false // Assume it doesn't exist for now
 	}
+
+	$effect(() => {
+		if (!isPublished && authUser) {
+			showPublishedWarning()
+		}
+	})
 </script>
 
 <header class={clsx(rest.class, 'border-b bg-white shadow-md')}>
@@ -52,4 +61,6 @@
 			{/if}
 		</div>
 	</nav>
+
+	<InfoMessage />
 </header>

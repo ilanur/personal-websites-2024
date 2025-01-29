@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms'
 	import { goto } from '$app/navigation'
 	import { PUBLIC_EUI_PERSONAL_WEBSITE_URL } from '$env/static/public'
+	import { closeMessage, showPublishedWarning } from '$lib/stores/messages-store'
 	import InputField from '$lib/components/form-elements/InputField.svelte'
 	import SelectField from '$lib/components/form-elements/SelectField.svelte'
 	import Button from '$lib/components/Button.svelte'
@@ -11,13 +12,11 @@
 
 	let { user, personalWebsite, nationalities = [] } = $props()
 
-	console.log('PersonalWebsite', personalWebsite)
-
 	let formLoading = $state(false)
 	let formErrors = $state()
 	let cv = $state(personalWebsite?.cv)
 	let cvChanged = $state(false)
-	let publishedState = $state(personalWebsite?.sys.versionStatus ? true : false)
+	let publishedState = $state(personalWebsite?.isPublished)
 	let pagesToPublish = $state({
 		publications: checkIfPagePublished('publications'),
 		'publications-in-cadmus': personalWebsite?.enableCadmusPublications,
@@ -58,6 +57,7 @@
 			}
 
 			if (result.status === 200 && result.data.updatedPersonalWebsite) {
+				result.data.updatedPersonalWebsite.isPublished ? closeMessage() : showPublishedWarning()
 				goto(`/${result.data.updatedPersonalWebsite.websiteSlug}`)
 			}
 		}
@@ -172,7 +172,7 @@
 					including search engines. Your website will be listed on <a href={PUBLIC_EUI_PERSONAL_WEBSITE_URL}>me.eui.eu</a> after a manual check.
 				</p>
 
-				<CheckboxField bind:value={publishedState} class="mt-4" name="pwPublishState" label="Publish/unpublish personal website" />
+				<CheckboxField bind:value={publishedState} class="mt-4" name="isPublished" label="Publish/unpublish personal website" />
 			</div>
 		</div>
 	</div>

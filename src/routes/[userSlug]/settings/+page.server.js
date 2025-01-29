@@ -8,7 +8,7 @@ import { admins } from '$lib/utils/permissions'
 export async function load({ parent, fetch }) {
 	const parentData = await parent()
 
-	if (!parentData.currentUserPersonalWebsite) throw redirect(302, '/')
+	if (!parentData.currentUserPersonalWebsite || !parentData.personalWebsite) throw redirect(301, '/')
 
 	async function fetchNationalities() {
 		try {

@@ -12,7 +12,7 @@
 		editorId = 'canvas-editor',
 		htmlContent,
 		enabled = false,
-		toolbar = ['bold', 'italic', 'underline', 'link', 'image', 'code-block', { list: 'ordered' }, { list: 'bullet' }],
+		toolbar = ['bold', 'italic', 'underline', 'link', 'image', 'code-block', 'video', { list: 'ordered' }, { list: 'bullet' }],
 		returnType = 'canvas', // canvas, html, text
 		onSave,
 		...rest
@@ -24,6 +24,8 @@
 	let htmlToRender = $state(htmlContent.replace(/&nbsp;/g, ' '))
 	let cancelModalRef = $state()
 	let clickedSave = $state(false)
+	let canvasContentRef = $state(null)
+	let contentHasChanged = $state(false)
 
 	const hasNoContent = $derived(!htmlToRender || htmlToRender === '<p></p>')
 
@@ -37,11 +39,13 @@
 	onMount(async () => {
 		await initQuill()
 		await imageLoader()
+		await videoLoader()
 	})
 
 	async function initQuill() {
 		if (!quillInstance) {
 			const Quill = (await import('quill')).default
+
 			quillInstance = new Quill(`#${editorId}`, {
 				modules: {
 					toolbar: {
@@ -53,6 +57,12 @@
 		}
 
 		setInnerHTML(htmlToRender)
+
+		quillInstance.on('text-change', () => {
+			if (editMode) {
+				contentHasChanged = true
+			}
+		})
 	}
 
 	function setInnerHTML(html) {
@@ -83,11 +93,31 @@
 			})
 
 			mappedCanvas = mapped
+
+			resolve()
 		})
 
 		if (mappedCanvas) {
 			htmlToRender = getCanvasHTML(mappedCanvas)
 		}
+	}
+
+	async function videoLoader() {
+		const youtubeLinks = canvasContentRef.querySelectorAll('a[href*="youtube.com/embed/"]')
+
+		youtubeLinks.forEach((link) => {
+			const url = link.getAttribute('href')
+			const iframe = document.createElement('iframe')
+
+			iframe.src = url
+			iframe.width = '100%'
+			iframe.height = ''
+			iframe.style.aspectRatio = '16 / 9'
+			iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+			iframe.allowFullscreen = true
+
+			link.parentNode.replaceChild(iframe, link)
+		})
 	}
 
 	function onEditClick() {
@@ -125,14 +155,10 @@
 	}
 
 	function onCancelClick() {
-		const text = quillInstance.getLength()
-
-		if (text === 1) {
-			console.log('Text is false')
-			editMode = false
-		} else {
-			console.log('Text is true')
+		if (contentHasChanged) {
 			cancelModalRef.openModal()
+		} else {
+			editMode = false
 		}
 	}
 
@@ -148,6 +174,7 @@
 
 <div class={rest.class}>
 	<div
+		bind:this={canvasContentRef}
 		class={clsx('canvas-content', {
 			'relative outline outline-2 outline-offset-8 outline-gray-200 hover:outline-gray-300': enabled,
 			hidden: editMode

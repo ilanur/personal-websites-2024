@@ -12,7 +12,7 @@
 		editorId = 'canvas-editor',
 		htmlContent,
 		enabled = false,
-		toolbar = ['bold', 'italic', 'underline', 'link', 'image', 'code-block', 'video', { list: 'ordered' }, { list: 'bullet' }],
+		toolbar = ['bold', 'italic', 'underline', 'link', 'image', 'video', { list: 'ordered' }, { list: 'bullet' }],
 		returnType = 'canvas', // canvas, html, text
 		onSave,
 		...rest

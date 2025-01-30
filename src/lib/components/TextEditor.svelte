@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte'
-	import 'quill/dist/quill.snow.css'
 	import clsx from 'clsx'
+	import 'quill/dist/quill.snow.css'
 
 	let {
 		editorId = 'canvas-editor',
@@ -9,7 +9,7 @@
 		error = null,
 		value = $bindable(),
 		label = '',
-		toolbar = ['bold', 'italic', 'underline', 'link', 'image', 'code-block', { list: 'ordered' }, { list: 'bullet' }],
+		toolbar = ['bold', 'italic', 'underline', 'link', 'image', 'video', { list: 'ordered' }, { list: 'bullet' }],
 		...rest
 	} = $props()
 
@@ -36,7 +36,7 @@
 </script>
 
 <div class={clsx('flex flex-col pb-4', rest.class)}>
-	<label for={editorId} class="mb-1 text-sm" onclick={quillInstance.focus()}>{label}</label>
+	<label for={editorId} class="mb-1 text-sm">{label}</label>
 
 	<div
 		class={clsx(

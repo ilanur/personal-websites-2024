@@ -291,6 +291,7 @@
 				</div>
 			{/if}
 		</div>
+
 		<!-- Quick search filters -->
 		{#if quickFilters.length > 0}
 			<div class="mx-auto">
@@ -313,7 +314,9 @@
 		{/if}
 	</form>
 </div>
+
 <div id="current-refinements" class="container"></div>
+
 <div class="container">
 	<div class="mb-6 flex items-center justify-between">
 		<div id="stats"></div>

@@ -15,7 +15,7 @@
 			University Institute by the ICT service Web unit.
 		</p>
 
-		<AppLink href="/" target="_blank" class="my-12 text-eui-yellow" showArrow>Browse all the EUI personal Websites</AppLink>
+		<AppLink href="/" target="_blank" class="text-eui-yellow my-12" showArrow>Browse all the EUI personal Websites</AppLink>
 
 		<ul class="flex flex-wrap space-x-1.5">
 			{#each quickLinks as { href, label }, i}
@@ -24,6 +24,9 @@
 			{/each}
 		</ul>
 
-		<p class="mt-5">© European University Institute 2024, Badia Fiesolana - Via dei Roccettini 9, I-50014 San Domenico di Fiesole (FI) - Italy</p>
+		<p class="mt-5">
+			© European University Institute {new Date().getFullYear()}, Badia Fiesolana - Via dei Roccettini 9, I-50014 San Domenico di Fiesole (FI)
+			- Italy
+		</p>
 	</div>
 </footer>

@@ -3,7 +3,9 @@
 	import AppFooter from '$lib/components/AppFooter.svelte'
 	import '../app.css'
 
-	let { children } = $props()
+	let { data, children } = $props()
+
+	console.log(data)
 </script>
 
 <AppHeader class="sticky top-0 z-30" />

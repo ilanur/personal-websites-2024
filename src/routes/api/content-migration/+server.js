@@ -57,6 +57,16 @@ export const POST = async () => {
 			let existingPersonalWebsite = await getExistingPersonalWebsite(personalData.user.personal_site)
 			let contensisPeopleEntry = await getPeopleEntryByEmail(personalDataEmail)
 
+			// Log the version of the existing personal website entry before fetching the latest version
+			if (existingPersonalWebsite) {
+				console.log('Existing version:', existingPersonalWebsite.sys)
+				existingPersonalWebsite = await ManagementClient.entries.get({
+					id: existingPersonalWebsite.sys.id,
+					versionStatus: 'latest'
+				})
+				console.log('Fetched latest version:', existingPersonalWebsite.sys)
+			}
+
 			// Create a new people entry if it doesn't exist
 			if (!contensisPeopleEntry) {
 				console.log(`${personalDataEmail} doesn't exist. Creating new people entry...`)
@@ -91,8 +101,6 @@ export const POST = async () => {
 			if (personalData.user.user_picture && personalData.user.user_picture.length > 0) {
 				const shouldImportImage =
 					!existingPersonalWebsite?.image || existingPersonalWebsite.image.asset.sys.uri !== personalData.user.user_picture
-
-				console.log('Should import image:', shouldImportImage)
 
 				if (shouldImportImage) {
 					mainImage = await importAsset(
@@ -147,12 +155,12 @@ export const POST = async () => {
 						id: social.sys.id,
 						contentTypeId: 'socialMedia'
 					}
-				})),
-				sys: {
-					contentTypeId: 'personalWebsites',
-					language: 'en-GB',
-					dataFormat: 'entry'
-				}
+				}))
+				// sys: {
+				// 	contentTypeId: 'personalWebsites',
+				// 	language: 'en-GB',
+				// 	dataFormat: 'entry'
+				// }
 			}
 
 			if (mainImage) {
@@ -182,32 +190,62 @@ export const POST = async () => {
 				payload['cv'] = existingPersonalWebsite.cv
 			}
 
-			let updatedPersonalWebsite
+			let newPersonalWebsite
 
-			try {
-				if (existingPersonalWebsite) {
-					// Update existing website
-					payload.sys.id = existingPersonalWebsite.sys.id
-					updatedPersonalWebsite = await ManagementClient.entries.update(payload)
-					console.log(`Updated personal website for ${personalDataEmail}`)
-				} else {
-					// Create new website
-					updatedPersonalWebsite = await ManagementClient.entries.create(payload)
-					console.log(`Created new personal website for ${personalDataEmail}`)
+			if (existingPersonalWebsite) {
+				try {
+					newPersonalWebsite = await ManagementClient.entries.patch(existingPersonalWebsite.sys.id, payload, 2)
+					await ManagementClient.entries.publish(newPersonalWebsite)
+				} catch (e) {
+					console.error('Error updating personal website:', e.data ?? e)
+					progress += 1
+					continue
 				}
+			} else {
+				// Create new website
+				try {
+					payload['sys'] = {
+						contentTypeId: 'personalWebsites',
+						language: 'en-GB',
+						dataFormat: 'entry'
+					}
 
-				await ManagementClient.entries.invokeWorkflow(updatedPersonalWebsite, 'draft.publish')
-			} catch (e) {
-				console.error(`Error updating/creating personalWebsite entry: ${JSON.stringify(e.data)}`)
-				progress += 1
-				continue
+					newPersonalWebsite = await ManagementClient.entries.create(payload)
+					await ManagementClient.entries.publish(newPersonalWebsite)
+					console.log(`Created new personal website for ${personalDataEmail}`)
+				} catch (e) {
+					console.error('Error creating personal website:', e.data ?? e)
+					progress += 1
+					continue
+				}
 			}
 
+			// await ManagementClient.entries.invokeWorkflow(newPersonalWebsite, 'draft.publish')
+
+			// try {
+			// 	if (existingPersonalWebsite) {
+			// 		// Update existing website
+			// 		// payload.sys.id = existingPersonalWebsite.sys.id
+			// 		newPersonalWebsite = await ManagementClient.entries.patch(existingPersonalWebsite.sys.id, payload)
+			// 		console.log(`Updated personal website for ${personalDataEmail}`)
+			// 	} else {
+			// 		// Create new website
+			// 		newPersonalWebsite = await ManagementClient.entries.create(payload)
+			// 		console.log(`Created new personal website for ${personalDataEmail}`)
+			// 	}
+
+			// 	// await ManagementClient.entries.invokeWorkflow(newPersonalWebsite, 'draft.publish')
+			// } catch (e) {
+			// 	console.error('Error updating/creating personalWebsite entry:', e.data ?? e)
+			// 	progress += 1
+			// 	continue
+			// }
+
 			// Update/create pages
-			await createPwPages(updatedPersonalWebsite, personalData)
+			await createPwPages(newPersonalWebsite, personalData)
 
 			// Update/create blog posts
-			await createPwBlogPosts(updatedPersonalWebsite, contensisPeopleEntry, personalData)
+			await createPwBlogPosts(newPersonalWebsite, contensisPeopleEntry, personalData)
 
 			// Log progress
 			progress += 1
@@ -218,7 +256,7 @@ export const POST = async () => {
 
 		return json({ success: true, data: oldCMSData }, { status: 200 })
 	} catch (e) {
-		console.error('Failed to migrate content to Contensis:', e)
+		console.error('Failed to migrate content to Contensis:', e.data ?? e)
 		error(e.status, e.data)
 	}
 }

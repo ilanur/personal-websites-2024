@@ -1,4 +1,4 @@
-import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
+import { ManagementClient } from '$lib/utils/contensis/_clients'
 import { parseHtml } from '@contensis/html-canvas'
 
 // Create personal website pages
@@ -6,8 +6,10 @@ export async function createPwPages(personalWebsite, personalData) {
 	// Define pages to exclude from migration.
 	const pagesToExclude = ['Blog', 'Contact Me', 'Personal Website Settings', 'Publications in Cadmus']
 
+	console.log('personalWebsite pages', personalWebsite.pages)
+
 	// Get existing pages
-	const existingPages = personalWebsite.pages.filter((page) => page.personalWebsite.sys.id === personalWebsite.sys.id)
+	const existingPages = personalWebsite.pages
 
 	// Loop over pages
 	for (let i = 0, ilen = personalData.pages.length; i < ilen; i++) {
@@ -52,33 +54,35 @@ export async function createPwPages(personalWebsite, personalData) {
 					id: personalWebsite.sys.id,
 					contentTypeId: 'personalWebsites'
 				}
-			},
-			sys: {
-				contentTypeId: 'personalWebsitePage',
-				language: 'en-GB',
-				dataFormat: 'entry'
 			}
 		}
 
 		try {
 			// Find existing page by slug
 			const existingPage = existingPages.items.find((p) => p.pageSlug === pageSlug)
-			let updatedPage
+
+			let newPage
 
 			if (existingPage) {
-				// Update existing page
-				payload.sys.id = existingPage.sys.id
-				updatedPage = await ManagementClient.entries.update(payload)
+				newPage = await ManagementClient.entries.patch(existingPage.sys.id, payload)
 				console.log(`Updated page ${title} for website ${personalWebsite.title}`)
 			} else {
 				// Create new page
-				updatedPage = await ManagementClient.entries.create(payload)
+				payload['sys'] = {
+					contentTypeId: 'personalWebsitePage',
+					language: 'en-GB',
+					dataFormat: 'entry'
+				}
+
+				newPage = await ManagementClient.entries.create(payload)
 				console.log(`Created new page ${title} for website ${personalWebsite.title}`)
 			}
 
-			await ManagementClient.entries.invokeWorkflow(updatedPage, 'draft.publish')
+			await ManagementClient.entries.publish(newPage)
+
+			// await ManagementClient.entries.invokeWorkflow(newPage, 'draft.publish')
 		} catch (e) {
-			console.error(`Error updating/creating page ${title}: ${JSON.stringify(e.data)}`)
+			console.error(`Error updating/creating page ${title}:`, e.data ?? e)
 			continue
 		}
 	}

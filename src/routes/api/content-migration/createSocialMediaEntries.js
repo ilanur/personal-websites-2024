@@ -3,7 +3,7 @@ import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
 // Extract socials from personal data and create social media entries
 export async function createSocialMediaEntries(personalData) {
 	function addHttpIfMissing(link) {
-		return !link.startsWith('http://') && !link.startsWith('https://') ? `https://${link}` : link
+		return link.startsWith('www.') || link.startsWith('http://') ? `https://${link}` : link
 	}
 
 	const createdSocials = []
@@ -36,9 +36,15 @@ export async function createSocialMediaEntries(personalData) {
 
 	try {
 		for (let i = 0, ilen = possibleSocials.length; i < ilen; i++) {
-			if (!possibleSocials[i].url) continue
+			console.log('possibleSocials[i].url', possibleSocials[i].url)
+
+			// Skip if no url or if it doesn't start with http:// or https://
+			const url = possibleSocials[i].url
+			if (!url || (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('www.'))) continue
 
 			const formattedLink = addHttpIfMissing(possibleSocials[i].url)
+
+			console.log('formattedLink', formattedLink)
 
 			// Check if social already exists
 			const contensisSocials = await DeliveryClient.entries.search({
@@ -56,24 +62,28 @@ export async function createSocialMediaEntries(personalData) {
 				continue
 			}
 
-			const createdSocial = await ManagementClient.entries.create({
-				type: possibleSocials[i].type,
-				url: formattedLink,
-				sys: {
-					contentTypeId: 'socialMedia',
-					language: 'en-GB',
-					dataFormat: 'entry'
-				}
-			})
+			try {
+				const createdSocial = await ManagementClient.entries.create({
+					type: possibleSocials[i].type,
+					url: formattedLink,
+					sys: {
+						contentTypeId: 'socialMedia',
+						language: 'en-GB',
+						dataFormat: 'entry'
+					}
+				})
 
-			createdSocials.push(createdSocial)
-			await ManagementClient.entries.invokeWorkflow(createdSocial, 'draft.publish')
+				createdSocials.push(createdSocial)
+				await ManagementClient.entries.invokeWorkflow(createdSocial, 'draft.publish')
+			} catch (error) {
+				console.error(`Error creating social media entry: ${formattedLink}`, error)
+			}
 		}
 
 		return createdSocials
 	} catch (e) {
-		console.error('Error creating social media entries:', JSON.stringify(e.data))
+		console.error('Error while creating social media entries:', e.data ?? e)
 	}
 
-	return []
+	return createdSocials
 }

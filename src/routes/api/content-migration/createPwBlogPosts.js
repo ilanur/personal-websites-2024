@@ -14,21 +14,19 @@ export async function createPwBlogPosts(personalWebsite, contensisPeopleEntry, p
 	const wpBlogPosts = personalData.posts
 
 	// Get existing blog posts
-	const existingBlogPosts = await DeliveryClient.entries.search({
-		where: [
-			{ field: 'sys.contentTypeId', equalTo: 'personalWebsitesBlogPost' },
-			{ field: 'sys.versionStatus', equalTo: 'published' },
-			{ field: 'personalWebsite.sys.id', equalTo: personalWebsite.sys.id }
-		]
-	})
+	const existingBlogPosts = personalWebsite.blogPosts
+
+	console.log('existingBlogPosts', existingBlogPosts)
 
 	for (let i = 0, ilen = wpBlogPosts.length; i < ilen; i++) {
+		if (i > 3) continue
+
 		const wpBlogPost = wpBlogPosts[i]
 		const canvas = await parseHtml(wpBlogPost.post_content)
 		let blogpostImg
 
 		// Check if we need to update the image
-		const existingBlogPost = existingBlogPosts.items.find((post) => post.wpId === wpBlogPost.ID)
+		const existingBlogPost = existingBlogPosts.find((post) => post.wpId === wpBlogPost.ID)
 		const shouldUpdateImage =
 			wpBlogPost.thumbnail_url && (!existingBlogPost?.mainImage || existingBlogPost.mainImage.asset.sys.uri !== wpBlogPost.thumbnail_url)
 
@@ -85,20 +83,23 @@ export async function createPwBlogPosts(personalWebsite, contensisPeopleEntry, p
 		}
 
 		try {
-			let updatedBlogPost
+			let newBlogPost
 
 			if (existingBlogPost) {
 				// Update existing blog post
-				payload.sys.id = existingBlogPost.sys.id
-				updatedBlogPost = await ManagementClient.entries.update(payload)
+				// payload.sys.id = existingBlogPost.sys.id
+				// newBlogPost = await ManagementClient.entries.update(payload)
+				newBlogPost = await ManagementClient.entries.patch(existingBlogPost.sys.id, payload)
 				console.log(`Updated blog post ${wpBlogPost.post_title}`)
 			} else {
 				// Create new blog post
-				updatedBlogPost = await ManagementClient.entries.create(payload)
+				newBlogPost = await ManagementClient.entries.create(payload)
 				console.log(`Created new blog post ${wpBlogPost.post_title}`)
 			}
 
-			await ManagementClient.entries.invokeWorkflow(updatedBlogPost, 'draft.publish')
+			await ManagementClient.entries.publish(newBlogPost)
+
+			// await ManagementClient.entries.invokeWorkflow(newBlogPost, 'draft.publish')
 		} catch (e) {
 			console.error(`Error updating/creating blog post (${wpBlogPost.post_name}): ${JSON.stringify(e.data)}`)
 			continue

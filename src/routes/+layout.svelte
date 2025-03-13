@@ -5,7 +5,7 @@
 
 	let { data, children } = $props()
 
-	console.log(data)
+	// console.log(data)
 </script>
 
 <AppHeader class="sticky top-0 z-30" />

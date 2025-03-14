@@ -1,4 +1,4 @@
-import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
+import { ManagementClient } from '$lib/utils/contensis/_clients'
 import { parseHtml } from '@contensis/html-canvas'
 import { importAsset } from './importAsset'
 
@@ -58,13 +58,7 @@ export async function createPwBlogPosts(personalWebsite, contensisPeopleEntry, p
 						contentTypeId: 'people'
 					}
 				}
-			],
-			sys: {
-				contentTypeId: 'personalWebsitesBlogPost',
-				slug: wpBlogPost.post_name,
-				language: 'en-GB',
-				dataFormat: 'entry'
-			}
+			]
 		}
 
 		if (blogpostImg) {
@@ -82,27 +76,38 @@ export async function createPwBlogPosts(personalWebsite, contensisPeopleEntry, p
 			payload['mainImage'] = existingBlogPost.mainImage
 		}
 
-		try {
-			let newBlogPost
+		let newBlogPost
 
-			if (existingBlogPost) {
+		console.log('EXISTING BLOG POST', existingBlogPost)
+
+		if (existingBlogPost) {
+			try {
 				// Update existing blog post
-				// payload.sys.id = existingBlogPost.sys.id
-				// newBlogPost = await ManagementClient.entries.update(payload)
 				newBlogPost = await ManagementClient.entries.patch(existingBlogPost.sys.id, payload)
 				console.log(`Updated blog post ${wpBlogPost.post_title}`)
-			} else {
+			} catch (e) {
+				console.error('Failed to update blog post', e.data ?? e)
+			}
+		} else {
+			try {
 				// Create new blog post
+				payload.sys = {
+					contentTypeId: 'personalWebsitesBlogPost',
+					slug: wpBlogPost.post_name,
+					language: 'en-GB',
+					dataFormat: 'entry'
+				}
+
 				newBlogPost = await ManagementClient.entries.create(payload)
 				console.log(`Created new blog post ${wpBlogPost.post_title}`)
+			} catch (e) {
+				console.error('Failed to create blog post', e.data ?? e)
+				continue
 			}
-
-			await ManagementClient.entries.publish(newBlogPost)
-
-			// await ManagementClient.entries.invokeWorkflow(newBlogPost, 'draft.publish')
-		} catch (e) {
-			console.error(`Error updating/creating blog post (${wpBlogPost.post_name}): ${JSON.stringify(e.data)}`)
-			continue
 		}
+
+		await ManagementClient.entries.publish(newBlogPost)
+
+		// await ManagementClient.entries.invokeWorkflow(newBlogPost, 'draft.publish')
 	}
 }

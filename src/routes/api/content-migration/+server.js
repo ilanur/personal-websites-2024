@@ -138,6 +138,7 @@ export const POST = async () => {
 				title: personalData.title.rendered,
 				description: personalData.description,
 				websiteSlug: personalData.user.personal_site?.split('/').pop() || '',
+				wpId: personalData.id,
 				city: personalData.user.city || '',
 				lat: personalData.user.nationality_lat || '',
 				lng: personalData.user.nationality_lng || '',
@@ -194,7 +195,7 @@ export const POST = async () => {
 
 			if (existingPersonalWebsite) {
 				try {
-					newPersonalWebsite = await ManagementClient.entries.patch(existingPersonalWebsite.sys.id, payload, 2)
+					newPersonalWebsite = await ManagementClient.entries.patch(existingPersonalWebsite.sys.id, payload)
 					await ManagementClient.entries.publish(newPersonalWebsite)
 				} catch (e) {
 					console.error('Error updating personal website:', e.data ?? e)

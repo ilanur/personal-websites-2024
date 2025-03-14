@@ -25,14 +25,23 @@ export const ManagementClient = UniversalClient.create({
 })
 
 // Management client extensions
-ManagementClient.entries.patch = async (id, changes, linkDepth) => {
+ManagementClient.entries.patch = async (id, changes) => {
 	const entry = await DeliveryClient.entries.get(id)
+
+	for (const key in entry) {
+		if (entry.hasOwnProperty(key)) {
+			const field = entry[key]
+			if (field && typeof field === 'object' && field.sys) {
+				entry[key] = { sys: field.sys }
+			}
+		}
+	}
 
 	Object.keys(changes).forEach((key) => {
 		entry[key] = changes[key]
 	})
 
-	return linkDepth ? await DeliveryClient.entries.get({ id, linkDepth }) : await ManagementClient.entries.update(entry)
+	return await ManagementClient.entries.update(entry)
 }
 
 ManagementClient.entries.publish = async (entry) => {

@@ -23,15 +23,23 @@ export const POST = async () => {
 		for (const cmsEntry of oldCMSData) {
 			const personalWebsite = allPersonalWebsites.items.find((pw) => pw.websiteSlug === cmsEntry.user.personal_site?.split('/').pop())
 
-			if (!personalWebsite || !personalWebsite.wpId) continue
+			console.log('WIP', personalWebsite?.wpId)
+
+			if (!personalWebsite || personalWebsite.wpId) {
+				console.log('Skipping', personalWebsite?.entryTitle)
+				progress++
+				continue
+			}
 
 			if (!personalWebsite.people) {
 				console.log('People entry not found. Skip.')
 				hasNoPeopleEntry.push(personalWebsite.entryTitle)
+				progress++
 				continue
 			}
 
 			if (personalWebsite) {
+				console.log('Updating personal website', personalWebsite.entryTitle)
 				const updatedPw = await ManagementClient.entries.patch(personalWebsite.sys.id, {
 					wpId: cmsEntry.id
 				})

@@ -2,11 +2,9 @@ import { ManagementClient } from '$lib/utils/contensis/_clients'
 import { parseHtml } from '@contensis/html-canvas'
 
 // Create personal website pages
-export async function createPwPages(personalWebsite, personalData) {
+export async function createOrUpdatePages(personalWebsite, personalData) {
 	// Define pages to exclude from migration.
 	const pagesToExclude = ['Blog', 'Contact Me', 'Personal Website Settings', 'Publications in Cadmus']
-
-	console.log('personalWebsite pages', personalWebsite.pages)
 
 	// Get existing pages
 	const existingPages = personalWebsite.pages
@@ -57,17 +55,23 @@ export async function createPwPages(personalWebsite, personalData) {
 			}
 		}
 
-		try {
-			// Find existing page by slug
-			const existingPage = existingPages.items.find((p) => p.pageSlug === pageSlug)
+		// Find existing page by slug
+		const existingPage = existingPages.items.find((p) => p.pageSlug === pageSlug)
 
-			let newPage
+		let newPage
 
-			if (existingPage) {
+		// Update existing page
+		if (existingPage) {
+			try {
 				newPage = await ManagementClient.entries.patch(existingPage.sys.id, payload)
 				console.log(`Updated page ${title} for website ${personalWebsite.title}`)
-			} else {
-				// Create new page
+			} catch (e) {
+				console.error(`Error updating page ${title}:`, e.data ?? e)
+			}
+		}
+		// Create new page
+		else {
+			try {
 				payload['sys'] = {
 					contentTypeId: 'personalWebsitePage',
 					language: 'en-GB',
@@ -76,14 +80,11 @@ export async function createPwPages(personalWebsite, personalData) {
 
 				newPage = await ManagementClient.entries.create(payload)
 				console.log(`Created new page ${title} for website ${personalWebsite.title}`)
+			} catch (e) {
+				console.error(`Error creating page ${title}:`, e.data ?? e)
 			}
-
-			await ManagementClient.entries.publish(newPage)
-
-			// await ManagementClient.entries.invokeWorkflow(newPage, 'draft.publish')
-		} catch (e) {
-			console.error(`Error updating/creating page ${title}:`, e.data ?? e)
-			continue
 		}
+
+		await ManagementClient.entries.publish(newPage)
 	}
 }

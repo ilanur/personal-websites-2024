@@ -1,12 +1,12 @@
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
 
-// Extract socials from personal data and create social media entries
-export async function createSocialMediaEntries(personalData) {
+// Extract socials from personal data and create or update social media entries
+export async function createOrUpdateSocialMediaEntries(personalData) {
 	function addHttpIfMissing(link) {
 		return link.startsWith('www.') || link.startsWith('http://') ? `https://${link}` : link
 	}
 
-	const createdSocials = []
+	const newSocials = []
 	const possibleSocials = [
 		{
 			type: 'Facebook',
@@ -55,35 +55,51 @@ export async function createSocialMediaEntries(personalData) {
 				]
 			})
 
-			// If social exists, skip it.
+			// Update existing social media entry
 			if (contensisSocials.items.length) {
-				console.log('skip social creation', formattedLink)
-				createdSocials.push(contensisSocials.items[0])
-				continue
+				const existingSocial = contensisSocials.items[0]
+
+				try {
+					const updatedSocial = await ManagementClient.entries.patch(existingSocial.sys.id, {
+						url: formattedLink,
+						type: possibleSocials[i].type
+					})
+
+					newSocials.push(updatedSocial)
+
+					await ManagementClient.entries.publish(updatedSocial)
+					console.log(`Updated social media entry: ${formattedLink}`)
+				} catch (error) {
+					console.error(`Error updating social media entry: ${formattedLink}`, error)
+				}
 			}
+			// Create new social media entry
+			else {
+				try {
+					const createdSocial = await ManagementClient.entries.create({
+						type: possibleSocials[i].type,
+						url: formattedLink,
+						sys: {
+							contentTypeId: 'socialMedia',
+							language: 'en-GB',
+							dataFormat: 'entry'
+						}
+					})
 
-			try {
-				const createdSocial = await ManagementClient.entries.create({
-					type: possibleSocials[i].type,
-					url: formattedLink,
-					sys: {
-						contentTypeId: 'socialMedia',
-						language: 'en-GB',
-						dataFormat: 'entry'
-					}
-				})
+					newSocials.push(createdSocial)
 
-				createdSocials.push(createdSocial)
-				await ManagementClient.entries.invokeWorkflow(createdSocial, 'draft.publish')
-			} catch (error) {
-				console.error(`Error creating social media entry: ${formattedLink}`, error)
+					await ManagementClient.entries.publish(createdSocial)
+					console.log(`Created new social media entry: ${formattedLink}`)
+				} catch (error) {
+					console.error(`Error creating social media entry: ${formattedLink}`, error)
+				}
 			}
 		}
 
-		return createdSocials
+		return newSocials
 	} catch (e) {
-		console.error('Error while creating social media entries:', e.data ?? e)
+		console.error('Error while creating or updating social media entries:', e.data ?? e)
 	}
 
-	return createdSocials
+	return newSocials
 }

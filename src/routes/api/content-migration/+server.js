@@ -2,11 +2,11 @@ import { ofetch } from 'ofetch'
 import { json, error } from '@sveltejs/kit'
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
 import { getPeopleEntryByEmail } from '$lib/utils/contensis/server'
-import { createPwPages } from './createPwPages.js'
+import { createOrUpdatePages } from './pages.js'
 import { importAsset } from './importAsset.js'
 import { getExistingPersonalWebsite } from './getExistingPersonalWebsite.js'
-import { createPwBlogPosts } from './createPwBlogPosts.js'
-import { createSocialMediaEntries } from './createSocialMediaEntries.js'
+import { createOrUpdateBlogPosts } from './BlogPosts.js'
+import { createOrUpdateSocialMediaEntries } from './socialMedia.js'
 
 // Endpoint for testing purposes.
 export const GET = async () => {
@@ -131,7 +131,7 @@ export const POST = async () => {
 				}
 			}
 
-			const socialMediaEntries = await createSocialMediaEntries(personalData)
+			const socialMediaEntries = await createOrUpdateSocialMediaEntries(personalData)
 
 			// Prepare payload for personalWebsite entry
 			const payload = {
@@ -157,11 +157,6 @@ export const POST = async () => {
 						contentTypeId: 'socialMedia'
 					}
 				}))
-				// sys: {
-				// 	contentTypeId: 'personalWebsites',
-				// 	language: 'en-GB',
-				// 	dataFormat: 'entry'
-				// }
 			}
 
 			if (mainImage) {
@@ -221,32 +216,11 @@ export const POST = async () => {
 				}
 			}
 
-			// await ManagementClient.entries.invokeWorkflow(newPersonalWebsite, 'draft.publish')
-
-			// try {
-			// 	if (existingPersonalWebsite) {
-			// 		// Update existing website
-			// 		// payload.sys.id = existingPersonalWebsite.sys.id
-			// 		newPersonalWebsite = await ManagementClient.entries.patch(existingPersonalWebsite.sys.id, payload)
-			// 		console.log(`Updated personal website for ${personalDataEmail}`)
-			// 	} else {
-			// 		// Create new website
-			// 		newPersonalWebsite = await ManagementClient.entries.create(payload)
-			// 		console.log(`Created new personal website for ${personalDataEmail}`)
-			// 	}
-
-			// 	// await ManagementClient.entries.invokeWorkflow(newPersonalWebsite, 'draft.publish')
-			// } catch (e) {
-			// 	console.error('Error updating/creating personalWebsite entry:', e.data ?? e)
-			// 	progress += 1
-			// 	continue
-			// }
-
 			// Update/create pages
-			await createPwPages(newPersonalWebsite, personalData)
+			await createOrUpdatePages(newPersonalWebsite, personalData)
 
-			// Update/create blog posts
-			await createPwBlogPosts(newPersonalWebsite, contensisPeopleEntry, personalData)
+			// create/update blog posts
+			await createOrUpdateBlogPosts(newPersonalWebsite, contensisPeopleEntry, personalData)
 
 			// Log progress
 			progress += 1

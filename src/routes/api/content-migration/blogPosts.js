@@ -9,16 +9,14 @@ function truncateContent(content, wordLimit) {
 	return words.length > wordLimit ? `${truncated}...` : truncated
 }
 
-// Create or update personal website blog posts
-export async function createPwBlogPosts(personalWebsite, contensisPeopleEntry, personalData) {
+export async function createOrUpdateBlogPosts(personalWebsite, contensisPeopleEntry, personalData) {
 	const wpBlogPosts = personalData.posts
 
 	// Get existing blog posts
 	const existingBlogPosts = personalWebsite.blogPosts
 
-	console.log('existingBlogPosts', existingBlogPosts)
-
 	for (let i = 0, ilen = wpBlogPosts.length; i < ilen; i++) {
+		// Skip first 3 blog posts for testing purposes
 		if (i > 3) continue
 
 		const wpBlogPost = wpBlogPosts[i]
@@ -39,6 +37,7 @@ export async function createPwBlogPosts(personalWebsite, contensisPeopleEntry, p
 			)
 		}
 
+		// Prepare default payload
 		const payload = {
 			wpId: wpBlogPost.ID,
 			title: wpBlogPost.post_title.replace(/&amp;/g, '&'),
@@ -80,17 +79,18 @@ export async function createPwBlogPosts(personalWebsite, contensisPeopleEntry, p
 
 		console.log('EXISTING BLOG POST', existingBlogPost)
 
+		// Update existing blog post
 		if (existingBlogPost) {
 			try {
-				// Update existing blog post
 				newBlogPost = await ManagementClient.entries.patch(existingBlogPost.sys.id, payload)
 				console.log(`Updated blog post ${wpBlogPost.post_title}`)
 			} catch (e) {
 				console.error('Failed to update blog post', e.data ?? e)
 			}
-		} else {
+		}
+		// Create new blog post
+		else {
 			try {
-				// Create new blog post
 				payload.sys = {
 					contentTypeId: 'personalWebsitesBlogPost',
 					slug: wpBlogPost.post_name,
@@ -107,7 +107,5 @@ export async function createPwBlogPosts(personalWebsite, contensisPeopleEntry, p
 		}
 
 		await ManagementClient.entries.publish(newBlogPost)
-
-		// await ManagementClient.entries.invokeWorkflow(newBlogPost, 'draft.publish')
 	}
 }

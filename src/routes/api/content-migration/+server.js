@@ -208,11 +208,14 @@ export const POST = async () => {
 				}
 			}
 
+			// Fetch latest personal website with a bigger linkDepth in order to get all pages
+			const latestPersonalWebsite = await DeliveryClient.entries.get({ id: newPersonalWebsite.sys.id, linkDepth: 1 })
+
 			// Update/create pages
-			await createOrUpdatePages(newPersonalWebsite, personalData)
+			await createOrUpdatePages(latestPersonalWebsite, personalData)
 
 			// create/update blog posts
-			await createOrUpdateBlogPosts(newPersonalWebsite, existingPeopleEntry, personalData)
+			await createOrUpdateBlogPosts(latestPersonalWebsite, existingPeopleEntry, personalData)
 
 			// Log progress
 			progress += 1

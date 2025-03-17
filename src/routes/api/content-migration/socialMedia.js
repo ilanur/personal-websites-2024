@@ -3,7 +3,19 @@ import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
 // Extract socials from personal data and create or update social media entries
 export async function createOrUpdateSocialMediaEntries(personalData) {
 	function addHttpIfMissing(link) {
-		return link.startsWith('www.') || link.startsWith('http://') ? `https://${link}` : link
+		if (link.startsWith('https://')) {
+			return link
+		}
+
+		if (link.startsWith('http://')) {
+			return link.replace('http://', 'https://')
+		}
+
+		if (link.startsWith('www.')) {
+			return `https://${link}`
+		}
+
+		return `https://${link}`
 	}
 
 	const validUrlRegex =

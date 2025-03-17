@@ -1,16 +1,13 @@
-import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
+import { ManagementClient } from '$lib/utils/contensis/_clients'
 import { parseHtml } from '@contensis/html-canvas'
 
 // Create personal website pages
 export async function createOrUpdatePages(personalWebsite, personalData) {
-	// Fetch latest personal website with a bigger linkDepth in order to get all pages
-	const latestPersonalWebsite = await DeliveryClient.entries.get({ id: personalWebsite.sys.id, linkDepth: 1 })
-
 	// Define pages to exclude from migration.
 	const pagesToExclude = ['Blog', 'Contact Me', 'Personal Website Settings', 'Publications in Cadmus']
 
 	// Get existing pages
-	const existingPages = latestPersonalWebsite.pages
+	const existingPages = personalWebsite.pages
 
 	// Loop over pages
 	for (let i = 0, ilen = personalData.pages.length; i < ilen; i++) {

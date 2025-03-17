@@ -1,4 +1,4 @@
-import { ManagementClient } from '$lib/utils/contensis/_clients'
+import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
 import { parseHtml } from '@contensis/html-canvas'
 import { importAsset } from './importAsset'
 
@@ -10,10 +10,30 @@ function truncateContent(content, wordLimit) {
 }
 
 export async function createOrUpdateBlogPosts(personalWebsite, contensisPeopleEntry, personalData) {
+	async function linkBlogPostToPw(blogPost) {
+		try {
+			const updatedPersonalWebsite = await ManagementClient.entries.patch(personalWebsite.sys.id, {
+				blogPosts: [
+					...personalWebsite.blogPosts,
+					{
+						sys: {
+							id: blogPost.sys.id,
+							contentTypeId: 'personalWebsitesBlogPost'
+						}
+					}
+				]
+			})
+
+			await ManagementClient.entries.publish(updatedPersonalWebsite)
+		} catch (e) {
+			console.error('Failed to link blog post', e.data ?? e)
+		}
+	}
+
 	const wpBlogPosts = personalData.posts
 
 	// Get existing blog posts
-	const existingBlogPosts = personalWebsite.blogPosts
+	const existingPwBlogPosts = personalWebsite.blogPosts
 
 	for (let i = 0, ilen = wpBlogPosts.length; i < ilen; i++) {
 		// Skip first 3 blog posts for testing purposes
@@ -24,7 +44,8 @@ export async function createOrUpdateBlogPosts(personalWebsite, contensisPeopleEn
 		let blogpostImg
 
 		// Check if we need to update the image
-		const existingBlogPost = existingBlogPosts.find((post) => post.wpId === wpBlogPost.ID)
+		const existingBlogPost = existingPwBlogPosts.find((post) => post.wpId === wpBlogPost.ID)
+
 		const shouldUpdateImage =
 			wpBlogPost.thumbnail_url && (!existingBlogPost?.mainImage || existingBlogPost.mainImage.asset.sys.uri !== wpBlogPost.thumbnail_url)
 
@@ -81,6 +102,7 @@ export async function createOrUpdateBlogPosts(personalWebsite, contensisPeopleEn
 		if (existingBlogPost) {
 			try {
 				newBlogPost = await ManagementClient.entries.patch(existingBlogPost.sys.id, payload)
+				await ManagementClient.entries.publish(newBlogPost)
 				console.log(`Updated blog post ${wpBlogPost.post_title}`)
 			} catch (e) {
 				console.error('Failed to update blog post', e.data ?? e)
@@ -97,13 +119,32 @@ export async function createOrUpdateBlogPosts(personalWebsite, contensisPeopleEn
 				}
 
 				newBlogPost = await ManagementClient.entries.create(payload)
+				await ManagementClient.entries.publish(newBlogPost)
+				await linkBlogPostToPw(newBlogPost)
 				console.log(`Created new blog post ${wpBlogPost.post_title}`)
 			} catch (e) {
 				console.error('Failed to create blog post', e.data ?? e)
+
+				// Blogpost already exists, but not linked to the personal website.
+				const data = e.data?.data
+				if (data && data.length && data[0].field === 'slug' && data[0].message.includes('already exists')) {
+					console.log('Blog post already exists, but not linked to the personal website, linking...', wpBlogPost.post_title)
+
+					const blogPostsSearch = await DeliveryClient.entries.search({
+						where: [
+							{ field: 'sys.contentTypeId', equalTo: 'personalWebsitesBlogPost' },
+							{ field: 'sys.versionStatus', equalTo: 'published' },
+							{ field: 'wpId', equalTo: wpBlogPost.ID }
+						]
+					})
+
+					if (blogPostsSearch.items.length) {
+						await linkBlogPostToPw(blogPostsSearch.items[0])
+					}
+				}
+
 				continue
 			}
 		}
-
-		await ManagementClient.entries.publish(newBlogPost)
 	}
 }

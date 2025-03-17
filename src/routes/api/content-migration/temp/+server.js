@@ -4,53 +4,23 @@ import { ofetch } from 'ofetch'
 
 export const POST = async () => {
 	try {
-		const oldCMSData = await ofetch('https://me.eui.eu/wp-json/eui/v1/sites')
+		const pwEntry = await DeliveryClient.entries.get('35b97324-1cc0-412b-8325-5b1692c8ed1c')
 
-		const allPersonalWebsites = await DeliveryClient.entries.search(
-			{
-				where: [
-					{ field: 'sys.contentTypeId', equalTo: 'personalWebsites' },
-					{ field: 'sys.versionStatus', equalTo: 'published' }
-				],
-				pageSize: 999999
-			},
-			2
-		)
+		if (pwEntry) {
+			const updatedPwEntry = await ManagementClient.entries.patch(pwEntry.sys.id, {
+				photo: {
+					altText: pwEntry.entryTitle,
+					asset: {
+						sys: {
+							id: '42351cf8-d083-4c0a-829a-e8829b2648ee',
+							language: 'en-GB',
+							dataFormat: 'asset'
+						}
+					}
+				}
+			})
 
-		const hasNoPeopleEntry = []
-		let progress = 0
-
-		for (const cmsEntry of oldCMSData) {
-			const personalWebsite = allPersonalWebsites.items.find((pw) => pw.websiteSlug === cmsEntry.user.personal_site?.split('/').pop())
-
-			console.log('WIP', personalWebsite?.wpId)
-
-			if (!personalWebsite || personalWebsite.wpId) {
-				console.log('Skipping', personalWebsite?.entryTitle)
-				progress++
-				continue
-			}
-
-			if (!personalWebsite.people) {
-				console.log('People entry not found. Skip.')
-				hasNoPeopleEntry.push(personalWebsite.entryTitle)
-				progress++
-				continue
-			}
-
-			if (personalWebsite) {
-				console.log('Updating personal website', personalWebsite.entryTitle)
-				const updatedPw = await ManagementClient.entries.patch(personalWebsite.sys.id, {
-					wpId: cmsEntry.id
-				})
-
-				await ManagementClient.entries.publish(updatedPw)
-			} else {
-				console.log('Personal website not found:', cmsEntry.user.display_name)
-			}
-
-			progress++
-			console.log(`Progress: ${progress}/${oldCMSData.length}`)
+			await ManagementClient.entries.publish(updatedPwEntry)
 		}
 
 		return json(

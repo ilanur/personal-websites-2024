@@ -3,10 +3,11 @@ import { json, error } from '@sveltejs/kit'
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
 import { getPeopleEntryByEmail } from '$lib/utils/contensis/server'
 import { createOrUpdatePages } from './pages.js'
-import { importAsset } from './importAsset.js'
 import { getExistingPersonalWebsite } from './getExistingPersonalWebsite.js'
 import { createOrUpdateBlogPosts } from './BlogPosts.js'
 import { createOrUpdateSocialMediaEntries } from './socialMedia.js'
+import { deleteAndReuploadMainImage } from './mainImage.js'
+import { deleteAndReuploadCV } from './cv.js'
 
 // Endpoint for testing purposes.
 export const GET = async () => {
@@ -15,15 +16,22 @@ export const GET = async () => {
 			where: [
 				{ field: 'sys.contentTypeId', equalTo: 'personalWebsites' },
 				{ field: 'sys.versionStatus', equalTo: 'published' }
-			]
+			],
+			pageSize: 99999
 		},
 		2
 	)
 
-	const email = 'anatole.cheysson@eui.eu'
-	const personalWebsite = personalWebsites.items.find((pw) => pw.people.email === email)
+	const email = 'andrea.deangelis@alumni.eui.eu'
+	const personalWebsite = personalWebsites.items.find((pw) => pw.people?.email === email)
 
-	return json({ success: true, personalWebsites: personalWebsites.items, personalWebsite }, { status: 200 })
+	return json(
+		{
+			success: true,
+			personalWebsite
+		},
+		{ status: 200 }
+	)
 }
 
 export const POST = async () => {
@@ -33,15 +41,21 @@ export const POST = async () => {
 		let progress = 0
 
 		// Test email - only process this specific website
-		const TEST_EMAIL = 'adanela.musaraj@alumnifellows.eui.eu'
+		// const TEST_EMAIL = 'adanela.musaraj@alumnifellows.eui.eu'
+		const TEST_EMAIL = 'andrea.deangelis@alumni.eui.eu'
 
 		// Loop over data and create/update items in Contensis.
 		for (let i = 0, ilen = oldCMSData.length; i < ilen; i++) {
+			// if (i > 9) break
+
+			// ================================================
+			// Get personal data
+			// ================================================
 			const personalData = oldCMSData[i]
 			const personalDataEmail = personalData.user.user_email?.toLowerCase()
 
 			if (!personalDataEmail) {
-				// console.log('Skipping entry without email')
+				progress += 1
 				continue
 			}
 
@@ -52,13 +66,15 @@ export const POST = async () => {
 				continue
 			}
 
-			// console.log(`Processing test email: ${TEST_EMAIL}`)
-
+			// ================================================
 			// Check if personal website already exists
+			// ================================================
 			let existingPersonalWebsite = await getExistingPersonalWebsite(personalData.user.personal_site)
 			let existingPeopleEntry = await getPeopleEntryByEmail(personalDataEmail)
 
-			// Create a new people entry if it doesn't exist
+			// ================================================
+			// Create people entry if it doesn't exist
+			// ================================================
 			if (!existingPeopleEntry) {
 				console.log(`${personalDataEmail} doesn't exist. Creating new people entry...`)
 
@@ -77,7 +93,6 @@ export const POST = async () => {
 					})
 
 					await ManagementClient.entries.publish(existingPeopleEntry)
-					// console.log(`${displayName} created in people entries. (${personalDataEmail})`)
 				} catch (e) {
 					console.error(`Error creating people entry: ${e.data}`)
 					continue
@@ -86,44 +101,14 @@ export const POST = async () => {
 				console.log(`${personalDataEmail} already exists. Skipping...`)
 			}
 
-			// Import main image if it has changed
-			let mainImage = null
-
-			if (personalData.user.user_picture && personalData.user.user_picture.length > 0) {
-				const shouldImportImage =
-					!existingPersonalWebsite?.image || existingPersonalWebsite.image.asset.sys.uri !== personalData.user.user_picture
-
-				if (shouldImportImage) {
-					mainImage = await importAsset(
-						personalData.user.user_picture,
-						personalData.title.rendered,
-						`Image for ${personalData.title.rendered}`,
-						'/Content-Types-Assets/PersonalWebsites'
-					)
-				}
-			}
-
-			// Import CV if available and changed
-			let cvAsset = null
-			const cvUrl = personalData.user.cv
-
-			if (cvUrl) {
-				// console.log('cvUrl', cvUrl)
-				const shouldImportCV = !existingPersonalWebsite?.cv || existingPersonalWebsite.cv.asset.sys.uri !== cvUrl
-
-				if (shouldImportCV) {
-					cvAsset = await importAsset(
-						cvUrl,
-						`${personalData.title.rendered} CV`,
-						`CV for ${personalData.title.rendered}`,
-						'/Content-Types-Assets/PersonalWebsites/CVs'
-					)
-				}
-			}
-
+			// ================================================
+			// Social media
+			// ================================================
 			const socialMediaEntries = await createOrUpdateSocialMediaEntries(personalData)
 
+			// ================================================
 			// Prepare payload for personalWebsite entry
+			// ================================================
 			const payload = {
 				title: personalData.title.rendered,
 				description: personalData.description,
@@ -149,6 +134,11 @@ export const POST = async () => {
 				}))
 			}
 
+			// ================================================
+			// Main image
+			// ================================================
+			const mainImage = await deleteAndReuploadMainImage(existingPersonalWebsite, personalData)
+
 			if (mainImage) {
 				payload['image'] = {
 					altText: personalData.title.rendered,
@@ -160,9 +150,12 @@ export const POST = async () => {
 						}
 					}
 				}
-			} else if (existingPersonalWebsite?.image) {
-				payload['image'] = existingPersonalWebsite.image
 			}
+
+			// ================================================
+			// CV
+			// ================================================
+			const cvAsset = await deleteAndReuploadCV(existingPersonalWebsite, personalData)
 
 			if (cvAsset) {
 				payload['cv'] = {
@@ -172,10 +165,11 @@ export const POST = async () => {
 						dataFormat: 'asset'
 					}
 				}
-			} else if (existingPersonalWebsite?.cv) {
-				payload['cv'] = existingPersonalWebsite.cv
 			}
 
+			// ================================================
+			// Update or create personal website
+			// ================================================
 			let newPersonalWebsite
 
 			// Update existing website

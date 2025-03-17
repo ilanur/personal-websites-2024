@@ -19,7 +19,7 @@ export async function createOrUpdateSocialMediaEntries(personalData) {
 	}
 
 	const validUrlRegex =
-		/https?:\/\/(www\.)?(youtube\.com|facebook\.com|twitter\.com|instagram\.com|linkedin\.com|researchgate\.net|academia\.edu|bsky\.app|flickr\.com)(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/g
+		/https?:\/\/([a-zA-Z0-9-]+\.)?(youtube\.com|facebook\.com|twitter\.com|instagram\.com|linkedin\.com|researchgate\.net|academia\.edu|bsky\.app|flickr\.com)(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/g
 	const newSocials = []
 	const possibleSocials = [
 		{

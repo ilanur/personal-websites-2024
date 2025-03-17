@@ -49,14 +49,14 @@ export async function createOrUpdateBlogPosts(personalWebsite, contensisPeopleEn
 		const shouldUpdateImage =
 			wpBlogPost.thumbnail_url && (!existingBlogPost?.mainImage || existingBlogPost.mainImage.asset.sys.uri !== wpBlogPost.thumbnail_url)
 
-		if (shouldUpdateImage) {
-			blogpostImg = await importAsset(
-				wpBlogPost.thumbnail_url,
-				wpBlogPost.post_title,
-				`Image for ${wpBlogPost.post_title}`,
-				'/Content-Types-Assets/PersonalWebsites/Blogs'
-			)
-		}
+		// if (shouldUpdateImage) {
+		// 	blogpostImg = await importAsset(
+		// 		wpBlogPost.thumbnail_url,
+		// 		wpBlogPost.post_title,
+		// 		`Image for ${wpBlogPost.post_title}`,
+		// 		'/Content-Types-Assets/PersonalWebsites/Blogs'
+		// 	)
+		// }
 
 		// Prepare default payload
 		const payload = {
@@ -81,20 +81,20 @@ export async function createOrUpdateBlogPosts(personalWebsite, contensisPeopleEn
 			]
 		}
 
-		if (blogpostImg) {
-			payload['mainImage'] = {
-				altText: wpBlogPost.post_title,
-				asset: {
-					sys: {
-						id: blogpostImg.sys.id,
-						language: 'en-GB',
-						dataFormat: 'asset'
-					}
-				}
-			}
-		} else if (existingBlogPost?.mainImage) {
-			payload['mainImage'] = existingBlogPost.mainImage
-		}
+		// if (blogpostImg) {
+		// 	payload['mainImage'] = {
+		// 		altText: wpBlogPost.post_title,
+		// 		asset: {
+		// 			sys: {
+		// 				id: blogpostImg.sys.id,
+		// 				language: 'en-GB',
+		// 				dataFormat: 'asset'
+		// 			}
+		// 		}
+		// 	}
+		// } else if (existingBlogPost?.mainImage) {
+		// 	payload['mainImage'] = existingBlogPost.mainImage
+		// }
 
 		let newBlogPost
 

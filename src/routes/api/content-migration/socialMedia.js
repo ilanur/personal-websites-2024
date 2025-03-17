@@ -6,6 +6,8 @@ export async function createOrUpdateSocialMediaEntries(personalData) {
 		return link.startsWith('www.') || link.startsWith('http://') ? `https://${link}` : link
 	}
 
+	const validUrlRegex =
+		/https?:\/\/(www\.)?(youtube\.com|facebook\.com|twitter\.com|instagram\.com|linkedin\.com|researchgate\.net|academia\.edu|bsky\.app|flickr\.com)(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/g
 	const newSocials = []
 	const possibleSocials = [
 		{
@@ -36,15 +38,17 @@ export async function createOrUpdateSocialMediaEntries(personalData) {
 
 	try {
 		for (let i = 0, ilen = possibleSocials.length; i < ilen; i++) {
-			console.log('possibleSocials[i].url', possibleSocials[i].url)
-
 			// Skip if no url or if it doesn't start with http:// or https://
 			const url = possibleSocials[i].url
+
 			if (!url || (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('www.'))) continue
 
 			const formattedLink = addHttpIfMissing(possibleSocials[i].url)
 
-			console.log('formattedLink', formattedLink)
+			if (!validUrlRegex.test(formattedLink)) {
+				console.log(`Invalid URL for ${possibleSocials[i].type}: ${formattedLink}`)
+				continue
+			}
 
 			// Check if social already exists
 			const contensisSocials = await DeliveryClient.entries.search({
@@ -69,8 +73,8 @@ export async function createOrUpdateSocialMediaEntries(personalData) {
 
 					await ManagementClient.entries.publish(updatedSocial)
 					console.log(`Updated social media entry: ${formattedLink}`)
-				} catch (error) {
-					console.error(`Error updating social media entry: ${formattedLink}`, error)
+				} catch (e) {
+					console.error(`Error updating social media entry: ${formattedLink}`, e.data ?? e)
 				}
 			}
 			// Create new social media entry
@@ -90,8 +94,8 @@ export async function createOrUpdateSocialMediaEntries(personalData) {
 
 					await ManagementClient.entries.publish(createdSocial)
 					console.log(`Created new social media entry: ${formattedLink}`)
-				} catch (error) {
-					console.error(`Error creating social media entry: ${formattedLink}`, error)
+				} catch (e) {
+					console.error(`Error creating social media entry: ${formattedLink}`, e.data ?? e)
 				}
 			}
 		}

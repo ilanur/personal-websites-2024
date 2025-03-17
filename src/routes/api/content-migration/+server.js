@@ -41,7 +41,7 @@ export const POST = async () => {
 			const personalDataEmail = personalData.user.user_email?.toLowerCase()
 
 			if (!personalDataEmail) {
-				console.log('Skipping entry without email')
+				// console.log('Skipping entry without email')
 				continue
 			}
 
@@ -52,13 +52,11 @@ export const POST = async () => {
 				continue
 			}
 
-			console.log(`Processing test email: ${TEST_EMAIL}`)
+			// console.log(`Processing test email: ${TEST_EMAIL}`)
 
 			// Check if personal website already exists
 			let existingPersonalWebsite = await getExistingPersonalWebsite(personalData.user.personal_site)
 			let existingPeopleEntry = await getPeopleEntryByEmail(personalDataEmail)
-
-			let newPeopleEntry
 
 			// Create a new people entry if it doesn't exist
 			if (!existingPeopleEntry) {
@@ -66,7 +64,7 @@ export const POST = async () => {
 
 				try {
 					const displayName = personalData.user.display_name
-					newPeopleEntry = await ManagementClient.entries.create({
+					existingPeopleEntry = await ManagementClient.entries.create({
 						nameAndSurnameForTheWeb: displayName,
 						email: personalDataEmail,
 						euiEmail: personalDataEmail,
@@ -78,8 +76,8 @@ export const POST = async () => {
 						}
 					})
 
-					await ManagementClient.entries.publish(newPeopleEntry)
-					console.log(`${displayName} created in people entries. (${personalDataEmail})`)
+					await ManagementClient.entries.publish(existingPeopleEntry)
+					// console.log(`${displayName} created in people entries. (${personalDataEmail})`)
 				} catch (e) {
 					console.error(`Error creating people entry: ${e.data}`)
 					continue
@@ -110,9 +108,8 @@ export const POST = async () => {
 			const cvUrl = personalData.user.cv
 
 			if (cvUrl) {
+				// console.log('cvUrl', cvUrl)
 				const shouldImportCV = !existingPersonalWebsite?.cv || existingPersonalWebsite.cv.asset.sys.uri !== cvUrl
-
-				console.log('Should import CV:', shouldImportCV)
 
 				if (shouldImportCV) {
 					cvAsset = await importAsset(
@@ -140,7 +137,7 @@ export const POST = async () => {
 				},
 				people: {
 					sys: {
-						id: newPeopleEntry.sys.id,
+						id: existingPeopleEntry.sys.id,
 						contentTypeId: 'people'
 					}
 				},
@@ -215,7 +212,7 @@ export const POST = async () => {
 			await createOrUpdatePages(newPersonalWebsite, personalData)
 
 			// create/update blog posts
-			await createOrUpdateBlogPosts(newPersonalWebsite, newPeopleEntry, personalData)
+			await createOrUpdateBlogPosts(newPersonalWebsite, existingPeopleEntry, personalData)
 
 			// Log progress
 			progress += 1

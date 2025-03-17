@@ -1,13 +1,16 @@
-import { ManagementClient } from '$lib/utils/contensis/_clients'
+import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
 import { parseHtml } from '@contensis/html-canvas'
 
 // Create personal website pages
 export async function createOrUpdatePages(personalWebsite, personalData) {
+	// Fetch latest personal website with a bigger linkDepth in order to get all pages
+	const latestPersonalWebsite = await DeliveryClient.entries.get({ id: personalWebsite.sys.id, linkDepth: 1 })
+
 	// Define pages to exclude from migration.
 	const pagesToExclude = ['Blog', 'Contact Me', 'Personal Website Settings', 'Publications in Cadmus']
 
 	// Get existing pages
-	const existingPages = personalWebsite.pages
+	const existingPages = latestPersonalWebsite.pages
 
 	// Loop over pages
 	for (let i = 0, ilen = personalData.pages.length; i < ilen; i++) {
@@ -56,14 +59,12 @@ export async function createOrUpdatePages(personalWebsite, personalData) {
 		}
 
 		// Find existing page by slug
-		const existingPage = existingPages.items.find((p) => p.pageSlug === pageSlug)
-
-		let newPage
+		let existingPage = existingPages.find((p) => p.pageSlug === pageSlug)
 
 		// Update existing page
 		if (existingPage) {
 			try {
-				newPage = await ManagementClient.entries.patch(existingPage.sys.id, payload)
+				existingPage = await ManagementClient.entries.patch(existingPage.sys.id, payload)
 				console.log(`Updated page ${title} for website ${personalWebsite.title}`)
 			} catch (e) {
 				console.error(`Error updating page ${title}:`, e.data ?? e)
@@ -78,13 +79,13 @@ export async function createOrUpdatePages(personalWebsite, personalData) {
 					dataFormat: 'entry'
 				}
 
-				newPage = await ManagementClient.entries.create(payload)
+				existingPage = await ManagementClient.entries.create(payload)
 				console.log(`Created new page ${title} for website ${personalWebsite.title}`)
 			} catch (e) {
 				console.error(`Error creating page ${title}:`, e.data ?? e)
 			}
 		}
 
-		await ManagementClient.entries.publish(newPage)
+		await ManagementClient.entries.publish(existingPage)
 	}
 }

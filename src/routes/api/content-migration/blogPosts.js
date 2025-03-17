@@ -77,8 +77,6 @@ export async function createOrUpdateBlogPosts(personalWebsite, contensisPeopleEn
 
 		let newBlogPost
 
-		console.log('EXISTING BLOG POST', existingBlogPost)
-
 		// Update existing blog post
 		if (existingBlogPost) {
 			try {

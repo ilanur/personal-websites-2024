@@ -48,6 +48,7 @@ export const POST = async () => {
 			// Skip all entries except the test email
 			if (personalDataEmail !== TEST_EMAIL) {
 				// console.log(`Skipping ${personalDataEmail} - only processing ${TEST_EMAIL} for testing`)
+				progress += 1
 				continue
 			}
 
@@ -55,25 +56,17 @@ export const POST = async () => {
 
 			// Check if personal website already exists
 			let existingPersonalWebsite = await getExistingPersonalWebsite(personalData.user.personal_site)
-			let contensisPeopleEntry = await getPeopleEntryByEmail(personalDataEmail)
+			let existingPeopleEntry = await getPeopleEntryByEmail(personalDataEmail)
 
-			// Log the version of the existing personal website entry before fetching the latest version
-			if (existingPersonalWebsite) {
-				console.log('Existing version:', existingPersonalWebsite.sys)
-				existingPersonalWebsite = await ManagementClient.entries.get({
-					id: existingPersonalWebsite.sys.id,
-					versionStatus: 'latest'
-				})
-				console.log('Fetched latest version:', existingPersonalWebsite.sys)
-			}
+			let newPeopleEntry
 
 			// Create a new people entry if it doesn't exist
-			if (!contensisPeopleEntry) {
+			if (!existingPeopleEntry) {
 				console.log(`${personalDataEmail} doesn't exist. Creating new people entry...`)
 
 				try {
 					const displayName = personalData.user.display_name
-					contensisPeopleEntry = await ManagementClient.entries.create({
+					newPeopleEntry = await ManagementClient.entries.create({
 						nameAndSurnameForTheWeb: displayName,
 						email: personalDataEmail,
 						euiEmail: personalDataEmail,
@@ -85,7 +78,7 @@ export const POST = async () => {
 						}
 					})
 
-					await ManagementClient.entries.invokeWorkflow(contensisPeopleEntry, 'draft.publish')
+					await ManagementClient.entries.publish(newPeopleEntry)
 					console.log(`${displayName} created in people entries. (${personalDataEmail})`)
 				} catch (e) {
 					console.error(`Error creating people entry: ${e.data}`)
@@ -147,7 +140,7 @@ export const POST = async () => {
 				},
 				people: {
 					sys: {
-						id: contensisPeopleEntry.sys.id,
+						id: newPeopleEntry.sys.id,
 						contentTypeId: 'people'
 					}
 				},
@@ -188,6 +181,7 @@ export const POST = async () => {
 
 			let newPersonalWebsite
 
+			// Update existing website
 			if (existingPersonalWebsite) {
 				try {
 					newPersonalWebsite = await ManagementClient.entries.patch(existingPersonalWebsite.sys.id, payload)
@@ -197,8 +191,9 @@ export const POST = async () => {
 					progress += 1
 					continue
 				}
-			} else {
-				// Create new website
+			}
+			// Create new website
+			else {
 				try {
 					payload['sys'] = {
 						contentTypeId: 'personalWebsites',
@@ -220,7 +215,7 @@ export const POST = async () => {
 			await createOrUpdatePages(newPersonalWebsite, personalData)
 
 			// create/update blog posts
-			await createOrUpdateBlogPosts(newPersonalWebsite, contensisPeopleEntry, personalData)
+			await createOrUpdateBlogPosts(newPersonalWebsite, newPeopleEntry, personalData)
 
 			// Log progress
 			progress += 1

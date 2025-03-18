@@ -6,7 +6,7 @@ export async function deleteAndReuploadCV(personalWebsite, personalData) {
 
 	try {
 		if (personalWebsite.cv) {
-			await ManagementClient.entries.delete(personalWebsite.cv.sys.id)
+			await ManagementClient.entries.delete(personalWebsite.cv.sys.id, ['en-GB'], true)
 		}
 
 		cv = await importAsset(

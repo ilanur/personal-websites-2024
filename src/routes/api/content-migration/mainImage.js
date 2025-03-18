@@ -7,7 +7,7 @@ export async function deleteAndReuploadMainImage(personalWebsite, personalData) 
 	try {
 		// First delete old image.
 		if (personalWebsite.image) {
-			await ManagementClient.entries.delete(personalWebsite.image.asset.sys.id)
+			await ManagementClient.entries.delete(personalWebsite.image.asset.sys.id, ['en-GB'], true)
 		}
 
 		// Re-upload new one.

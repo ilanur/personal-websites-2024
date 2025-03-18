@@ -25,9 +25,31 @@ export const GET = async () => {
 	const email = 'andrea.deangelis@alumni.eui.eu'
 	const personalWebsite = personalWebsites.items.find((pw) => pw.people?.email === email)
 
+	const assets = await DeliveryClient.entries.search({
+		where: [
+			{ field: 'sys.dataFormat', equalTo: 'asset' },
+			{ field: 'sys.properties.filePath', equalTo: '/Content-Types-Assets/PersonalWebsites/Blogs/' }
+		],
+		pageSize: 999999
+	})
+
+	const ids = []
+
+	for (const asset of assets.items) {
+		// if (asset.sys.properties.filename.includes('alternative-proteins-projections-to')) {
+		ids.push(asset.sys.id)
+
+		// ids.push({
+		// 	id: asset.sys.id,
+		// 	filename: asset.sys.properties.filename
+		// })
+		// }
+	}
+
 	return json(
 		{
 			success: true,
+			ids,
 			personalWebsite
 		},
 		{ status: 200 }

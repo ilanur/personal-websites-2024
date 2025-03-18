@@ -39,26 +39,20 @@ export async function createOrUpdateBlogPosts(personalWebsite, contensisPeopleEn
 		// Skip first 3 blog posts for testing purposes
 		if (i > 3) continue
 
+		// ================================================
+		// Get blog post data
+		// ================================================
 		const wpBlogPost = wpBlogPosts[i]
 		const canvas = await parseHtml(wpBlogPost.post_content)
-		let blogpostImg
 
+		// ================================================
 		// Check if we need to update the image
+		// ================================================
 		const existingBlogPost = existingPwBlogPosts.find((post) => post.wpId === wpBlogPost.ID)
 
-		const shouldUpdateImage =
-			wpBlogPost.thumbnail_url && (!existingBlogPost?.mainImage || existingBlogPost.mainImage.asset.sys.uri !== wpBlogPost.thumbnail_url)
-
-		// if (shouldUpdateImage) {
-		// 	blogpostImg = await importAsset(
-		// 		wpBlogPost.thumbnail_url,
-		// 		wpBlogPost.post_title,
-		// 		`Image for ${wpBlogPost.post_title}`,
-		// 		'/Content-Types-Assets/PersonalWebsites/Blogs'
-		// 	)
-		// }
-
+		// ================================================
 		// Prepare default payload
+		// ================================================
 		const payload = {
 			wpId: wpBlogPost.ID,
 			title: wpBlogPost.post_title.replace(/&amp;/g, '&'),
@@ -81,24 +75,39 @@ export async function createOrUpdateBlogPosts(personalWebsite, contensisPeopleEn
 			]
 		}
 
-		// if (blogpostImg) {
-		// 	payload['mainImage'] = {
-		// 		altText: wpBlogPost.post_title,
-		// 		asset: {
-		// 			sys: {
-		// 				id: blogpostImg.sys.id,
-		// 				language: 'en-GB',
-		// 				dataFormat: 'asset'
-		// 			}
-		// 		}
-		// 	}
-		// } else if (existingBlogPost?.mainImage) {
-		// 	payload['mainImage'] = existingBlogPost.mainImage
-		// }
+		// ================================================
+		// Blogpost image
+		// ================================================
+		if (existingBlogPost.mainImage) {
+			console.log('Deleting main image', existingBlogPost.mainImage.asset.sys.id)
+			await ManagementClient.entries.delete(existingBlogPost.mainImage.asset.sys.id, ['en-GB'], true)
+		}
+
+		const newImage = await importAsset(
+			wpBlogPost.thumbnail_url,
+			wpBlogPost.post_title,
+			`Image for ${wpBlogPost.post_title}`,
+			'/Content-Types-Assets/PersonalWebsites/Blogs'
+		)
+
+		if (newImage) {
+			payload['mainImage'] = {
+				altText: wpBlogPost.post_title,
+				asset: {
+					sys: {
+						id: newImage.sys.id,
+						language: 'en-GB',
+						dataFormat: 'asset'
+					}
+				}
+			}
+		}
 
 		let newBlogPost
 
+		// ================================================
 		// Update existing blog post
+		// ================================================
 		if (existingBlogPost) {
 			try {
 				newBlogPost = await ManagementClient.entries.patch(existingBlogPost.sys.id, payload)
@@ -108,7 +117,10 @@ export async function createOrUpdateBlogPosts(personalWebsite, contensisPeopleEn
 				console.error('Failed to update blog post', e.data ?? e)
 			}
 		}
+
+		// ================================================
 		// Create new blog post
+		// ================================================
 		else {
 			try {
 				payload.sys = {

@@ -9,6 +9,8 @@ export async function createOrUpdatePages(personalWebsite, personalData) {
 	// Get existing pages
 	const existingPages = personalWebsite.pages
 
+	const newPages = []
+
 	// Loop over pages
 	for (let i = 0, ilen = personalData.pages.length; i < ilen; i++) {
 		const page = personalData.pages[i]
@@ -84,5 +86,8 @@ export async function createOrUpdatePages(personalWebsite, personalData) {
 		}
 
 		await ManagementClient.entries.publish(existingPage)
+		newPages.push(existingPage)
 	}
+
+	return newPages
 }

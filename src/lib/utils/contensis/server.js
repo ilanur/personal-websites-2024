@@ -2,16 +2,17 @@ import { PUBLIC_CONTENSIS_MANAGEMENT_URL, PUBLIC_CONTENSIS_URL } from '$env/stat
 import { error } from '@sveltejs/kit'
 import { ofetch } from 'ofetch'
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
+import { Op, Query } from 'contensis-delivery-api'
 
 export async function getPeopleEntryByEmail(email) {
 	try {
-		const contensisUsers = await DeliveryClient.entries.search({
-			where: [
-				{ field: 'sys.contentTypeId', equalTo: 'people' },
-				{ field: 'sys.versionStatus', equalTo: 'published' },
-				{ field: 'euiEmail', equalTo: email }
-			]
-		})
+		const query = new Query(
+			Op.contains('sys.contentTypeId', 'people'),
+			Op.equalTo('sys.versionStatus', 'published'),
+			Op.or(Op.equalTo('euiEmail', email), Op.equalTo('email', email))
+		)
+
+		const contensisUsers = await DeliveryClient.entries.search(query)
 
 		if (!contensisUsers.items.length) return null
 

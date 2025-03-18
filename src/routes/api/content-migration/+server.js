@@ -28,9 +28,9 @@ export const GET = async () => {
 	const assets = await DeliveryClient.entries.search({
 		where: [
 			{ field: 'sys.dataFormat', equalTo: 'asset' },
-			{ field: 'sys.properties.filePath', equalTo: '/Content-Types-Assets/PersonalWebsites/Blogs/' }
+			{ field: 'sys.properties.filePath', equalTo: '/Content-Types-Assets/PersonalWebsites/' }
 		],
-		pageSize: 999999
+		pageSize: 99999
 	})
 
 	const ids = []
@@ -43,7 +43,6 @@ export const GET = async () => {
 		// 	id: asset.sys.id,
 		// 	filename: asset.sys.properties.filename
 		// })
-		// }
 	}
 
 	return json(
@@ -64,7 +63,8 @@ export const POST = async () => {
 
 		// Test email - only process this specific website
 		// const TEST_EMAIL = 'adanela.musaraj@alumnifellows.eui.eu'
-		const TEST_EMAIL = 'andrea.deangelis@alumni.eui.eu'
+		// const TEST_EMAIL = 'andrea.deangelis@alumni.eui.eu'
+		const TEST_EMAIL = 'marco.cozzani@alumni.eui.eu'
 
 		// Loop over data and create/update items in Contensis.
 		for (let i = 0, ilen = oldCMSData.length; i < ilen; i++) {
@@ -91,11 +91,28 @@ export const POST = async () => {
 			// ================================================
 			// Check if personal website already exists
 			// ================================================
-			let existingPersonalWebsite = await getExistingPersonalWebsite(personalData.user.personal_site)
+			let personalWebsiteEntry = await getExistingPersonalWebsite(personalData.user.personal_site, 1)
 			let existingPeopleEntry = await getPeopleEntryByEmail(personalDataEmail)
 
+			console.log(`Personal website: ${personalWebsiteEntry?.entryTitle} (${personalWebsiteEntry?.sys?.id})`)
+			console.log(`People entry: ${existingPeopleEntry?.entryTitle} (${existingPeopleEntry?.sys?.id})`)
+
+			if (!existingPeopleEntry) {
+				const address = personalDataEmail.split('@')[0]
+				const domain = personalDataEmail.split('@').pop()
+
+				// Check if people entry exists by @eui.eu domain.
+				if (domain === 'alumni.eui.eu') {
+					existingPeopleEntry = await getPeopleEntryByEmail(`${address}@eui.eu`)
+					existingPeopleEntry = await ManagementClient.entries.patch(existingPeopleEntry.sys.id, {
+						email: personalDataEmail,
+						euiEmail: personalDataEmail
+					})
+				}
+			}
+
 			// ================================================
-			// Create people entry if it doesn't exist
+			// Create or update people entry
 			// ================================================
 			if (!existingPeopleEntry) {
 				console.log(`${personalDataEmail} doesn't exist. Creating new people entry...`)
@@ -113,15 +130,15 @@ export const POST = async () => {
 							dataFormat: 'entry'
 						}
 					})
-
-					await ManagementClient.entries.publish(existingPeopleEntry)
 				} catch (e) {
 					console.error(`Error creating people entry: ${e.data}`)
 					continue
 				}
 			} else {
-				console.log(`${personalDataEmail} already exists. Skipping...`)
+				console.log(`${personalDataEmail} already exists, don't create new people entry...`)
 			}
+
+			await ManagementClient.entries.publish(existingPeopleEntry)
 
 			// ================================================
 			// Social media
@@ -157,12 +174,51 @@ export const POST = async () => {
 			}
 
 			// ================================================
+			// Update or create personal website
+			// ================================================
+
+			// Update existing personalwebsite
+			if (personalWebsiteEntry) {
+				try {
+					personalWebsiteEntry = await ManagementClient.entries.patch(personalWebsiteEntry.sys.id, payload)
+					console.log('Updated existing personal website for', personalDataEmail)
+				} catch (e) {
+					console.error('Error updating personal website:', e.data ?? e)
+					progress += 1
+					continue
+				}
+			}
+			// Create new personalwebsite
+			else {
+				try {
+					payload['sys'] = {
+						contentTypeId: 'personalWebsites',
+						language: 'en-GB',
+						dataFormat: 'entry'
+					}
+
+					personalWebsiteEntry = await ManagementClient.entries.create(payload)
+					console.log('Created new personal website for', personalDataEmail)
+				} catch (e) {
+					console.error('Error creating personal website:', e.data ?? e)
+					progress += 1
+					continue
+				}
+			}
+
+			await ManagementClient.entries.publish(personalWebsiteEntry)
+
+			const latestPersonalWebsite = await DeliveryClient.entries.get({ id: personalWebsiteEntry.sys.id, linkDepth: 1 })
+
+			const linkPayload = {}
+
+			// ================================================
 			// Main image
 			// ================================================
-			const mainImage = await deleteAndReuploadMainImage(existingPersonalWebsite, personalData)
+			const mainImage = await deleteAndReuploadMainImage(latestPersonalWebsite, personalData)
 
 			if (mainImage) {
-				payload['image'] = {
+				linkPayload['image'] = {
 					altText: personalData.title.rendered,
 					asset: {
 						sys: {
@@ -177,10 +233,10 @@ export const POST = async () => {
 			// ================================================
 			// CV
 			// ================================================
-			const cvAsset = await deleteAndReuploadCV(existingPersonalWebsite, personalData)
+			const cvAsset = await deleteAndReuploadCV(latestPersonalWebsite, personalData)
 
 			if (cvAsset) {
-				payload['cv'] = {
+				linkPayload['cv'] = {
 					sys: {
 						id: cvAsset.sys.id,
 						language: 'en-GB',
@@ -190,52 +246,50 @@ export const POST = async () => {
 			}
 
 			// ================================================
-			// Update or create personal website
+			// Pages
 			// ================================================
-			let newPersonalWebsite
+			const newPages = await createOrUpdatePages(latestPersonalWebsite, personalData)
 
-			// Update existing website
-			if (existingPersonalWebsite) {
-				try {
-					newPersonalWebsite = await ManagementClient.entries.patch(existingPersonalWebsite.sys.id, payload)
-					await ManagementClient.entries.publish(newPersonalWebsite)
-				} catch (e) {
-					console.error('Error updating personal website:', e.data ?? e)
-					progress += 1
-					continue
+			linkPayload.pages = newPages.map((page) => ({
+				sys: {
+					id: page.sys.id,
+					contentTypeId: 'personalWebsitePage'
 				}
-			}
-			// Create new website
-			else {
-				try {
-					payload['sys'] = {
-						contentTypeId: 'personalWebsites',
-						language: 'en-GB',
-						dataFormat: 'entry'
-					}
+			}))
 
-					newPersonalWebsite = await ManagementClient.entries.create(payload)
-					await ManagementClient.entries.publish(newPersonalWebsite)
-					console.log(`Created new personal website for ${personalDataEmail}`)
-				} catch (e) {
-					console.error('Error creating personal website:', e.data ?? e)
-					progress += 1
-					continue
+			console.log(
+				'New or updated pages:',
+				newPages.map((page) => page.entryTitle)
+			)
+
+			// ================================================
+			// Blog posts
+			// ================================================
+			const newBlogPosts = await createOrUpdateBlogPosts(latestPersonalWebsite, existingPeopleEntry, personalData)
+
+			linkPayload.blogPosts = newBlogPosts.map((blogPost) => ({
+				sys: {
+					id: blogPost.sys.id,
+					contentTypeId: 'personalWebsiteBlogPost'
 				}
+			}))
+
+			console.log(
+				'New or updated blog posts:',
+				newBlogPosts.map((blogPost) => blogPost.entryTitle)
+			)
+
+			// Update personal website with new link payload
+			try {
+				const updatedPersonalWebsite = await ManagementClient.entries.patch(latestPersonalWebsite.sys.id, linkPayload)
+				await ManagementClient.entries.publish(updatedPersonalWebsite)
+			} catch (e) {
+				console.error('Failed to update and publish personal website:', e.data ?? e)
 			}
-
-			// Fetch latest personal website with a bigger linkDepth in order to get all pages
-			const latestPersonalWebsite = await DeliveryClient.entries.get({ id: newPersonalWebsite.sys.id, linkDepth: 1 })
-
-			// Update/create pages
-			await createOrUpdatePages(latestPersonalWebsite, personalData)
-
-			// create/update blog posts
-			await createOrUpdateBlogPosts(latestPersonalWebsite, existingPeopleEntry, personalData)
 
 			// Log progress
 			progress += 1
-			console.log(`${progress}/${ilen} "personalWebsite" entries processed.`)
+			console.log(`${progress}/${ilen} "personalWebsite" entries processed (${personalDataEmail}).`)
 		}
 
 		console.log('Migration complete!')

@@ -1,34 +1,22 @@
 import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
 import { error, json } from '@sveltejs/kit'
-import { ofetch } from 'ofetch'
 
 export const POST = async () => {
 	try {
-		const pwEntry = await DeliveryClient.entries.get('35b97324-1cc0-412b-8325-5b1692c8ed1c')
+		const entry = await DeliveryClient.entries.get('ce58e038-31cf-4f18-8098-d1cb2fd9ba4d')
 
-		if (pwEntry) {
-			const updatedPwEntry = await ManagementClient.entries.patch(pwEntry.sys.id, {
-				photo: {
-					altText: pwEntry.entryTitle,
-					asset: {
-						sys: {
-							id: '42351cf8-d083-4c0a-829a-e8829b2648ee',
-							language: 'en-GB',
-							dataFormat: 'asset'
-						}
-					}
-				}
+		if (entry) {
+			const updatedEntry = await ManagementClient.entries.patch(entry.sys.id, {
+				email: 'Marco.Cozzani@eui.eu',
+				euiEmail: ''
 			})
 
-			await ManagementClient.entries.publish(updatedPwEntry)
+			await ManagementClient.entries.publish(updatedEntry)
 		}
 
 		return json(
 			{
-				success: true,
-				data: {
-					hasNoPeopleEntry
-				}
+				success: true
 			},
 			{ status: 200 }
 		)

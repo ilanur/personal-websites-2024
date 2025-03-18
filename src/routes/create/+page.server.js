@@ -73,7 +73,7 @@ export const actions = {
 				try {
 					uploadedPhoto = await uploadAsset(fileBuffer, filename, {
 						description: 'Photo uploaded from Personal website creation page',
-						folderId: '/Content-Types-Assets/PersonalWebsites',
+						folderId: '/Content-Types-Assets/PersonalWebsites/Profiles',
 						contentType: formData.photoUpload.type,
 						title: contensisUser?.nameAndSurnameForTheWeb ?? formData.title
 					})

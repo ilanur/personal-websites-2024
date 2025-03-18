@@ -10,34 +10,16 @@ function truncateContent(content, wordLimit) {
 }
 
 export async function createOrUpdateBlogPosts(personalWebsite, contensisPeopleEntry, personalData) {
-	async function linkBlogPostToPw(blogPost) {
-		try {
-			const updatedPersonalWebsite = await ManagementClient.entries.patch(personalWebsite.sys.id, {
-				blogPosts: [
-					...personalWebsite.blogPosts,
-					{
-						sys: {
-							id: blogPost.sys.id,
-							contentTypeId: 'personalWebsitesBlogPost'
-						}
-					}
-				]
-			})
-
-			await ManagementClient.entries.publish(updatedPersonalWebsite)
-		} catch (e) {
-			console.error('Failed to link blog post', e.data ?? e)
-		}
-	}
-
 	const wpBlogPosts = personalData.posts
 
 	// Get existing blog posts
 	const existingPwBlogPosts = personalWebsite.blogPosts
 
+	let newBlogPosts = []
+
 	for (let i = 0, ilen = wpBlogPosts.length; i < ilen; i++) {
 		// Skip first 3 blog posts for testing purposes
-		if (i > 3) continue
+		if (i > 4) continue
 
 		// ================================================
 		// Get blog post data
@@ -79,16 +61,25 @@ export async function createOrUpdateBlogPosts(personalWebsite, contensisPeopleEn
 		// Blogpost image
 		// ================================================
 		if (existingBlogPost.mainImage) {
-			console.log('Deleting main image', existingBlogPost.mainImage.asset.sys.id)
-			await ManagementClient.entries.delete(existingBlogPost.mainImage.asset.sys.id, ['en-GB'], true)
+			console.log('Deleting blogpost image', existingBlogPost.mainImage.asset.sys.id)
+			try {
+				await ManagementClient.entries.delete(existingBlogPost.mainImage.asset.sys.id, ['en-GB'], true)
+			} catch (e) {
+				console.error('Failed to delete blog post image:', e.data ?? e)
+			}
 		}
 
-		const newImage = await importAsset(
-			wpBlogPost.thumbnail_url,
-			wpBlogPost.post_title,
-			`Image for ${wpBlogPost.post_title}`,
-			'/Content-Types-Assets/PersonalWebsites/Blogs'
-		)
+		let newImage
+		try {
+			newImage = await importAsset(
+				wpBlogPost.thumbnail_url,
+				wpBlogPost.post_title,
+				`Image for ${wpBlogPost.post_title}`,
+				'/Content-Types-Assets/PersonalWebsites/Blogs'
+			)
+		} catch (e) {
+			console.error('Failed to import blog post image:', e.data ?? e)
+		}
 
 		if (newImage) {
 			payload['mainImage'] = {
@@ -132,7 +123,6 @@ export async function createOrUpdateBlogPosts(personalWebsite, contensisPeopleEn
 
 				newBlogPost = await ManagementClient.entries.create(payload)
 				await ManagementClient.entries.publish(newBlogPost)
-				await linkBlogPostToPw(newBlogPost)
 				console.log(`Created new blog post ${wpBlogPost.post_title}`)
 			} catch (e) {
 				console.error('Failed to create blog post', e.data ?? e)
@@ -151,12 +141,16 @@ export async function createOrUpdateBlogPosts(personalWebsite, contensisPeopleEn
 					})
 
 					if (blogPostsSearch.items.length) {
-						await linkBlogPostToPw(blogPostsSearch.items[0])
+						newBlogPost = blogPostsSearch.items[0]
 					}
 				}
 
 				continue
 			}
 		}
+
+		newBlogPosts.push(newBlogPost)
 	}
+
+	return newBlogPosts
 }

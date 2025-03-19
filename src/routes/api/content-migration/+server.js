@@ -4,10 +4,11 @@ import { DeliveryClient, ManagementClient } from '$lib/utils/contensis/_clients'
 import { getPeopleEntryByEmail } from '$lib/utils/contensis/server'
 import { createOrUpdatePages } from './pages.js'
 import { getExistingPersonalWebsite } from './getExistingPersonalWebsite.js'
-import { createOrUpdateBlogPosts } from './BlogPosts.js'
+import { createOrUpdateBlogPosts } from './blogPosts.js'
 import { createOrUpdateSocialMediaEntries } from './socialMedia.js'
 import { deleteAndReuploadMainImage } from './mainImage.js'
 import { deleteAndReuploadCV } from './cv.js'
+import { Op, Query } from 'contensis-delivery-api'
 
 // Endpoint for testing purposes.
 export const GET = async () => {
@@ -25,23 +26,32 @@ export const GET = async () => {
 	const email = 'andrea.deangelis@alumni.eui.eu'
 	const personalWebsite = personalWebsites.items.find((pw) => pw.people?.email === email)
 
-	const assets = await DeliveryClient.entries.search({
-		where: [
-			{ field: 'sys.dataFormat', equalTo: 'asset' },
-			{ field: 'sys.properties.filePath', equalTo: '/Content-Types-Assets/PersonalWebsites/' }
-		],
-		pageSize: 99999
-	})
+	const assetsQuery = new Query(
+		Op.equalTo('sys.dataFormat', 'asset'),
+		// Op.equalTo('sys.id', '6ff7f726-8173-42cd-998a-8f0888ed21ca'),
+		Op.or(
+			Op.equalTo('sys.properties.filePath', '/Content-Types-Assets/PersonalWebsites/Profiles/'),
+			Op.equalTo('sys.properties.filePath', '/Content-Types-Assets/PersonalWebsites/Blogs/'),
+			Op.equalTo('sys.properties.filePath', '/Content-Types-Assets/PersonalWebsites/Cvs/'),
+			Op.equalTo('sys.properties.filePath', '/Content-Types-Assets/PersonalWebsites/Pages/')
+		)
+	)
+
+	assetsQuery.pageSize = 99999
+
+	const assets = await DeliveryClient.entries.search(assetsQuery)
 
 	const ids = []
 
 	for (const asset of assets.items) {
+		// ids.push(asset.sys)
 		// if (asset.sys.properties.filename.includes('alternative-proteins-projections-to')) {
 		ids.push(asset.sys.id)
 
 		// ids.push({
 		// 	id: asset.sys.id,
-		// 	filename: asset.sys.properties.filename
+		// 	filename: asset.sys.properties.filename,
+		// 	filePath: asset.sys.properties.filePath
 		// })
 	}
 
@@ -63,8 +73,10 @@ export const POST = async () => {
 
 		// Test email - only process this specific website
 		// const TEST_EMAIL = 'adanela.musaraj@alumnifellows.eui.eu'
+		// const TEST_EMAIL = 'laura.bartolini@eui.eu'
+		// const TEST_EMAIL = 'dieter.reinisch@eui.eu'
 		// const TEST_EMAIL = 'andrea.deangelis@alumni.eui.eu'
-		const TEST_EMAIL = 'marco.cozzani@alumni.eui.eu'
+		// const TEST_EMAIL = 'marco.cozzani@alumni.eui.eu'
 
 		// Loop over data and create/update items in Contensis.
 		for (let i = 0, ilen = oldCMSData.length; i < ilen; i++) {
@@ -82,11 +94,11 @@ export const POST = async () => {
 			}
 
 			// Skip all entries except the test email
-			if (personalDataEmail !== TEST_EMAIL) {
-				// console.log(`Skipping ${personalDataEmail} - only processing ${TEST_EMAIL} for testing`)
-				progress += 1
-				continue
-			}
+			// if (personalDataEmail !== TEST_EMAIL) {
+			// 	// console.log(`Skipping ${personalDataEmail} - only processing ${TEST_EMAIL} for testing`)
+			// 	progress += 1
+			// 	continue
+			// }
 
 			// ================================================
 			// Check if personal website already exists
@@ -209,7 +221,6 @@ export const POST = async () => {
 			await ManagementClient.entries.publish(personalWebsiteEntry)
 
 			const latestPersonalWebsite = await DeliveryClient.entries.get({ id: personalWebsiteEntry.sys.id, linkDepth: 1 })
-
 			const linkPayload = {}
 
 			// ================================================
@@ -252,7 +263,7 @@ export const POST = async () => {
 
 			linkPayload.pages = newPages.map((page) => ({
 				sys: {
-					id: page.sys.id,
+					id: page?.sys?.id,
 					contentTypeId: 'personalWebsitePage'
 				}
 			}))
@@ -269,15 +280,10 @@ export const POST = async () => {
 
 			linkPayload.blogPosts = newBlogPosts.map((blogPost) => ({
 				sys: {
-					id: blogPost.sys.id,
+					id: blogPost?.sys?.id,
 					contentTypeId: 'personalWebsiteBlogPost'
 				}
 			}))
-
-			console.log(
-				'New or updated blog posts:',
-				newBlogPosts.map((blogPost) => blogPost.entryTitle)
-			)
 
 			// Update personal website with new link payload
 			try {

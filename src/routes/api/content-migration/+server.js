@@ -73,7 +73,7 @@ export const POST = async () => {
 
 		// Test email - only process this specific website
 		// const TEST_EMAIL = 'adanela.musaraj@alumnifellows.eui.eu'
-		// const TEST_EMAIL = 'laura.bartolini@eui.eu'
+		// const TEST_EMAIL = 'ioana.oana@eui.eu'
 		// const TEST_EMAIL = 'dieter.reinisch@eui.eu'
 		// const TEST_EMAIL = 'andrea.deangelis@alumni.eui.eu'
 		// const TEST_EMAIL = 'marco.cozzani@alumni.eui.eu'
@@ -88,7 +88,7 @@ export const POST = async () => {
 			const personalData = oldCMSData[i]
 			const personalDataEmail = personalData.user.user_email?.toLowerCase()
 
-			if (!personalDataEmail) {
+			if (!personalDataEmail || !personalData.user.personal_site) {
 				progress += 1
 				continue
 			}
@@ -295,7 +295,9 @@ export const POST = async () => {
 
 			// Log progress
 			progress += 1
+			console.log('==========================================')
 			console.log(`${progress}/${ilen} "personalWebsite" entries processed (${personalDataEmail}).`)
+			console.log('==========================================')
 		}
 
 		console.log('Migration complete!')

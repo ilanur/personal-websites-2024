@@ -1,7 +1,7 @@
 <script>
-	import { liteClient as algoliasearch } from 'algoliasearch/lite'
 	import instantsearch from 'instantsearch.js'
-	import { afterUpdate, onDestroy } from 'svelte'
+	import { liteClient as algoliasearch } from 'algoliasearch/lite'
+	import { onDestroy } from 'svelte'
 	import { hits, configure, hitsPerPage, stats, currentRefinements } from 'instantsearch.js/es/widgets'
 	import { setConfigs } from '$lib/utils/algolia/indexesConfig'
 	import { customPagination } from '$lib/utils/algolia/customPagination'
@@ -12,10 +12,35 @@
 	import { getThumbnail, truncateString } from '$lib/utils/utils'
 	import { page } from '$app/stores'
 
-	export let item
+	let { item } = $props()
 
-	// Get preview state from the page store
-	$: isPreview = $page.data.preview?.active || false
+	let search = $state()
+	let activeFilter = $state(null)
+
+	const isPreview = $derived($page.data.preview?.active || false)
+	const option_hitsPerPage = $derived(item.customHitsPerPage || 12)
+	const quickFilters = $derived(item.quickFilter || [])
+	const hideSearchBar = $derived(item.hideSearchBar || false)
+	const hidePagination = $derived(item.hidePagination || false)
+	const filters = $derived(
+		activeFilter ? `${item.additionalFilters ? `${item.additionalFilters} AND ` : ''}${activeFilter}` : item.additionalFilters || ''
+	)
+
+	$effect(() => {
+		if (search) {
+			search.dispose()
+			activeFilter = null
+		}
+
+		initializeSearch()
+	})
+
+	onDestroy(() => {
+		if (search) {
+			search.dispose()
+			activeFilter = null
+		}
+	})
 
 	// Function to get the correct index name based on preview mode
 	function getIndexName(baseIndex) {
@@ -36,17 +61,9 @@
 		return `${targetUrl.pathname}${targetUrl.search}`
 	}
 
-	$: activeFilter = null
-	$: option_hitsPerPage = item.customHitsPerPage || 12
-	$: quickFilters = item.quickFilter || []
-	$: hideSearchBar = item.hideSearchBar || false
-	$: hidePagination = item.hidePagination || false
-	$: filters = activeFilter ? `${item.additionalFilters ? `${item.additionalFilters} AND ` : ''}${activeFilter}` : item.additionalFilters || ''
-
-	let search
-
-	const initializeSearch = () => {
+	function initializeSearch() {
 		const searchClient = algoliasearch(PUBLIC_ALGOLIA_ID, PUBLIC_ALGOLIA_KEY)
+
 		// Get the base index name
 		let indexName = item.index
 		if (item.indexName && item.indexName !== '') {
@@ -60,8 +77,6 @@
 		const config = setConfigs(indexName)
 		const { transformItems, select_form_classes, root_classes, list_classes, item_classes } = config
 
-		let not_found_classes = 'my-14 text-center'
-
 		const search = instantsearch({
 			indexName,
 			searchClient,
@@ -74,6 +89,7 @@
 				filters: filters
 			})
 		])
+
 		search.addWidgets([
 			hits({
 				container: '#hits',
@@ -137,7 +153,7 @@
 					}
 				},
 				transformItems(items, { results }) {
-					console.log('Hits retrieved:', items)
+					console.log('Hits retrieved:', items) // This is executed twice for some reason
 					return transformItems(items, { results })
 				},
 				cssClasses: {
@@ -175,6 +191,7 @@
 				})
 			])
 		}
+
 		if (hideSearchBar === false) {
 			search.addWidgets([
 				customSearch({
@@ -186,6 +203,7 @@
 				})
 			])
 		}
+
 		search.addWidgets([
 			stats({
 				container: '#stats',
@@ -233,21 +251,6 @@
 		search.start()
 	}
 
-	afterUpdate(() => {
-		if (search) {
-			search.dispose()
-			activeFilter = null
-		}
-		initializeSearch()
-	})
-
-	onDestroy(() => {
-		if (search) {
-			search.dispose()
-			activeFilter = null
-		}
-	})
-
 	// Map the JSON type to the corresponding InstantSearch.js widget
 	function mapFilterTypeToWidget(type) {
 		const typeMap = {
@@ -259,6 +262,7 @@
 
 		return typeMap[type]
 	}
+
 	// Function to toggle filter
 	function toggleFilter(algoliaFilter) {
 		search.dispose()
@@ -271,7 +275,8 @@
 			//console.log('Applying new filter');
 			activeFilter = algoliaFilter // Apply new filter
 		}
-		//console.log('Current activeFilter: ' + (activeFilter || 'none'));
+
+		console.log('Current activeFilter: ' + (activeFilter || 'none'))
 		initializeSearch() // Reinitialize search with new filter
 	}
 </script>
@@ -303,7 +308,7 @@
 								class="rounded px-2 py-1 text-xs font-semibold {activeFilter === `${filter.algoliaFilter}`
 									? 'bg-eui-dark-blue-500 text-white'
 									: 'bg-eui-dark-blue-100 text-eui-dark-blue-500'} hover:bg-eui-dark-blue-500 hover:text-white"
-								on:click={() => toggleFilter(filter.algoliaFilter)}
+								onclick={() => toggleFilter(filter.algoliaFilter)}
 							>
 								{@html filter.label}
 							</button>

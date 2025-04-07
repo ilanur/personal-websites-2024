@@ -82,7 +82,7 @@ jobs:
           echo "Pulling images to use for build cache: $BUILDER_IMAGE $LATEST_IMAGE"
           echo "{\"commitRef\":\"${{ github.sha }}\",\"pipelineIID\":\"${{ github.run_id }}\",\"pipelineUrl\":\"${{ github.event.repository.html_url }}/actions/runs/${{ github.run_id }}\",\"buildNo\":\"${{ github.run_number }}\",\"branchName\":\"${{ github.ref_name }}\",\"registryImage\":\"${{ env.APP_IMAGE }}\"}" > version.json
           if [ -n "$(docker pull $BUILDER_IMAGE || echo "")" ]; then echo "Builder image exists: $BUILDER_IMAGE"; fi
-          if [[ -n "$BUILDER_IMAGE_ARG" && -n "$(docker pull $LATEST_IMAGE || echo "")" ]]; then echo "App image exists: $LATEST_IMAGE"; fi
+          if [[ -n "$BUILDER_IMAGE" && -n "$(docker pull $LATEST_IMAGE || echo "")" ]]; then echo "App image exists: $LATEST_IMAGE"; fi
           docker build -t $LATEST_IMAGE -t $BUILD_IMAGE --cache-from $LATEST_IMAGE --build-arg builder_image=$BUILDER_IMAGE -f docker/build.Dockerfile .
           docker push --all-tags ${{ env.APP_IMAGE }}
           echo "image-uri=$BUILD_IMAGE" >> $GITHUB_OUTPUT

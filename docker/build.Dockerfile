@@ -8,8 +8,9 @@ FROM ${builder_base} AS prepare
 RUN apt-get -qq update && apt-get -qq -y install libglu1
 
 WORKDIR /usr/src/app
-COPY package.json yarn.lock ./
-RUN yarn install --silent --non-interactive --prefer-offline --cache-folder ./cache
+COPY package.json package-lock.json ./
+RUN npm install --loglevel error --cache ./cache
+# RUN yarn install --silent --non-interactive --prefer-offline --cache-folder ./cache
 
 # The builder image will be built targeting the "prepare" alias
 # so we can prepare a cacheable build environment for the final build
@@ -19,14 +20,16 @@ RUN yarn install --silent --non-interactive --prefer-offline --cache-folder ./ca
 # with the builder or app images
 FROM ${builder_image} AS build
 COPY ./ ./
-RUN yarn run build
+RUN npm run build
 
 FROM ${app_base} AS final
 COPY manifest.json /
 WORKDIR /app
 COPY package.json .
-COPY yarn.lock .
-RUN yarn config set cache-folder .cache && yarn install --production --link-duplicates --silent --non-interactive --prefer-offline && yarn cache clean
+COPY package-lock.json .
+
+RUN npm config set cache .cache && npm install --production --loglevel error && npm cache clean --force
+# RUN yarn config set cache-folder .cache && yarn install --production --link-duplicates --silent --non-interactive --prefer-offline && yarn cache clean
 COPY .env* ./
 # COPY webpack/define-config.js ./webpack/
 COPY --from=build /usr/src/app/dist dist
